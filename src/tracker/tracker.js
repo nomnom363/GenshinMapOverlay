@@ -45,7 +45,14 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const status = (phase, key, params = {}, progress = 0) => api.status({ phase, key, params, progress });
 
 async function loadCv() {
-  const mod = window.cv;
+  let mod = window.cv;
+  if (!mod) {
+    for (let i = 0; i < 50 && !window.cv; i++) {
+      await sleep(100);
+    }
+    mod = window.cv;
+  }
+  if (!mod) throw new Error('OpenCV failed to initialize (window.cv is undefined)');
   if (typeof mod.then === 'function') return mod;
   if (mod.Mat) return mod;
   return new Promise((resolve) => { mod.onRuntimeInitialized = () => resolve(mod); });
