@@ -178,7 +178,45 @@
       this.scale = best.s;
       this.lastGood = now;
       this.fresh = false;
-      return { ok: true, x: best.x, y: best.y, scale: best.s, corr: best.corr };
+
+      // Extract player arrow orientation from minimap center
+      let heading = null;
+      if (corner && corner.data && corner.width > GEOMETRY.cx + 20 && corner.height > GEOMETRY.cy + 20) {
+        let sumX = 0, sumY = 0, count = 0;
+        let maxTipD2 = 0, tipDx = 0, tipDy = 0;
+        const R_ARROW = 14;
+        for (let dy = -R_ARROW; dy <= R_ARROW; dy++) {
+          for (let dx = -R_ARROW; dx <= R_ARROW; dx++) {
+            const d2 = dx * dx + dy * dy;
+            if (d2 > R_ARROW * R_ARROW || d2 < 6) continue;
+            const px = GEOMETRY.cx + dx;
+            const py = GEOMETRY.cy + dy;
+            const idx = (py * corner.width + px) * 4;
+            const r = corner.data[idx];
+            const g = corner.data[idx + 1];
+            const b = corner.data[idx + 2];
+            const isCyan = (b > 150 && g > 120 && r < 145);
+            const isWhite = (r > 200 && g > 200 && b > 200);
+            if (isCyan || isWhite) {
+              sumX += dx;
+              sumY += dy;
+              count++;
+              if (d2 > maxTipD2) {
+                maxTipD2 = d2;
+                tipDx = dx;
+                tipDy = dy;
+              }
+            }
+          }
+        }
+        if (count >= 8) {
+          const wx = sumX * 0.4 + tipDx * 0.6 * count;
+          const wy = sumY * 0.4 + tipDy * 0.6 * count;
+          heading = Math.atan2(wy, wx);
+        }
+      }
+
+      return { ok: true, x: best.x, y: best.y, scale: best.s, corr: best.corr, angle: heading };
     }
 
     unsure(now, corr) {

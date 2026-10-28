@@ -1,4 +1,7 @@
 let navigatingPin = null;
+let currentHeading = -Math.PI / 2;
+let lastPlayerMapX = 0;
+let lastPlayerMapY = 0;
 // Overlay: Marker auf der Ingame-Karte + Panel.
 // Maus nur über Marker/Panel abfangen, sonst geht alles ans Spiel (ziehen, zoomen, Wegpunkte).
 /* global I18n, Media, Hud */
@@ -256,8 +259,12 @@ function draw() {
   ctx.clearRect(0, 0, W, H);
   drawnCount = 0;
   if (!data || !view || visibility <= 0) {
-    if (data && minimap && settings.minimap !== false && visibility <= 0) drawMinimap();
-    else if (nearby >= 0) setNearby(-1);
+    if (data && minimap && settings.minimap !== false && visibility <= 0) {
+      drawMinimap();
+      if (navigatingPin) drawWorldNavigationArrow(W, H, u);
+    } else if (nearby >= 0) {
+      setNearby(-1);
+    }
     updateHover();
     return;
   }
@@ -339,6 +346,9 @@ function draw() {
     ctx.arc(x, cy, half + 6 * u, 0, Math.PI * 2);
     ctx.stroke();
     ctx.globalAlpha = 1;
+  }
+  if (navigatingPin) {
+    drawBigMapNavigation(W, H, u, ax, ay, bx, by);
   }
 }
 
@@ -510,6 +520,318 @@ function renderNearby() {
   el.hidden = false;
 }
 
+
+function drawNavPill(x, y, text, color, u) {
+  ctx.save();
+  ctx.font = `bold ${Math.round(11 * u)}px sans-serif`;
+  const metrics = ctx.measureText(text);
+  const pillW = metrics.width + 16 * u;
+  const pillH = 22 * u;
+
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+  ctx.strokeStyle = color || '#38bdf8';
+  ctx.lineWidth = 1.2 * u;
+
+  const r = pillH / 2;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x - pillW / 2, y - pillH / 2, pillW, pillH, r);
+  else ctx.rect(x - pillW / 2, y - pillH / 2, pillW, pillH);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function findBestTeleport(targetIdx) {
+  if (!data || targetIdx < 0 || targetIdx >= data.markers.count) return null;
+  const { x: mx, y: my, id: ids, underground: ug, layerId: lId } = data.markers;
+  const tx = mx[targetIdx];
+  const ty = my[targetIdx];
+  const isTargetUg = ug && ug[targetIdx] === 1;
+  const targetLayerId = lId ? lId[targetIdx] : 0;
+
+  const teleIndices = [];
+  ['o3', 'o2'].forEach(key => {
+    const tIdx = typeIndexByKey.get(key);
+    if (tIdx !== undefined && markersByType[tIdx]) {
+      for (const i of markersByType[tIdx]) teleIndices.push(i);
+    }
+  });
+
+  if (!teleIndices.length) return null;
+
+  if (isTargetUg) {
+    let bestSameLayer = -1;
+    let bestSameDist = Infinity;
+    for (const i of teleIndices) {
+      if (ug[i] === 1 && lId[i] === targetLayerId) {
+        const d = Math.hypot(mx[i] - tx, my[i] - ty);
+        if (d < bestSameDist) {
+          bestSameDist = d;
+          bestSameLayer = i;
+        }
+      }
+    }
+    if (bestSameLayer >= 0) {
+      return {
+        index: bestSameLayer,
+        id: ids[bestSameLayer],
+        x: mx[bestSameLayer],
+        y: my[bestSameLayer],
+        name: data.types[data.markers.type[bestSameLayer]].name,
+        dist: bestSameDist,
+        sameCave: true
+      };
+    }
+
+    const entIds = (data.entrances && data.entrances[ids[targetIdx]]) || [];
+    if (entIds.length) {
+      const entIdx = markerIndexById.get(entIds[0]);
+      if (entIdx !== undefined) {
+        const ex = mx[entIdx];
+        const ey = my[entIdx];
+        let bestEntTele = -1;
+        let bestEntDist = Infinity;
+        for (const i of teleIndices) {
+          if (ug[i] === 0) {
+            const d = Math.hypot(mx[i] - ex, my[i] - ey);
+            if (d < bestEntDist) {
+              bestEntDist = d;
+              bestEntTele = i;
+            }
+          }
+        }
+        if (bestEntTele >= 0) {
+          return {
+            index: bestEntTele,
+            id: ids[bestEntTele],
+            x: mx[bestEntTele],
+            y: my[bestEntTele],
+            name: data.types[data.markers.type[bestEntTele]].name,
+            dist: bestEntDist,
+            entrance: true,
+            entranceId: entIds[0]
+          };
+        }
+      }
+    }
+  }
+
+  let bestTele = -1;
+  let bestDist = Infinity;
+  for (const i of teleIndices) {
+    if (!isTargetUg && ug[i] === 1) continue;
+    const d = Math.hypot(mx[i] - tx, my[i] - ty);
+    if (d < bestDist) {
+      bestDist = d;
+      bestTele = i;
+    }
+  }
+
+  if (bestTele >= 0) {
+    return {
+      index: bestTele,
+      id: ids[bestTele],
+      x: mx[bestTele],
+      y: my[bestTele],
+      name: data.types[data.markers.type[bestTele]].name,
+      dist: bestDist
+    };
+  }
+  return null;
+}
+
+function drawWorldNavigationArrow(W, H, u) {
+  if (!navigatingPin || !minimap) return;
+
+  const targetX = navigatingPin.x;
+  const targetY = navigatingPin.y;
+  const playerX = minimap.x;
+  const playerY = minimap.y;
+
+  const dx = targetX - playerX;
+  const dy = targetY - playerY;
+  const distMap = Math.hypot(dx, dy);
+  const distMeters = Math.round(distMap * 15);
+
+  const targetWorldAngle = Math.atan2(dy, dx);
+  let relAngle = targetWorldAngle - currentHeading;
+  while (relAngle > Math.PI) relAngle -= 2 * Math.PI;
+  while (relAngle < -Math.PI) relAngle += 2 * Math.PI;
+
+  const charX = W * 0.5;
+  const charY = H * 0.65;
+
+  ctx.save();
+
+  if (distMeters < 12) {
+    const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 200);
+    const radius = (28 + pulse * 14) * u;
+
+    ctx.save();
+    ctx.translate(charX, charY);
+    ctx.scale(1, 0.45);
+
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 3 * u;
+    ctx.globalAlpha = 0.6 + 0.3 * pulse;
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 15 * u;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+    ctx.fill();
+    ctx.restore();
+
+    drawNavPill(charX, charY - 35 * u, `🎯 Arrived (~ ${distMeters}m)`, '#38bdf8', u);
+    ctx.restore();
+    return;
+  }
+
+  const orbitX = 115 * u;
+  const orbitY = 60 * u;
+  const bob = Math.sin(performance.now() / 220) * (5 * u);
+
+  const dirX = Math.sin(relAngle);
+  const dirY = -Math.cos(relAngle);
+
+  const arrowX = charX + dirX * (orbitX + bob);
+  const arrowY = charY + dirY * (orbitY + bob * 0.55);
+  const arrowScreenAngle = Math.atan2(dirY, dirX);
+
+  ctx.save();
+  ctx.translate(arrowX, arrowY);
+  ctx.rotate(arrowScreenAngle);
+
+  const arrowLen = 38 * u;
+  const arrowW = 24 * u;
+
+  ctx.shadowColor = '#38bdf8';
+  ctx.shadowBlur = 12 * u;
+
+  const grad = ctx.createLinearGradient(-arrowLen * 0.4, 0, arrowLen * 0.6, 0);
+  grad.addColorStop(0, 'rgba(56, 189, 248, 0.15)');
+  grad.addColorStop(1, 'rgba(56, 189, 248, 0.55)');
+
+  ctx.fillStyle = grad;
+  ctx.strokeStyle = 'rgba(125, 211, 252, 0.85)';
+  ctx.lineWidth = 2.2 * u;
+
+  ctx.beginPath();
+  ctx.moveTo(arrowLen * 0.6, 0);
+  ctx.lineTo(-arrowLen * 0.4, -arrowW * 0.5);
+  ctx.lineTo(-arrowLen * 0.15, 0);
+  ctx.lineTo(-arrowLen * 0.4, arrowW * 0.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  const pulseOff = ((performance.now() / 600) % 1) * (arrowLen * 0.4);
+  ctx.strokeStyle = `rgba(56, 189, 248, ${0.7 - (pulseOff / (arrowLen * 0.4)) * 0.5})`;
+  ctx.lineWidth = 2 * u;
+  ctx.beginPath();
+  ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
+  ctx.lineTo(-arrowLen * 0.6 - pulseOff, -arrowW * 0.35);
+  ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
+  ctx.lineTo(-arrowLen * 0.6 - pulseOff, arrowW * 0.35);
+  ctx.stroke();
+
+  ctx.restore();
+
+  const isUg = navigatingPin.isUnderground;
+  const distText = `${isUg ? '🕳️' : '⚡'} ${distMeters}m • ${navigatingPin.name}`;
+  const pillX = Math.max(80 * u, Math.min(W - 80 * u, arrowX));
+  const pillY = Math.max(30 * u, Math.min(H - 40 * u, arrowY + 24 * u));
+  drawNavPill(pillX, pillY, distText, isUg ? '#7dd3fc' : '#38bdf8', u);
+  ctx.restore();
+}
+
+function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
+  if (!navigatingPin || !data) return;
+  const targetX = ax * navigatingPin.x + bx;
+  const targetY = ay * navigatingPin.y + by;
+
+  const bestTele = findBestTeleport(navigatingPin.index);
+  if (bestTele) {
+    const teleX = ax * bestTele.x + bx;
+    const teleY = ay * bestTele.y + by;
+
+    // 1. Draw animated dashed route line
+    ctx.save();
+    ctx.setLineDash([10 * u, 6 * u]);
+    ctx.lineDashOffset = -performance.now() / 25;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2.8 * u;
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 8 * u;
+    ctx.globalAlpha = Math.min(0.85, visibility);
+
+    ctx.beginPath();
+    ctx.moveTo(teleX, teleY);
+    ctx.lineTo(targetX, targetY);
+    ctx.stroke();
+
+    const dLine = Math.hypot(targetX - teleX, targetY - teleY);
+    const numC = Math.floor(dLine / (55 * u));
+    const aLine = Math.atan2(targetY - teleY, targetX - teleX);
+    ctx.fillStyle = '#ffffff';
+    for (let k = 1; k <= numC; k++) {
+      const t = k / (numC + 1);
+      const px = teleX + (targetX - teleX) * t;
+      const py = teleY + (targetY - teleY) * t;
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(aLine);
+      ctx.beginPath();
+      ctx.moveTo(4 * u, 0);
+      ctx.lineTo(-4 * u, -3.5 * u);
+      ctx.lineTo(-2 * u, 0);
+      ctx.lineTo(-4 * u, 3.5 * u);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // 2. Draw glowing beacon ring on recommended teleport
+    ctx.save();
+    const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 180);
+    const r = (settings.markerSize * u * 0.6) + 10 * u + pulse * 6 * u;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2.5 * u;
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 12 * u;
+    ctx.globalAlpha = Math.min(0.95, visibility);
+
+    ctx.beginPath();
+    ctx.arc(teleX, teleY, r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    const distM = Math.round(bestTele.dist * 15);
+    drawNavPill(teleX, teleY - r - 12 * u, `⚡ Fastest Teleport (~ ${distM}m)`, '#38bdf8', u);
+    ctx.restore();
+  }
+
+  // 3. Draw pulsating focal beacon on target pin
+  ctx.save();
+  const pulseT = 0.5 + 0.5 * Math.sin(performance.now() / 200);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 2.5 * u;
+  ctx.shadowColor = '#f59e0b';
+  ctx.shadowBlur = 10 * u;
+  ctx.globalAlpha = Math.min(0.95, visibility);
+  ctx.beginPath();
+  ctx.arc(targetX, targetY, (settings.markerSize * u * 0.6) + 12 * u + pulseT * 8 * u, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawCheck(x, y, r) {
   ctx.globalAlpha = Math.min(1, settings.opacity * visibility);
   ctx.fillStyle = '#3f9d57';
@@ -561,14 +883,22 @@ function drawUndergroundBadge(x, y, half, size, u, floorName) {
 
 function overPanel(x, y) {
   const inside = (el) => {
+    if (!el || el.hidden) return false;
     const r = el.getBoundingClientRect();
     return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
   };
-  // Lightbox deckt alles ab, Klick irgendwo schließt sie.
   if (!$('lightbox').hidden) return true;
   if (panelOpen && inside($('panel'))) return true;
   if (spot && inside($('spot'))) return true;
   return !$('panel-handle').hidden && inside($('panel-handle'));
+}
+
+function overSpot(x, y) {
+  if (!spot) return false;
+  const el = $('spot');
+  if (!el || el.hidden) return false;
+  const r = el.getBoundingClientRect();
+  return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
 }
 
 function renderHandle() {
@@ -646,8 +976,24 @@ api.on('cursor', (point) => {
 let mousePressInfo = null;
 
 window.addEventListener('mousedown', (event) => {
-  if (overPanel(event.clientX, event.clientY)) return;
-  if (spot !== null && overSpot(event.clientX, event.clientY)) return;
+  // If clicked inside sidebar or spot popup, keep capture active and let DOM handle it
+  if (overPanel(event.clientX, event.clientY)) {
+    setCapture(true);
+    return;
+  }
+  if (spot !== null && overSpot(event.clientX, event.clientY)) {
+    setCapture(true);
+    return;
+  }
+
+  // Clicked outside sidebar panel: close sidebar
+  if (panelOpen) {
+    setPanel(false);
+  }
+  // Clicked outside spot popup: close spot if not clicking another pin
+  if (spot && hover < 0) {
+    closeSpot();
+  }
 
   if (hover >= 0) {
     if (event.button === 2) {
@@ -662,7 +1008,7 @@ window.addEventListener('mousedown', (event) => {
     }
   } else {
     // Click on empty map: immediately release capture so game pans freely
-    if (event.button === 0) {
+    if (event.button === 0 && !panelOpen && !spot) {
       setCapture(false);
     }
   }
@@ -772,12 +1118,55 @@ async function openSpot(index) {
   $('spot').classList.add('open');
   $('spot-body').scrollTop = 0;
   renderSpotLayerBadge(index);
+  renderSpotTeleport(index);
   renderSpotFound();
   renderSpotNav();
   requestDraw();
   await loadSpot();
 }
 
+
+
+function renderSpotTeleport(index) {
+  let teleEl = $('spot-teleport-card');
+  if (!teleEl) {
+    teleEl = document.createElement('div');
+    teleEl.id = 'spot-teleport-card';
+    teleEl.className = 'spot-teleport-card';
+    const badgeEl = $('spot-layer-badge');
+    if (badgeEl && badgeEl.parentNode) {
+      badgeEl.parentNode.insertBefore(teleEl, badgeEl.nextSibling);
+    }
+  }
+  const bestTele = findBestTeleport(index);
+  if (!bestTele) {
+    teleEl.style.display = 'none';
+    return;
+  }
+  teleEl.style.display = 'flex';
+  const distM = Math.round(bestTele.dist * 15);
+  const note = bestTele.sameCave ? ' (Inside same cave)' : (bestTele.entrance ? ' (Closest to cave entrance)' : '');
+  
+  teleEl.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;flex:1;">
+      <span style="font-size:16px;">⚡</span>
+      <div style="display:flex;flex-direction:column;">
+        <span style="font-weight:700;color:#38bdf8;font-size:11px;">FASTEST TELEPORT</span>
+        <span style="font-size:12px;color:#f1f5f9;">${bestTele.name} (~${distM}m away${note})</span>
+      </div>
+    </div>
+    <button id="btn-focus-teleport" type="button" class="tele-focus-btn">Focus</button>
+  `;
+
+  const btnFocus = $('btn-focus-teleport');
+  if (btnFocus) {
+    btnFocus.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openSpot(bestTele.index);
+      showToast(`⚡ Focused nearest teleport: ${bestTele.name}`);
+    });
+  }
+}
 
 function renderSpotLayerBadge(index) {
   const badgeEl = $('spot-layer-badge');
@@ -991,8 +1380,12 @@ function closeLightbox() {
 function setPanel(open) {
   panelOpen = open;
   $('panel').classList.toggle('open', open);
-  if (!open) $('search').blur();
-  // Außerhalb der Karte hält Genshin den Mauszeiger fest, ans Panel nur mit Alt.
+  if (!open) {
+    $('search').blur();
+    if (!spot && hover < 0) setCapture(false);
+  } else {
+    setCapture(true);
+  }
   if (open && !target) showToast(tt('ui.altHint'));
   renderHandle();
   updateHover();
@@ -1051,9 +1444,15 @@ function buildPanel() {
       if (event.target.classList.contains('cat-all')) return;
       section.classList.toggle('open');
     });
-    head.querySelector('.cat-all').addEventListener('change', (event) => {
+    const catAllBox = head.querySelector('.cat-all');
+    catAllBox.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+    catAllBox.addEventListener('change', (event) => {
+      event.stopPropagation();
+      const isChecked = event.target.checked;
       for (const t of cat.types) {
-        if (event.target.checked) enabled.add(t);
+        if (isChecked) enabled.add(t);
         else enabled.delete(t);
       }
       saveEnabled();
@@ -1070,7 +1469,12 @@ function buildPanel() {
       const box = document.createElement('input');
       box.type = 'checkbox';
       box.dataset.type = t;
-      box.addEventListener('change', () => {
+      box.checked = enabled.has(t);
+      box.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+      box.addEventListener('change', (e) => {
+        e.stopPropagation();
         if (box.checked) enabled.add(t);
         else enabled.delete(t);
         saveEnabled();
@@ -1321,6 +1725,24 @@ let lastMinimapPos = null;
 
 api.on('minimap', (pos) => {
   if (pos && typeof pos.x === 'number') {
+    if (typeof pos.angle === 'number' && Number.isFinite(pos.angle)) {
+      let diff = pos.angle - currentHeading;
+      while (diff > Math.PI) diff -= 2 * Math.PI;
+      while (diff < -Math.PI) diff += 2 * Math.PI;
+      currentHeading += diff * 0.35;
+    } else if (lastPlayerMapX && lastPlayerMapY) {
+      const mdx = pos.x - lastPlayerMapX;
+      const mdy = pos.y - lastPlayerMapY;
+      if (Math.hypot(mdx, mdy) > 0.02) {
+        const moveAngle = Math.atan2(mdy, mdx);
+        let diff = moveAngle - currentHeading;
+        while (diff > Math.PI) diff -= 2 * Math.PI;
+        while (diff < -Math.PI) diff += 2 * Math.PI;
+        currentHeading += diff * 0.25;
+      }
+    }
+    lastPlayerMapX = pos.x;
+    lastPlayerMapY = pos.y;
     minimap = pos;
     lastMinimapPos = pos;
     lastMinimapTime = performance.now();
@@ -1372,7 +1794,9 @@ if (btnNav) {
         index: spot.index,
         x: data.markers.x[spot.index],
         y: data.markers.y[spot.index],
-        name: type ? type.name : 'Target'
+        name: type ? type.name : 'Target',
+        isUnderground: data.markers.underground && data.markers.underground[spot.index] === 1,
+        floorName: (data.layers && data.markers.layerId) ? data.layers[data.markers.layerId[spot.index]] : ''
       };
       showToast(`📍 Tracking ${navigatingPin.name} on Minimap`);
     }
@@ -1462,22 +1886,23 @@ api.on('hotkey:markAt', (pt) => {
 });
 
 
-let panelLeaveTimer = null;
 const panelEl = $('panel');
 if (panelEl) {
-  panelEl.addEventListener('mouseleave', () => {
-    if (panelOpen) {
-      panelLeaveTimer = setTimeout(() => {
-        if (panelOpen && !overPanel(mouse.x, mouse.y)) {
-          setPanel(false);
-        }
-      }, 1200);
+  panelEl.addEventListener('mouseenter', () => setCapture(true));
+  panelEl.addEventListener('mouseover', () => setCapture(true));
+  panelEl.addEventListener('mouseleave', (e) => {
+    if (hover < 0 && (!spot || !overSpot(e.clientX, e.clientY))) {
+      setCapture(false);
     }
   });
-  panelEl.addEventListener('mouseenter', () => {
-    if (panelLeaveTimer) {
-      clearTimeout(panelLeaveTimer);
-      panelLeaveTimer = null;
+}
+const spotElem = $('spot');
+if (spotElem) {
+  spotElem.addEventListener('mouseenter', () => setCapture(true));
+  spotElem.addEventListener('mouseover', () => setCapture(true));
+  spotElem.addEventListener('mouseleave', (e) => {
+    if (hover < 0 && (!panelOpen || !overPanel(e.clientX, e.clientY))) {
+      setCapture(false);
     }
   });
 }

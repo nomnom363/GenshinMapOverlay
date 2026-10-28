@@ -652,3 +652,30 @@ input[type="range"]::-webkit-slider-thumb {
   background: #38bdf8;
   color: #0f172a;
 }
+
+/* Teleport Card */
+.spot-teleport-card {
+  margin: 6px 14px 4px;
+  padding: calc(8 * var(--u)) calc(12 * var(--u));
+  border-radius: calc(6 * var(--u));
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.tele-focus-btn {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #2563eb;
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tele-focus-btn:hover {
+  background: #1d4ed8;
+}

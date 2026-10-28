@@ -277,7 +277,7 @@ async function grabFrame(wantFull, wantCorner) {
 // null = keine Marker auf der Minimap
 function reportMinimap(m) {
   const show = !!m && m.ok;
-  if (show) api.minimap({ x: m.x, y: m.y, scale: m.scale });
+  if (show) api.minimap({ x: m.x, y: m.y, scale: m.scale, angle: m.angle });
   else if (minimapShown) api.minimap(null);
   minimapShown = show;
 }
