@@ -305,9 +305,12 @@ function draw() {
   ctx.clearRect(0, 0, W, H);
   drawnCount = 0;
   if (!data || !view || visibility <= 0) {
-    if (data && (minimap || (navigatingPin && playerTrack.lastSeen > 0)) && visibility <= 0) {
+    if (data && (minimap || navigatingPin) && visibility <= 0) {
       if (minimap && settings.minimap !== false) drawMinimap();
-      if (navigatingPin) drawWorldNavigationArrow(W, H, u);
+      if (navigatingPin) {
+        drawMinimapNavigation(u);
+        drawWorldNavigationArrow(W, H, u);
+      }
     } else if (nearby >= 0) {
       setNearby(-1);
     }
@@ -511,45 +514,126 @@ function drawMinimap() {
     ctx.stroke();
     requestDraw();
   }
-  // Navigation / Waypoint Indicator on Minimap (stage-aware & elevation colored)
-  if (navigatingPin && (minimap || playerTrack.lastSeen > 0)) {
-    const px = minimap ? minimap.x : playerTrack.x;
-    const py = minimap ? minimap.y : playerTrack.y;
-    // Check if routing to cave entrance first
-    let tx = navigatingPin.x;
-    let ty = navigatingPin.y;
-    if (navigatingPin.entrancePoint) {
-      const dEnt = Math.hypot(navigatingPin.entrancePoint.x - px, navigatingPin.entrancePoint.y - py) * 15;
-      const dTarget = Math.hypot(navigatingPin.x - px, navigatingPin.y - py) * 15;
-      if (dEnt > 18 && dTarget > 25) {
-        tx = navigatingPin.entrancePoint.x;
-        ty = navigatingPin.entrancePoint.y;
-      }
-    }
-    const dx = tx - px;
-    const dy = ty - py;
-    const angle = Math.atan2(dy, dx);
-    const maxR = r - 12 * u;
-    const ax = cx + Math.cos(angle) * maxR;
-    const ay = cy + Math.sin(angle) * maxR;
-
-    ctx.save();
-    ctx.translate(ax, ay);
-    ctx.rotate(angle);
-    ctx.fillStyle = navigatingPin.elevation === 'up' ? '#f59e0b' : (navigatingPin.elevation === 'down' ? '#06b6d4' : '#38bdf8');
-    ctx.beginPath();
-    ctx.moveTo(9 * u, 0);
-    ctx.lineTo(-7 * u, -5.5 * u);
-    ctx.lineTo(-3.5 * u, 0);
-    ctx.lineTo(-7 * u, 5.5 * u);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
 
   ctx.restore();
   ctx.globalAlpha = 1;
   setNearby(closest);
+}
+
+function drawMinimapNavigation(u) {
+  if (!navigatingPin) return;
+  const cx = MINIMAP.cx * u;
+  const cy = MINIMAP.cy * u;
+  const r = MINIMAP.radius * u;
+  const s = (minimap && minimap.scale) ? minimap.scale * u : 1.25 * u;
+
+  const px = minimap ? minimap.x : playerTrack.x;
+  const py = minimap ? minimap.y : playerTrack.y;
+
+  let tx = navigatingPin.x;
+  let ty = navigatingPin.y;
+  let isCaveEnt = false;
+
+  if (navigatingPin.entrancePoint) {
+    const dEnt = Math.hypot(navigatingPin.entrancePoint.x - px, navigatingPin.entrancePoint.y - py) * 15;
+    const dTarget = Math.hypot(navigatingPin.x - px, navigatingPin.y - py) * 15;
+    if (dEnt > 18 && dTarget > 25) {
+      tx = navigatingPin.entrancePoint.x;
+      ty = navigatingPin.entrancePoint.y;
+      isCaveEnt = true;
+    }
+  }
+
+  const dx = (tx - px) * s;
+  const dy = (ty - py) * s;
+  const screenDist = Math.hypot(dx, dy);
+  const distM = Math.round(Math.hypot(tx - px, ty - py) * 15);
+
+  let mainColor = '#38bdf8';
+  let badgeIcon = '🎯';
+  if (isCaveEnt) {
+    mainColor = '#06b6d4';
+    badgeIcon = '🚪';
+  } else if (navigatingPin.elevation === 'up') {
+    mainColor = '#f59e0b';
+    badgeIcon = '▲';
+  } else if (navigatingPin.elevation === 'down') {
+    mainColor = '#06b6d4';
+    badgeIcon = '▼';
+  }
+
+  const now = performance.now();
+
+  ctx.save();
+  if (screenDist <= r - 10 * u) {
+    // 1. Inside minimap radar: draw target beacon at (cx + dx, cy + dy)
+    const bx = cx + dx;
+    const by = cy + dy;
+    const pulse = 0.5 + 0.5 * Math.sin(now / 180);
+
+    // Outer glow ring
+    ctx.strokeStyle = mainColor + '40';
+    ctx.lineWidth = 4 * u;
+    ctx.beginPath();
+    ctx.arc(bx, by, (7 + pulse * 4) * u, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Core ring
+    ctx.strokeStyle = mainColor;
+    ctx.lineWidth = 2 * u;
+    ctx.beginPath();
+    ctx.arc(bx, by, 6 * u, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Center dot
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(bx, by, 2.5 * u, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Small distance tag right above beacon
+    drawNavPill(bx, by - 12 * u, `${distM}m`, mainColor, u * 0.85);
+  } else {
+    // 2. Outside minimap: draw directional pointer on the outer rim of the minimap
+    const angle = Math.atan2(dy, dx);
+    const rimR = r + 3 * u;
+    const pxRim = cx + Math.cos(angle) * rimR;
+    const pyRim = cy + Math.sin(angle) * rimR;
+
+    // Pointer chevron pointing in the direction of the target
+    ctx.save();
+    ctx.translate(pxRim, pyRim);
+    ctx.rotate(angle);
+
+    // Chevron outer glow
+    ctx.strokeStyle = mainColor + '40';
+    ctx.lineWidth = 4 * u;
+    ctx.beginPath();
+    ctx.moveTo(9 * u, 0);
+    ctx.lineTo(-6 * u, -6 * u);
+    ctx.lineTo(-3 * u, 0);
+    ctx.lineTo(-6 * u, 6 * u);
+    ctx.closePath();
+    ctx.stroke();
+
+    // Chevron body
+    ctx.fillStyle = mainColor;
+    ctx.beginPath();
+    ctx.moveTo(9 * u, 0);
+    ctx.lineTo(-6 * u, -6 * u);
+    ctx.lineTo(-3 * u, 0);
+    ctx.lineTo(-6 * u, 6 * u);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Rim distance tag: offset slightly outwards from chevron
+    const tagR = rimR + 24 * u;
+    const tagX = cx + Math.cos(angle) * tagR;
+    const tagY = cy + Math.sin(angle) * tagR;
+    drawNavPill(tagX, tagY, `${badgeIcon} ${distM}m`, mainColor, u * 0.88);
+  }
+  ctx.restore();
 }
 
 // Hinweis rechts neben der Minimap + Nähe-Taste im Hauptprozess (nur solange etwas angeboten wird)
@@ -648,13 +732,30 @@ function drawNavCard(x, y, lines, color, u) {
   ctx.restore();
 }
 
-function findBestTeleport(targetIdx) {
-  if (!data || targetIdx < 0 || targetIdx >= data.markers.count) return null;
+function findBestTeleport(targetIdx, customTx, customTy) {
+  if (!data || !data.markers) return null;
   const { x: mx, y: my, id: ids, underground: ug, layerId: lId } = data.markers;
-  const tx = mx[targetIdx];
-  const ty = my[targetIdx];
-  const isTargetUg = ug && ug[targetIdx] === 1;
-  const targetLayerId = lId ? lId[targetIdx] : 0;
+
+  let tx = 0;
+  let ty = 0;
+  let isTargetUg = false;
+  let targetLayerId = 0;
+  let targetMarkerId = null;
+
+  if (targetIdx >= 0 && targetIdx < data.markers.count) {
+    tx = mx[targetIdx];
+    ty = my[targetIdx];
+    isTargetUg = ug && ug[targetIdx] === 1;
+    targetLayerId = lId ? lId[targetIdx] : 0;
+    targetMarkerId = ids[targetIdx];
+  } else if (typeof customTx === 'number' && typeof customTy === 'number') {
+    tx = customTx;
+    ty = customTy;
+    isTargetUg = false;
+    targetLayerId = 0;
+  } else {
+    return null;
+  }
 
   const teleIndices = [];
   ['o3', 'o2'].forEach(key => {
@@ -666,7 +767,7 @@ function findBestTeleport(targetIdx) {
 
   if (!teleIndices.length) return null;
 
-  if (isTargetUg) {
+  if (isTargetUg && targetMarkerId) {
     let bestSameLayer = -1;
     let bestSameDist = Infinity;
     for (const i of teleIndices) {
@@ -690,7 +791,7 @@ function findBestTeleport(targetIdx) {
       };
     }
 
-    const entIds = (data.entrances && data.entrances[ids[targetIdx]]) || [];
+    const entIds = (data.entrances && data.entrances[targetMarkerId]) || [];
     if (entIds.length) {
       const entIdx = markerIndexById.get(entIds[0]);
       if (entIdx !== undefined) {
@@ -726,7 +827,7 @@ function findBestTeleport(targetIdx) {
   let bestTele = -1;
   let bestDist = Infinity;
   for (const i of teleIndices) {
-    if (!isTargetUg && ug[i] === 1) continue;
+    if (!isTargetUg && ug && ug[i] === 1) continue;
     const d = Math.hypot(mx[i] - tx, my[i] - ty);
     if (d < bestDist) {
       bestDist = d;
@@ -951,25 +1052,59 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
   if (!navigatingPin || !data) return;
   const half = (settings.markerSize * u) / 2;
   const targetX = ax * navigatingPin.x + bx;
-  const targetY = ay * navigatingPin.y + by - half;
+  const targetY = navigatingPin.isCustom ? (ay * navigatingPin.y + by) : (ay * navigatingPin.y + by - half);
 
-  // 1. Draw pulsating focal beacon and clear badge on target pin
+  // 1. Draw pulsating focal beacon and clear badge on target pin or custom waypoint
   ctx.save();
   const pulseT = 0.5 + 0.5 * Math.sin(performance.now() / 200);
   const targetR = (settings.markerSize * u * 0.6) + 10 * u + pulseT * 6 * u;
   const targetColor = navigatingPin.elevation === 'up' ? '#f59e0b' : (navigatingPin.elevation === 'down' ? '#06b6d4' : '#38bdf8');
-  ctx.strokeStyle = targetColor;
-  ctx.lineWidth = 2.5 * u;
-  ctx.shadowColor = targetColor;
-  ctx.shadowBlur = 10 * u;
-  ctx.globalAlpha = Math.min(0.95, visibility);
-  ctx.beginPath();
-  ctx.arc(targetX, targetY, targetR, 0, Math.PI * 2);
-  ctx.stroke();
+
+  if (navigatingPin.isCustom) {
+    // Custom Waypoint Reticle on Big Map
+    ctx.strokeStyle = '#38bdf833';
+    ctx.lineWidth = 6 * u;
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, 15 * u + pulseT * 4 * u, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2.4 * u;
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, 13 * u, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.lineWidth = 2 * u;
+    ctx.beginPath();
+    ctx.moveTo(targetX - 18 * u, targetY);
+    ctx.lineTo(targetX + 18 * u, targetY);
+    ctx.moveTo(targetX, targetY - 18 * u);
+    ctx.lineTo(targetX, targetY + 18 * u);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, 3.5 * u, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    // Outer hardware-accelerated soft halo
+    ctx.strokeStyle = targetColor + '33';
+    ctx.lineWidth = 6 * u;
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, targetR + 2 * u, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = targetColor;
+    ctx.lineWidth = 2.5 * u;
+    ctx.globalAlpha = Math.min(0.95, visibility);
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, targetR, 0, Math.PI * 2);
+    ctx.stroke();
+  }
   ctx.restore();
 
   // Target name badge with Elevation
-  const badgeLabel = `🎯 ${navigatingPin.name} (${navigatingPin.elevationLabel})`;
+  const badgeLabel = navigatingPin.isCustom ? '🎯 Custom Waypoint' : `🎯 ${navigatingPin.name} (${navigatingPin.elevationLabel})`;
   drawNavPill(targetX, targetY - targetR - 12 * u, badgeLabel, targetColor, u);
 
   // 2. Cave Entrance Route & Beacon (if underground with entrance)
@@ -984,10 +1119,14 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
       ctx.save();
       const pulseE = 0.5 + 0.5 * Math.sin(performance.now() / 220);
       const rE = (settings.markerSize * u * 0.55) + 8 * u + pulseE * 5 * u;
+      ctx.strokeStyle = '#06b6d433';
+      ctx.lineWidth = 6 * u;
+      ctx.beginPath();
+      ctx.arc(viaX, viaY, rE + 2 * u, 0, Math.PI * 2);
+      ctx.stroke();
+
       ctx.strokeStyle = '#06b6d4';
       ctx.lineWidth = 2.4 * u;
-      ctx.shadowColor = '#06b6d4';
-      ctx.shadowBlur = 10 * u;
       ctx.globalAlpha = Math.min(0.95, visibility);
       ctx.beginPath();
       ctx.arc(viaX, viaY, rE, 0, Math.PI * 2);
@@ -1012,7 +1151,7 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
   }
 
   // 3. Teleport & Route planning
-  const bestTele = findBestTeleport(navigatingPin.index);
+  const bestTele = findBestTeleport(navigatingPin.index, navigatingPin.x, navigatingPin.y);
   if (bestTele) {
     const teleX = ax * bestTele.x + bx;
     const teleY = ay * bestTele.y + by - half;
@@ -1040,10 +1179,14 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
       ctx.save();
       const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 180);
       const r = (settings.markerSize * u * 0.6) + 10 * u + pulse * 6 * u;
+      ctx.strokeStyle = '#38bdf833';
+      ctx.lineWidth = 6 * u;
+      ctx.beginPath();
+      ctx.arc(teleX, teleY, r + 2 * u, 0, Math.PI * 2);
+      ctx.stroke();
+
       ctx.strokeStyle = '#38bdf8';
       ctx.lineWidth = 2.5 * u;
-      ctx.shadowColor = '#38bdf8';
-      ctx.shadowBlur = 12 * u;
       ctx.globalAlpha = Math.min(0.95, visibility);
       ctx.beginPath();
       ctx.arc(teleX, teleY, r, 0, Math.PI * 2);
@@ -1069,14 +1212,21 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
       ctx.save();
       ctx.setLineDash([10 * u, 6 * u]);
       ctx.lineDashOffset = -performance.now() / 25;
-      ctx.strokeStyle = usePlayerOrigin ? '#10b981' : '#38bdf8';
-      ctx.lineWidth = 2.8 * u;
-      ctx.shadowColor = usePlayerOrigin ? '#10b981' : '#38bdf8';
-      ctx.shadowBlur = 8 * u;
-      ctx.globalAlpha = Math.min(0.85, visibility);
-
+      const routeColor = usePlayerOrigin ? '#10b981' : '#38bdf8';
+      ctx.strokeStyle = routeColor + '40';
+      ctx.lineWidth = 5 * u;
       ctx.beginPath();
       ctx.moveTo(originX, originY);
+      ctx.lineTo(routeDestX, routeDestY);
+      ctx.stroke();
+
+      ctx.strokeStyle = routeColor;
+      ctx.lineWidth = 2.6 * u;
+      ctx.globalAlpha = Math.min(0.9, visibility);
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(routeDestX, routeDestY);
+      ctx.stroke();
       ctx.lineTo(routeDestX, routeDestY);
       ctx.stroke();
 
@@ -1439,6 +1589,45 @@ function toggleNavigation(index) {
   requestDraw();
 }
 
+function setCustomNavigation(mapX, mapY, screenX, screenY) {
+  if (typeof mapX !== 'number' || typeof mapY !== 'number') return;
+
+  // If already navigating to a custom pin and clicking right near it, toggle it off
+  if (navigatingPin && navigatingPin.isCustom && view) {
+    const W = innerWidth;
+    const H = innerHeight;
+    const curScreenX = (view.sx * navigatingPin.x + view.ox) * W;
+    const curScreenY = (view.sy * navigatingPin.y + view.oy) * H;
+    if (Math.hypot(curScreenX - screenX, curScreenY - screenY) < 30) {
+      navigatingPin = null;
+      renderSpotNav();
+      requestDraw();
+      showToast('✕ Waypoint cleared');
+      return;
+    }
+  }
+
+  navigatingPin = {
+    id: 'custom_' + Date.now(),
+    index: -1,
+    isCustom: true,
+    x: mapX,
+    y: mapY,
+    name: 'Custom Waypoint',
+    isUnderground: false,
+    floorName: '',
+    entrancePoint: null,
+    elevation: 'level',
+    elevationLabel: '━ SURFACE LEVEL',
+    hint: 'Custom navigation waypoint',
+    obstacleNote: ''
+  };
+
+  showToast('🧭 Waypoint set — close map to follow');
+  renderSpotNav();
+  requestDraw();
+}
+
 window.addEventListener('dblclick', (event) => {
   if (overPanel(event.clientX, event.clientY) || (spot !== null && overSpot(event.clientX, event.clientY))) {
     return;
@@ -1447,6 +1636,13 @@ window.addEventListener('dblclick', (event) => {
   if (targetIndex >= 0) {
     event.preventDefault();
     toggleNavigation(targetIndex);
+  } else if (view && view.sx && view.sy) {
+    event.preventDefault();
+    const W = innerWidth;
+    const H = innerHeight;
+    const mapX = (event.clientX - view.ox * W) / (view.sx * W);
+    const mapY = (event.clientY - view.oy * H) / (view.sy * H);
+    setCustomNavigation(mapX, mapY, event.clientX, event.clientY);
   }
 });
 
@@ -2348,7 +2544,11 @@ api.on('view', (next) => {
       // Instant anchor: keep pins 100% stuck to map terrain when zooming
       view = { ...stamped };
     }
-    if (playerTrack.lastSeen === 0 && target && target.sx) {
+    if (next.playerPos && typeof next.playerPos.x === 'number') {
+      playerTrack.x = next.playerPos.x;
+      playerTrack.y = next.playerPos.y;
+      playerTrack.lastSeen = performance.now();
+    } else if (playerTrack.lastSeen === 0 && target && target.sx) {
       playerTrack.x = (-target.ox + 0.5) / target.sx;
       playerTrack.y = (-target.oy + 0.5) / target.sy;
       playerTrack.lastSeen = performance.now();
@@ -2518,17 +2718,22 @@ api.on('hotkey:navigateTarget', () => {
     targetIndex = hover;
   } else if (spot && typeof spot.index === 'number') {
     targetIndex = spot.index;
+  }
+  if (targetIndex >= 0) {
+    toggleNavigation(targetIndex);
+  } else if (view && mouse && mouse.x >= 0 && mouse.y >= 0 && visibility > 0) {
+    const W = innerWidth;
+    const H = innerHeight;
+    const mapX = (mouse.x - view.ox * W) / (view.sx * W);
+    const mapY = (mouse.y - view.oy * H) / (view.sy * H);
+    setCustomNavigation(mapX, mapY, mouse.x, mouse.y);
   } else if (navigatingPin) {
     navigatingPin = null;
     renderSpotNav();
     requestDraw();
     showToast('✕ Navigation cleared');
-    return;
-  }
-  if (targetIndex >= 0) {
-    toggleNavigation(targetIndex);
   } else {
-    showToast('🧭 Hover over a pin or open a pin to navigate');
+    showToast('🧭 Hover over a pin or map spot to navigate');
   }
 });
 
@@ -2587,16 +2792,22 @@ window.addEventListener('keydown', (e) => {
   if (!activeRecordingAction && document.activeElement && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
     if (e.key === 't' || e.key === 'T' || e.key === 'n' || e.key === 'N') {
       const targetIndex = hover >= 0 ? hover : (spot ? spot.index : -1);
-      if (targetIndex >= 0 || navigatingPin) {
+      if (targetIndex >= 0) {
         e.preventDefault();
-        if (targetIndex >= 0) {
-          toggleNavigation(targetIndex);
-        } else if (navigatingPin) {
-          navigatingPin = null;
-          renderSpotNav();
-          requestDraw();
-          showToast('✕ Navigation cleared');
-        }
+        toggleNavigation(targetIndex);
+      } else if (view && mouse && mouse.x >= 0 && mouse.y >= 0 && visibility > 0) {
+        e.preventDefault();
+        const W = innerWidth;
+        const H = innerHeight;
+        const mapX = (mouse.x - view.ox * W) / (view.sx * W);
+        const mapY = (mouse.y - view.oy * H) / (view.sy * H);
+        setCustomNavigation(mapX, mapY, mouse.x, mouse.y);
+      } else if (navigatingPin) {
+        e.preventDefault();
+        navigatingPin = null;
+        renderSpotNav();
+        requestDraw();
+        showToast('✕ Navigation cleared');
       }
     }
   }

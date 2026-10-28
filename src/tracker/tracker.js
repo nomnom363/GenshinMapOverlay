@@ -289,7 +289,7 @@ function reportMinimap(m) {
   minimapShown = show;
 }
 
-function report(res, width, height) {
+function report(res, width, height, playerPos) {
   const nowLocked = !!res && res.ok;
   if (nowLocked) {
     // relativ zur Bildgröße: bildschirm = (sx * karte + ox) * Breite
@@ -302,6 +302,7 @@ function report(res, width, height) {
       inliers: res.inliers,
       ms: res.ms,
       mode: res.mode,
+      playerPos: playerPos || null,
     });
   } else if (locked) {
     api.view({ locked: false });
@@ -335,12 +336,12 @@ async function loop() {
         recent.push({ t: Date.now(), mode: res.mode, ok: res.ok, inliers: res.inliers, pairs: res.pairs, spread: res.spread, s: res.s, ms: res.ms });
         if (recent.length > 240) recent.shift();
         if (res.ok) {
-          // Record minimap anchor on lock so minimap always knows player position
-          if (minimap && (!minimap.active || !wasLocked)) {
+          // Record player initial position ONLY on the very first frame of map lock (centered on player)
+          if (!wasLocked || !minimapAnchor) {
             minimapAnchor = { x: (img.width / 2 - res.tx) / res.s, y: (img.height / 2 - res.ty) / res.s };
           }
           lastLockAt = Date.now();
-          report(res, img.width, img.height);
+          report(res, img.width, img.height, minimapAnchor);
         } else if (!core.locked) {
           if (wasLocked) {
             lostFrame = { data: new Uint8ClampedArray(img.data), width: img.width, height: img.height, lastS: prior.s };

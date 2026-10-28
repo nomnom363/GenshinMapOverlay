@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.5] - 2026-10-28
+
+### Fixed & Enhanced
+- **Main Map & In-World Navigation Decoupling**:
+  - **Player Coordinates Shielded Against Map Panning**: Fixed the bug where dragging or panning the big map across Teyvat inadvertently overwrote the player's true character coordinates with camera pan coordinates. The player's location is now anchored strictly on the first frame of opening (when Genshin Impact centers the map on the player), preserving accurate GPS distance and bearing even after scrolling across continents.
+  - **Persistent Navigation Memory**: Closing the big map now cleanly remembers the active target (`navigatingPin`), seamlessly transitioning guidance into the in-game world and minimap without resetting or confusing the player position.
+- **Custom Waypoints Everywhere on Main Map**:
+  - **Double-Click or Key Anywhere on Map**: Double-clicking or pressing `T` / `N` / `F6` anywhere on the main map (even empty terrain, custom waypoints, or in-game icons) instantly sets and remembers a custom waypoint target (`🎯 Custom Waypoint`).
+  - **Intelligent Route & Teleport Calculation for Custom Targets**: The overlay automatically calculates the closest teleport waypoint and route vector to any custom map target, just like standard pins.
+- **Minimap Waypoint & Radar Indicators**:
+  - **In-Range Minimap Radar Beacon**: When within the minimap radar circle, displays a glowing, pulsating beacon directly on the minimap with an elevation-aware color and compact distance tag (`${distM}m`).
+  - **Out-of-Range Minimap Rim Pointer**: When the target is beyond minimap radius, renders a high-contrast directional pointer on the outer metallic rim of the minimap, along with a crisp distance pill (`🎯 240m` / `▲ 180m` / `▼ 95m` / `🚪 120m`).
+  - **Unclipped Rendering**: Rendered cleanly outside the minimap circle clip so the rim pointer and distance badges are never cut off.
+- **Seamless 3D Arrow Direction**:
+  - Smooth in-world ground arrow continuously points in the exact direction of the target from the player's true position.
+
+---
+
 ## [1.2.4] - 2026-10-28
 
 ### Fixed & Optimized
