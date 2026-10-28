@@ -100,9 +100,21 @@ def input_watcher():
                 now = time.time()
                 if now - last_click_time > 0.15:
                     last_click_time = now
-                    pt = POINT()
-                    user32.GetCursorPos(ctypes.byref(pt))
-                    safe_print({"rightClick": True, "screenX": pt.x, "screenY": pt.y})
+                    pt_screen = POINT()
+                    user32.GetCursorPos(ctypes.byref(pt_screen))
+                    pt_client = POINT(pt_screen.x, pt_screen.y)
+                    hwnd_target = get_genshin_hwnd()
+                    client_ok = False
+                    if hwnd_target:
+                        user32.ScreenToClient(hwnd_target, ctypes.byref(pt_client))
+                        client_ok = True
+                    safe_print({
+                        "rightClick": True,
+                        "screenX": pt_screen.x,
+                        "screenY": pt_screen.y,
+                        "clientX": pt_client.x if client_ok else pt_screen.x,
+                        "clientY": pt_client.y if client_ok else pt_screen.y
+                    })
             rbutton_was_down = rbutton_down
 
             # 0x73 = VK_F4 (F4 key to mark collected / nearby pin)

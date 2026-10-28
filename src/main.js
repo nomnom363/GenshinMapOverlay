@@ -36,7 +36,10 @@ function handleGenshinWindowUpdate(info) {
 
   if (info.rightClick) {
     let x, y;
-    if (alive(overlayWin) && typeof info.screenX === 'number' && typeof info.screenY === 'number') {
+    if (typeof info.clientX === 'number' && typeof info.clientY === 'number') {
+      x = info.clientX;
+      y = info.clientY;
+    } else if (alive(overlayWin) && typeof info.screenX === 'number' && typeof info.screenY === 'number') {
       const bounds = overlayWin.getBounds();
       x = info.screenX - bounds.x;
       y = info.screenY - bounds.y;
@@ -48,6 +51,7 @@ function handleGenshinWindowUpdate(info) {
 
   if (info.keyM || info.keyEsc) {
     sendToOverlay('map:keyM');
+    sendToTracker('map:keyM');
     return;
   }
 
@@ -122,6 +126,7 @@ function handleGenshinWindowUpdate(info) {
       }
       genshinBounds = nextBounds;
       overlayWin.setBounds(genshinBounds);
+      sendToOverlay('window:bounds', genshinBounds);
       log(`window-tracker: Genshin bounds updated to ${nextBounds.x},${nextBounds.y} ${nextBounds.width}x${nextBounds.height}`);
     }
     if (cfg.active && !overlayWin.isVisible()) {

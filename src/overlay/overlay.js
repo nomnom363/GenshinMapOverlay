@@ -1369,8 +1369,8 @@ function renderHandle() {
 
 function updateHover() {
   const u = uiScale();
-  // Pin hit radius matching the icon size so empty map dragging is effortless
-  const radius = Math.max(14, (settings.markerSize / 2 + 2) * u);
+  // Pin hit radius matching the icon size with generous margin so hover & capture locks reliably in window and fullscreen mode
+  const radius = Math.max(24, (settings.markerSize / 2 + 8) * u);
   let best = -1;
   let bestDist = radius * radius;
   if (mouse.x >= 0 && !overPanel(mouse.x, mouse.y)) {
@@ -1457,16 +1457,19 @@ function findPinIndexAt(x, y) {
 }
 
 function findAnyPinAt(x, y, maxDistance) {
-  if (!data || !data.markers || x < 0 || y < 0) return -1;
+  if (!data || !data.markers) return -1;
+  const cx = Math.max(0, x);
+  const cy = Math.max(0, y);
+  if (cx > innerWidth + 40 || cy > innerHeight + 40) return -1;
   const u = uiScale();
-  const radius = maxDistance || Math.max(38, (settings.markerSize + 16) * u);
+  const radius = maxDistance || Math.max(44, (settings.markerSize + 20) * u);
   let best = -1;
   let bestDist = radius * radius;
 
   // 1. Check visible drawn pins first
   for (let k = 0; k < drawnCount; k++) {
-    const dx = drawnX[k] - x;
-    const dy = drawnY[k] - y;
+    const dx = drawnX[k] - cx;
+    const dy = drawnY[k] - cy;
     const d = dx * dx + dy * dy;
     if (d < bestDist) {
       bestDist = d;
@@ -2742,9 +2745,17 @@ api.on('hotkey:markAt', (pt) => {
     toggleFoundMarker(hover);
     return;
   }
-  const checkX = (pt && typeof pt.x === 'number') ? pt.x : mouse.x;
-  const checkY = (pt && typeof pt.y === 'number') ? pt.y : mouse.y;
+  let checkX = (pt && typeof pt.x === 'number') ? pt.x : mouse.x;
+  let checkY = (pt && typeof pt.y === 'number') ? pt.y : mouse.y;
+  checkX = Math.max(0, checkX);
+  checkY = Math.max(0, checkY);
   findAndMarkAt(checkX, checkY);
+});
+
+api.on('window:bounds', () => {
+  resizeCanvas();
+  updateHover();
+  requestDraw();
 });
 
 api.on('hotkey:navigateTarget', () => {

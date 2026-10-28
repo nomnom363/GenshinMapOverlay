@@ -12,7 +12,7 @@ const MASK = { purple: true, erode: 13, gray: 70, sea: 80 };
 const CHECK_MS_WORKER = 250;
 const CHECK_MS_INLINE = 1000;
 // Minimap: Takt in der Weltansicht; Anker nur nach so langer Weltansicht (sonst wäre es eine verschobene Karte)
-const MINIMAP_FPS = 8;
+const MINIMAP_FPS = 20;
 const ANCHOR_AFTER_MS = 1500;
 
 let cv = null;
@@ -320,7 +320,7 @@ async function loop() {
       // große Karte: offen → jedes Bild; sonst alle searchIntervalMs suchen, dazwischen nur die Minimap
       const now = performance.now();
       const recentlyLocked = Date.now() - lastLockAt < 400;
-      const searchDue = core.locked || recentlyLocked || now - lastSearch >= settings.searchIntervalMs;
+      const searchDue = core.locked || recentlyLocked || now - lastSearch >= (minimap && minimap.active ? 1000 : settings.searchIntervalMs);
       const minimapOn = settings.minimap !== false && !!minimap;
       const frame = await grabFrame(searchDue, minimapOn && !core.locked);
       if (!frame) {
@@ -412,6 +412,9 @@ api.on('tracker:restart-capture', () => {
   if (core) core.reset();
   if (minimap) minimap.stop();
   reportMinimap(null);
+});
+api.on('map:keyM', () => {
+  lastSearch = 0;
 });
 
 (async () => {

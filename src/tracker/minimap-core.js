@@ -20,7 +20,7 @@
   // - zoomSwitchCorr/zoomSwitchMargin: Wechsel nur bei so guter Korrelation und so viel Vorsprung
   // - waitRender: auf neues Kachelbild warten statt im Hintergrund (Messbank)
   const DEFAULTS = {
-    tplRadius: 86, arrowRadius: 18, search: 24, margin: 160, minCorr: 0.5, lostMs: 6000, maxJump: 40,
+    tplRadius: 86, arrowRadius: 18, search: 36, margin: 160, minCorr: 0.45, lostMs: 6000, maxJump: 65,
     zoomCheckEvery: 8, zoomCheckBelow: 0.8, zoomSwitchCorr: 0.75, zoomSwitchMargin: 0.08, waitRender: false,
   };
 

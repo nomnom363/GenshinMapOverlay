@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.7] - 2026-10-28
+
+### Performance & Responsiveness
+- **Real-Time Minimap Tracking (20 FPS & Expanded 36px Sprint Radius)**:
+  - Upgraded minimap template matching frequency from 8 FPS to 20 FPS (50ms tick rate). Minimap radar now updates in fluid real-time without falling behind during running or sprinting.
+  - Expanded search window radius from 24px to 36px and increased `maxJump` from 40 to 65. The minimap tracker no longer loses correlation or drops tracking during sprint dashes or character mobility skills (e.g. Yelan, Sayu).
+  - Throttled full-screen big map ORB feature search to 1000ms while minimap tracking is active in the 3D world, eliminating periodic 80-120ms CPU spikes and maintaining smooth 60 FPS in-game.
+  - Added instant big-map recognition wake-up on `M` key press so opening the big map responds immediately without search latency.
+
+### Fixed
+- **Windowed Mode Right-Click Pin Ticking/Unticking**:
+  - Replaced ambiguous screen-to-window subtraction with direct Windows Win32 API `ScreenToClient(hwnd)` in `window_tracker.py`. Exact client-area coordinates are now calculated at the OS level, eliminating border and title-bar coordinate offsets in windowed mode.
+  - Fixed clamped boundary logic in `findAnyPinAt` and `hotkey:markAt` so pins near window borders or slightly offset coordinates are never discarded.
+  - Increased pin hit capture radius and hover tolerance in `updateHover` so pins can be clicked, ticked, or unticked instantly without having to switch to fullscreen or click an overlay pin first.
+  - Added real-time `window:bounds` synchronization event so canvas size and hover state update immediately whenever the Genshin window is moved or resized.
+
+---
+
 ## [1.2.6] - 2026-10-28
 
 ### Removed & Redesigned
