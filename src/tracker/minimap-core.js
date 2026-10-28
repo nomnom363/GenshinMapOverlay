@@ -20,7 +20,7 @@
   // - zoomSwitchCorr/zoomSwitchMargin: Wechsel nur bei so guter Korrelation und so viel Vorsprung
   // - waitRender: auf neues Kachelbild warten statt im Hintergrund (Messbank)
   const DEFAULTS = {
-    tplRadius: 86, arrowRadius: 18, search: 24, margin: 160, minCorr: 0.5, lostMs: 3000, maxJump: 40,
+    tplRadius: 86, arrowRadius: 18, search: 24, margin: 160, minCorr: 0.5, lostMs: 6000, maxJump: 40,
     zoomCheckEvery: 8, zoomCheckBelow: 0.8, zoomSwitchCorr: 0.75, zoomSwitchMargin: 0.08, waitRender: false,
   };
 
@@ -179,24 +179,24 @@
       this.lastGood = now;
       this.fresh = false;
 
-      // Extract player arrow orientation from minimap center
+      // Extract player arrow orientation from minimap center (adaptive for various resolutions & lighting)
       let heading = null;
       if (corner && corner.data && corner.width > GEOMETRY.cx + 20 && corner.height > GEOMETRY.cy + 20) {
         let sumX = 0, sumY = 0, count = 0;
         let maxTipD2 = 0, tipDx = 0, tipDy = 0;
-        const R_ARROW = 14;
+        const R_ARROW = 15;
         for (let dy = -R_ARROW; dy <= R_ARROW; dy++) {
           for (let dx = -R_ARROW; dx <= R_ARROW; dx++) {
             const d2 = dx * dx + dy * dy;
-            if (d2 > R_ARROW * R_ARROW || d2 < 6) continue;
+            if (d2 > R_ARROW * R_ARROW || d2 < 4) continue;
             const px = GEOMETRY.cx + dx;
             const py = GEOMETRY.cy + dy;
             const idx = (py * corner.width + px) * 4;
             const r = corner.data[idx];
             const g = corner.data[idx + 1];
             const b = corner.data[idx + 2];
-            const isCyan = (b > 150 && g > 120 && r < 145);
-            const isWhite = (r > 200 && g > 200 && b > 200);
+            const isCyan = (b > 120 && g > 95 && (b > r + 12 || (b > 175 && g > 175 && b >= r)));
+            const isWhite = (r > 185 && g > 185 && b > 185);
             if (isCyan || isWhite) {
               sumX += dx;
               sumY += dy;
@@ -209,9 +209,9 @@
             }
           }
         }
-        if (count >= 8) {
-          const wx = sumX * 0.4 + tipDx * 0.6 * count;
-          const wy = sumY * 0.4 + tipDy * 0.6 * count;
+        if (count >= 5) {
+          const wx = sumX * 0.35 + tipDx * 0.65 * count;
+          const wy = sumY * 0.35 + tipDy * 0.65 * count;
           heading = Math.atan2(wy, wx);
         }
       }

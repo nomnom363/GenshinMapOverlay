@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.3] - 2026-10-28
+
+### Added
+- **Intelligent 3D In-World Navigation (Elevation & Height Awareness)**:
+  - **Up & Down Vertical Chevrons**: Navigation arrow now displays dynamic 3D elevation chevrons (`▲ ▲` for climbing / high peaks, `▼ ▼` for descending / caves / ravines).
+  - **Adaptive Color Gradients**: High altitude targets render with Radiant Amber/Gold gradients, underground and canyon targets render with Neon Cyan/Indigo gradients, and ground-level targets render in crisp Sky Blue.
+  - **Elevation & Obstacle Badges**: Navigation HUD now displays clear vertical indicators (`▲ HIGH / CLIMB UP`, `▼ LOW / IN CAVE / RAVINE`, `▼ DEEP UNDERGROUND (Floor BX)`, `▲ UPPER TOWER (Floor LX)`).
+  - **Proximity Vertical Alerts**: When arriving within 12 meters of a target with vertical difference, the overlay specifically alerts `🧗 LOOK UP! (~Xm above on cliff/structure)` or `🕳️ LOOK DOWN! (~Xm below in cave/ravine)`.
+  - **Community Intelligence & Tip Extraction**: Automatically analyzes marker community summaries and comments to detect terrain hints (e.g. cliff peak, tree branch, glide down, breakable rocks) and displays a 1-line actionable tip right on the navigation HUD.
+- **Smart Cave & Wall Routing**:
+  - **Stage 1 (Head to Cave Entrance)**: When tracking a target inside a cave, mountain, or behind walls, navigation routes to the **Cave Entrance** first with a dedicated `🚪 Cave Entrance (~Xm)` badge, preventing players from running blindly into solid cliff faces.
+  - **Stage 2 (Inside Cave -> Target)**: Once within 18m of the entrance or inside the cave, the arrow seamlessly transitions to guide the player directly to the pin inside.
+  - **Big Map Entrance Route & Beacon**: When viewing the big map, draws the approach route to the Cave Entrance beacon, followed by a dashed tunnel route leading into the cave to the target.
+
+### Fixed
+- **Navigation Arrow Disappearing & Freezing**:
+  - Fixed an issue where the in-world arrow would freeze or disappear when the big map was closed. Enabled continuous 60 FPS animation loop whenever navigation is active (`!!navigatingPin`).
+  - Added persistent player position retention (60-second grace window with dead reckoning) so brief minimap template correlation drops (e.g. from grass, sprinting, shadows, combat, or dialog) no longer cause the arrow to flicker or vanish.
+  - Seed initial player position from big map center on open so navigation works immediately even before the first minimap scan locks.
+  - Enhanced minimap player arrow direction extraction with adaptive hue/contrast checks and lower pixel count threshold (5px), ensuring reliable character heading detection across 720p, 768p, 1080p, and 1440p resolutions.
+
+---
+
 ## [1.2.2] - 2026-10-28
 
 ### Fixed

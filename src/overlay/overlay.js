@@ -2,6 +2,7 @@ let navigatingPin = null;
 let currentHeading = -Math.PI / 2;
 let lastPlayerMapX = 0;
 let lastPlayerMapY = 0;
+let playerTrack = { x: 0, y: 0, lastSeen: 0, live: false, vx: 0, vy: 0, lastStepTime: 0 };
 // Overlay: Marker auf der Ingame-Karte + Panel.
 // Maus nur über Marker/Panel abfangen, sonst geht alles ans Spiel (ziehen, zoomen, Wegpunkte).
 /* global I18n, Media, Hud */
@@ -268,7 +269,7 @@ function tick(now) {
   } else {
     visibility = Math.max(0, visibility - 0.2);
   }
-  animating = animating || (target ? visibility < 1 : visibility > 0);
+  animating = animating || (target ? visibility < 1 : visibility > 0) || !!navigatingPin;
   draw();
   if (animating) requestDraw();
 }
@@ -280,8 +281,8 @@ function draw() {
   ctx.clearRect(0, 0, W, H);
   drawnCount = 0;
   if (!data || !view || visibility <= 0) {
-    if (data && minimap && settings.minimap !== false && visibility <= 0) {
-      drawMinimap();
+    if (data && (minimap || (navigatingPin && playerTrack.lastSeen > 0)) && visibility <= 0) {
+      if (minimap && settings.minimap !== false) drawMinimap();
       if (navigatingPin) drawWorldNavigationArrow(W, H, u);
     } else if (nearby >= 0) {
       setNearby(-1);
@@ -486,11 +487,23 @@ function drawMinimap() {
     ctx.stroke();
     requestDraw();
   }
-  // Navigation / Waypoint Indicator on Minimap
-  if (navigatingPin && minimap) {
-    const dx = navigatingPin.x - minimap.x;
-    const dy = navigatingPin.y - minimap.y;
-    const dist = Math.hypot(dx, dy);
+  // Navigation / Waypoint Indicator on Minimap (stage-aware & elevation colored)
+  if (navigatingPin && (minimap || playerTrack.lastSeen > 0)) {
+    const px = minimap ? minimap.x : playerTrack.x;
+    const py = minimap ? minimap.y : playerTrack.y;
+    // Check if routing to cave entrance first
+    let tx = navigatingPin.x;
+    let ty = navigatingPin.y;
+    if (navigatingPin.entrancePoint) {
+      const dEnt = Math.hypot(navigatingPin.entrancePoint.x - px, navigatingPin.entrancePoint.y - py) * 15;
+      const dTarget = Math.hypot(navigatingPin.x - px, navigatingPin.y - py) * 15;
+      if (dEnt > 18 && dTarget > 25) {
+        tx = navigatingPin.entrancePoint.x;
+        ty = navigatingPin.entrancePoint.y;
+      }
+    }
+    const dx = tx - px;
+    const dy = ty - py;
     const angle = Math.atan2(dy, dx);
     const maxR = r - 12 * u;
     const ax = cx + Math.cos(angle) * maxR;
@@ -499,12 +512,12 @@ function drawMinimap() {
     ctx.save();
     ctx.translate(ax, ay);
     ctx.rotate(angle);
-    ctx.fillStyle = '#ef4444';
+    ctx.fillStyle = navigatingPin.elevation === 'up' ? '#f59e0b' : (navigatingPin.elevation === 'down' ? '#06b6d4' : '#38bdf8');
     ctx.beginPath();
-    ctx.moveTo(8 * u, 0);
-    ctx.lineTo(-8 * u, -6 * u);
-    ctx.lineTo(-4 * u, 0);
-    ctx.lineTo(-8 * u, 6 * u);
+    ctx.moveTo(9 * u, 0);
+    ctx.lineTo(-7 * u, -5.5 * u);
+    ctx.lineTo(-3.5 * u, 0);
+    ctx.lineTo(-7 * u, 5.5 * u);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
@@ -563,6 +576,53 @@ function drawNavPill(x, y, text, color, u) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function drawNavCard(x, y, lines, color, u) {
+  if (!lines || !lines.length) return;
+  ctx.save();
+  const paddingX = 14 * u;
+  const paddingY = 8 * u;
+  const lineH = 15 * u;
+
+  let maxW = 0;
+  for (const line of lines) {
+    const sz = line.size ? Math.round(line.size * u) : Math.round(11 * u);
+    ctx.font = `${line.bold ? 'bold ' : ''}${sz}px sans-serif`;
+    const w = ctx.measureText(line.text).width;
+    if (w > maxW) maxW = w;
+  }
+
+  const cardW = Math.max(140 * u, maxW + paddingX * 2);
+  const cardH = lines.length * lineH + paddingY * 2;
+
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+  ctx.strokeStyle = color || '#38bdf8';
+  ctx.lineWidth = 1.4 * u;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+  ctx.shadowBlur = 10 * u;
+
+  const rx = x - cardW / 2;
+  const ry = y - cardH / 2;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(rx, ry, cardW, cardH, 7 * u);
+  else ctx.rect(rx, ry, cardW, cardH);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const sz = line.size ? Math.round(line.size * u) : Math.round(11 * u);
+    ctx.font = `${line.bold ? 'bold ' : ''}${sz}px sans-serif`;
+    ctx.fillStyle = line.color || '#ffffff';
+    const ly = ry + paddingY + (i + 0.5) * lineH;
+    ctx.fillText(line.text, x, ly);
+  }
   ctx.restore();
 }
 
@@ -666,17 +726,49 @@ function findBestTeleport(targetIdx) {
 }
 
 function drawWorldNavigationArrow(W, H, u) {
-  if (!navigatingPin || !minimap) return;
+  if (!navigatingPin) return;
 
+  const now = performance.now();
+  let playerX = minimap ? minimap.x : playerTrack.x;
+  let playerY = minimap ? minimap.y : playerTrack.y;
+  const hasLock = (minimap && typeof minimap.x === 'number') || (playerTrack.lastSeen > 0 && now - playerTrack.lastSeen < 60000);
+
+  if (!hasLock) {
+    drawNavCard(W * 0.5, H * 0.65 - 45 * u, [
+      { text: `🧭 Tracking: ${navigatingPin.name}`, color: '#38bdf8', bold: true },
+      { text: 'Press M in game to sync GPS location', color: '#f59e0b', bold: false }
+    ], '#38bdf8', u);
+    return;
+  }
+
+  const isLive = minimap && playerTrack.live;
   const targetX = navigatingPin.x;
   const targetY = navigatingPin.y;
-  const playerX = minimap.x;
-  const playerY = minimap.y;
 
-  const dx = targetX - playerX;
-  const dy = targetY - playerY;
-  const distMap = Math.hypot(dx, dy);
-  const distMeters = Math.round(distMap * 15);
+  // 1. Cave Entrance / Wall Routing Stage
+  let activeTargetX = targetX;
+  let activeTargetY = targetY;
+  let navStage = 'direct';
+  let entranceDistM = Infinity;
+  const targetDistM = Math.round(Math.hypot(targetX - playerX, targetY - playerY) * 15);
+
+  if (navigatingPin.entrancePoint) {
+    const ent = navigatingPin.entrancePoint;
+    entranceDistM = Math.round(Math.hypot(ent.x - playerX, ent.y - playerY) * 15);
+    if (entranceDistM > 18 && targetDistM > 25) {
+      navStage = 'entrance';
+      activeTargetX = ent.x;
+      activeTargetY = ent.y;
+    } else {
+      navStage = 'inside_cave';
+    }
+  } else if (navigatingPin.isUnderground) {
+    navStage = 'underground';
+  }
+
+  const activeDistM = navStage === 'entrance' ? entranceDistM : targetDistM;
+  const dx = activeTargetX - playerX;
+  const dy = activeTargetY - playerY;
 
   const targetWorldAngle = Math.atan2(dy, dx);
   let relAngle = targetWorldAngle - currentHeading;
@@ -688,35 +780,55 @@ function drawWorldNavigationArrow(W, H, u) {
 
   ctx.save();
 
-  if (distMeters < 12) {
-    const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 200);
+  // Arrival / Close Proximity (< 12m)
+  if (activeDistM < 12) {
+    const pulse = 0.5 + 0.5 * Math.sin(now / 200);
     const radius = (28 + pulse * 14) * u;
+    const ringColor = navigatingPin.elevation === 'up' ? '#f59e0b' : (navigatingPin.elevation === 'down' ? '#06b6d4' : '#10b981');
 
     ctx.save();
     ctx.translate(charX, charY);
     ctx.scale(1, 0.45);
-
-    ctx.strokeStyle = '#38bdf8';
+    ctx.strokeStyle = ringColor;
     ctx.lineWidth = 3 * u;
     ctx.globalAlpha = 0.6 + 0.3 * pulse;
-    ctx.shadowColor = '#38bdf8';
+    ctx.shadowColor = ringColor;
     ctx.shadowBlur = 15 * u;
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+    ctx.fillStyle = ringColor;
+    ctx.globalAlpha = 0.15;
     ctx.fill();
     ctx.restore();
 
-    drawNavPill(charX, charY - 35 * u, `🎯 Arrived (~ ${distMeters}m)`, '#38bdf8', u);
+    let arriveTitle = `🎯 Arrived (~${activeDistM}m)`;
+    let arriveSub = navigatingPin.name;
+    if (navigatingPin.elevation === 'up') {
+      arriveTitle = `🧗 LOOK UP! (~${activeDistM}m above)`;
+      arriveSub = navigatingPin.hint || 'Target is on cliff / peak / ruins above';
+    } else if (navigatingPin.elevation === 'down' || navStage === 'inside_cave' || navStage === 'underground') {
+      arriveTitle = `🕳️ LOOK DOWN! (~${activeDistM}m below)`;
+      arriveSub = navigatingPin.hint || 'Target is in cave / ravine / water below';
+    } else if (navStage === 'entrance') {
+      arriveTitle = '🚪 Cave Entrance Reached!';
+      arriveSub = `Enter cave to find ${navigatingPin.name}`;
+    }
+
+    drawNavCard(charX, charY - 48 * u, [
+      { text: arriveTitle, color: ringColor, bold: true },
+      { text: arriveSub, color: '#e2e8f0', bold: false }
+    ], ringColor, u);
+
     ctx.restore();
     return;
   }
 
-  const orbitX = 115 * u;
-  const orbitY = 60 * u;
-  const bob = Math.sin(performance.now() / 220) * (5 * u);
+  // Draw 3D-styled navigation arrow around character orbit
+  const orbitX = 118 * u;
+  const orbitY = 62 * u;
+  const bob = Math.sin(now / 220) * (5 * u);
 
   const dirX = Math.sin(relAngle);
   const dirY = -Math.cos(relAngle);
@@ -729,20 +841,33 @@ function drawWorldNavigationArrow(W, H, u) {
   ctx.translate(arrowX, arrowY);
   ctx.rotate(arrowScreenAngle);
 
-  const arrowLen = 38 * u;
-  const arrowW = 24 * u;
+  const arrowLen = 40 * u;
+  const arrowW = 26 * u;
 
-  ctx.shadowColor = '#38bdf8';
-  ctx.shadowBlur = 12 * u;
+  // Visual styling based on Elevation & Cave Stage
+  let mainColor = '#38bdf8';
+  let glowColor = '#38bdf8';
+  if (navigatingPin.elevation === 'up') {
+    mainColor = '#f59e0b';
+    glowColor = '#fbbf24';
+  } else if (navigatingPin.elevation === 'down' || navStage === 'inside_cave' || navStage === 'entrance' || navStage === 'underground') {
+    mainColor = '#06b6d4';
+    glowColor = '#38bdf8';
+  }
 
+  ctx.shadowColor = glowColor;
+  ctx.shadowBlur = 14 * u;
+
+  // Arrow gradient
   const grad = ctx.createLinearGradient(-arrowLen * 0.4, 0, arrowLen * 0.6, 0);
-  grad.addColorStop(0, 'rgba(56, 189, 248, 0.15)');
-  grad.addColorStop(1, 'rgba(56, 189, 248, 0.55)');
+  grad.addColorStop(0, mainColor + '26');
+  grad.addColorStop(1, mainColor + 'b3');
 
   ctx.fillStyle = grad;
-  ctx.strokeStyle = 'rgba(125, 211, 252, 0.85)';
+  ctx.strokeStyle = mainColor;
   ctx.lineWidth = 2.2 * u;
 
+  // Main Arrow Body
   ctx.beginPath();
   ctx.moveTo(arrowLen * 0.6, 0);
   ctx.lineTo(-arrowLen * 0.4, -arrowW * 0.5);
@@ -752,8 +877,10 @@ function drawWorldNavigationArrow(W, H, u) {
   ctx.fill();
   ctx.stroke();
 
-  const pulseOff = ((performance.now() / 600) % 1) * (arrowLen * 0.4);
-  ctx.strokeStyle = `rgba(56, 189, 248, ${0.7 - (pulseOff / (arrowLen * 0.4)) * 0.5})`;
+  // Forward pulsing chevron inside arrow
+  const pulseOff = ((now / 600) % 1) * (arrowLen * 0.4);
+  ctx.strokeStyle = mainColor;
+  ctx.globalAlpha = 0.7 - (pulseOff / (arrowLen * 0.4)) * 0.5;
   ctx.lineWidth = 2 * u;
   ctx.beginPath();
   ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
@@ -761,14 +888,57 @@ function drawWorldNavigationArrow(W, H, u) {
   ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
   ctx.lineTo(-arrowLen * 0.6 - pulseOff, arrowW * 0.35);
   ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // 3D Elevation Chevrons (Up / Down indicator directly on arrow)
+  if (navigatingPin.elevation === 'up') {
+    const climb = ((now / 500) % 1) * (6 * u);
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2.4 * u;
+    ctx.beginPath();
+    ctx.moveTo(-arrowLen * 0.1, -arrowW * 0.65 - climb);
+    ctx.lineTo(arrowLen * 0.1, -arrowW * 0.95 - climb);
+    ctx.lineTo(arrowLen * 0.3, -arrowW * 0.65 - climb);
+    ctx.stroke();
+  } else if (navigatingPin.elevation === 'down') {
+    const drop = ((now / 500) % 1) * (6 * u);
+    ctx.strokeStyle = '#06b6d4';
+    ctx.lineWidth = 2.4 * u;
+    ctx.beginPath();
+    ctx.moveTo(-arrowLen * 0.1, arrowW * 0.65 + drop);
+    ctx.lineTo(arrowLen * 0.1, arrowW * 0.95 + drop);
+    ctx.lineTo(arrowLen * 0.3, arrowW * 0.65 + drop);
+    ctx.stroke();
+  }
 
   ctx.restore();
 
-  const isUg = navigatingPin.isUnderground;
-  const distText = `${isUg ? '🕳️' : '⚡'} ${distMeters}m • ${navigatingPin.name}`;
-  const pillX = Math.max(80 * u, Math.min(W - 80 * u, arrowX));
-  const pillY = Math.max(30 * u, Math.min(H - 40 * u, arrowY + 24 * u));
-  drawNavPill(pillX, pillY, distText, isUg ? '#7dd3fc' : '#38bdf8', u);
+  // Draw Informative Multi-Line Navigation Card
+  const cardX = Math.max(120 * u, Math.min(W - 120 * u, arrowX));
+  const cardY = Math.max(40 * u, Math.min(H - 65 * u, arrowY + 28 * u));
+
+  const lines = [];
+  if (navStage === 'entrance') {
+    lines.push({ text: `🚪 STEP 1: Cave Entrance (~${activeDistM}m)`, color: '#06b6d4', bold: true });
+    lines.push({ text: `↳ Target: ${navigatingPin.name} is underground`, color: '#e2e8f0', bold: false });
+  } else if (navStage === 'inside_cave') {
+    lines.push({ text: `🕳️ STEP 2: Inside Cave (~${activeDistM}m)`, color: '#06b6d4', bold: true });
+    lines.push({ text: `🎯 ${navigatingPin.name} • ${navigatingPin.elevationLabel}`, color: '#38bdf8', bold: false });
+  } else {
+    const prefix = navigatingPin.elevation === 'up' ? '▲' : (navigatingPin.elevation === 'down' ? '▼' : '⚡');
+    lines.push({ text: `${prefix} ${activeDistM}m • ${navigatingPin.name}`, color: mainColor, bold: true });
+    lines.push({ text: navigatingPin.elevationLabel + (navigatingPin.obstacleNote ? ` • ${navigatingPin.obstacleNote}` : ''), color: '#94a3b8', bold: false });
+  }
+
+  if (navigatingPin.hint) {
+    lines.push({ text: `💡 ${navigatingPin.hint}`, color: '#fef08a', bold: false, size: 10 });
+  }
+
+  if (!isLive) {
+    lines.push({ text: '🧭 Estimating position (Open M to sync)', color: '#f97316', bold: false, size: 9 });
+  }
+
+  drawNavCard(cardX, cardY, lines, mainColor, u);
   ctx.restore();
 }
 
@@ -782,9 +952,10 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
   ctx.save();
   const pulseT = 0.5 + 0.5 * Math.sin(performance.now() / 200);
   const targetR = (settings.markerSize * u * 0.6) + 10 * u + pulseT * 6 * u;
-  ctx.strokeStyle = '#f59e0b';
+  const targetColor = navigatingPin.elevation === 'up' ? '#f59e0b' : (navigatingPin.elevation === 'down' ? '#06b6d4' : '#38bdf8');
+  ctx.strokeStyle = targetColor;
   ctx.lineWidth = 2.5 * u;
-  ctx.shadowColor = '#f59e0b';
+  ctx.shadowColor = targetColor;
   ctx.shadowBlur = 10 * u;
   ctx.globalAlpha = Math.min(0.95, visibility);
   ctx.beginPath();
@@ -792,37 +963,75 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
   ctx.stroke();
   ctx.restore();
 
-  // Target name badge
-  drawNavPill(targetX, targetY - targetR - 12 * u, `🎯 ${navigatingPin.name}`, '#f59e0b', u);
+  // Target name badge with Elevation
+  const badgeLabel = `🎯 ${navigatingPin.name} (${navigatingPin.elevationLabel})`;
+  drawNavPill(targetX, targetY - targetR - 12 * u, badgeLabel, targetColor, u);
 
-  // 2. Teleport & Route planning
+  // 2. Cave Entrance Route & Beacon (if underground with entrance)
+  let viaX = null;
+  let viaY = null;
+  if (navigatingPin.entrancePoint) {
+    viaX = ax * navigatingPin.entrancePoint.x + bx;
+    viaY = ay * navigatingPin.entrancePoint.y + by - half;
+
+    const entOnScreen = viaX >= -40 && viaX <= W + 40 && viaY >= -40 && viaY <= H + 40;
+    if (entOnScreen) {
+      ctx.save();
+      const pulseE = 0.5 + 0.5 * Math.sin(performance.now() / 220);
+      const rE = (settings.markerSize * u * 0.55) + 8 * u + pulseE * 5 * u;
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2.4 * u;
+      ctx.shadowColor = '#06b6d4';
+      ctx.shadowBlur = 10 * u;
+      ctx.globalAlpha = Math.min(0.95, visibility);
+      ctx.beginPath();
+      ctx.arc(viaX, viaY, rE, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      drawNavPill(viaX, viaY - rE - 10 * u, `🚪 ${navigatingPin.entrancePoint.name}`, '#06b6d4', u);
+
+      // Tunnel dashed route from Cave Entrance to Target Pin
+      ctx.save();
+      ctx.setLineDash([6 * u, 6 * u]);
+      ctx.lineDashOffset = -performance.now() / 30;
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2.4 * u;
+      ctx.globalAlpha = Math.min(0.85, visibility);
+      ctx.beginPath();
+      ctx.moveTo(viaX, viaY);
+      ctx.lineTo(targetX, targetY);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // 3. Teleport & Route planning
   const bestTele = findBestTeleport(navigatingPin.index);
   if (bestTele) {
     const teleX = ax * bestTele.x + bx;
     const teleY = ay * bestTele.y + by - half;
     const distM = Math.round(bestTele.dist * 15);
 
-    // Check if teleport is on screen or nearby
     const teleOnScreen = teleX >= -40 && teleX <= W + 40 && teleY >= -40 && teleY <= H + 40;
     const targetOnScreen = targetX >= -40 && targetX <= W + 40 && targetY >= -40 && targetY <= H + 40;
 
-    // Check player proximity
     let usePlayerOrigin = false;
     let originX = teleX;
     let originY = teleY;
 
-    if (minimap && typeof minimap.x === 'number') {
-      const pDistM = Math.round(Math.hypot(navigatingPin.x - minimap.x, navigatingPin.y - minimap.y) * 15);
-      // If player is already closer to target than teleport is, route from player!
+    const pX = minimap ? minimap.x : playerTrack.x;
+    const pY = minimap ? minimap.y : playerTrack.y;
+    if (playerTrack.lastSeen > 0) {
+      const pDistM = Math.round(Math.hypot(navigatingPin.x - pX, navigatingPin.y - pY) * 15);
       if (pDistM < distM || pDistM < 160) {
         usePlayerOrigin = true;
-        originX = ax * minimap.x + bx;
-        originY = ay * minimap.y + by - half;
+        originX = ax * pX + bx;
+        originY = ay * pY + by - half;
       }
     }
 
     if (teleOnScreen && !usePlayerOrigin) {
-      // Draw glowing beacon ring on recommended teleport
       ctx.save();
       const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 180);
       const r = (settings.markerSize * u * 0.6) + 10 * u + pulse * 6 * u;
@@ -838,16 +1047,20 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
 
       drawNavPill(teleX, teleY - r - 12 * u, `⚡ ${bestTele.name} (~${distM}m)`, '#38bdf8', u);
     } else if (!teleOnScreen && !usePlayerOrigin && targetOnScreen) {
-      // Teleport is off-screen when zoomed in: show directional edge hint so user knows where to teleport
       const angle = Math.atan2(teleY - H / 2, teleX - W / 2);
       const edgeX = Math.max(90 * u, Math.min(W - 90 * u, W / 2 + Math.cos(angle) * (W / 2 - 50 * u)));
       const edgeY = Math.max(30 * u, Math.min(H - 30 * u, H / 2 + Math.sin(angle) * (H / 2 - 40 * u)));
       drawNavPill(edgeX, edgeY, `⚡ Warp to: ${bestTele.name} (~${distM}m)`, '#38bdf8', u);
     }
 
-    // Draw route line only if origin is on screen or nearby
+    // Connect route to Cave Entrance (if routing to cave) or Target Pin
+    const routeDestX = viaX !== null ? viaX : targetX;
+    const routeDestY = viaY !== null ? viaY : targetY;
+
     const originOnScreen = originX >= -120 && originX <= W + 120 && originY >= -120 && originY <= H + 120;
-    if (originOnScreen && targetOnScreen) {
+    const destOnScreen = routeDestX >= -120 && routeDestX <= W + 120 && routeDestY >= -120 && routeDestY <= H + 120;
+
+    if (originOnScreen && destOnScreen) {
       ctx.save();
       ctx.setLineDash([10 * u, 6 * u]);
       ctx.lineDashOffset = -performance.now() / 25;
@@ -859,17 +1072,17 @@ function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
 
       ctx.beginPath();
       ctx.moveTo(originX, originY);
-      ctx.lineTo(targetX, targetY);
+      ctx.lineTo(routeDestX, routeDestY);
       ctx.stroke();
 
-      const dLine = Math.hypot(targetX - originX, targetY - originY);
+      const dLine = Math.hypot(routeDestX - originX, routeDestY - originY);
       const numC = Math.floor(dLine / (55 * u));
-      const aLine = Math.atan2(targetY - originY, targetX - originX);
+      const aLine = Math.atan2(routeDestY - originY, routeDestX - originX);
       ctx.fillStyle = '#ffffff';
       for (let k = 1; k <= numC; k++) {
         const t = k / (numC + 1);
-        const px = originX + (targetX - originX) * t;
-        const py = originY + (targetY - originY) * t;
+        const px = originX + (routeDestX - originX) * t;
+        const py = originY + (routeDestY - originY) * t;
         ctx.save();
         ctx.translate(px, py);
         ctx.rotate(aLine);
@@ -1112,6 +1325,45 @@ function findAndMarkAt(checkX, checkY) {
   return false;
 }
 
+function parsePinIntelligence(pin, res) {
+  if (!res) return;
+  const summary = (res.summary || '').trim();
+  const comments = res.comments || [];
+  const topText = comments.slice(0, 4).map(c => c.text || '').join(' ');
+  const combined = (summary + ' ' + topText).toLowerCase();
+
+  const upHits = (combined.match(/\b(top|peak|cliff|mountain|summit|roof|pillar|tree|high|above|climb|tower|floating|air|sky|ledge)\b/g) || []).length;
+  const downHits = (combined.match(/\b(cave|bottom|ravine|below|tunnel|well|chasm|under|down|underneath|drop|hole|submerged|waterfall|pit)\b/g) || []).length;
+  const wallHits = (combined.match(/\b(wall|destructible|breakable|barrier|rock|puzzle|gate|seal|door|blocked)\b/g) || []).length;
+
+  if (pin.isUnderground || (pin.floorName && pin.floorName.startsWith('B'))) {
+    pin.elevation = 'down';
+    pin.elevationLabel = '▼ UNDERGROUND CAVE';
+  } else if (pin.floorName && pin.floorName.startsWith('L')) {
+    pin.elevation = 'up';
+    pin.elevationLabel = '▲ UPPER TOWER / LEVEL';
+  } else if (upHits > downHits && upHits >= 2) {
+    pin.elevation = 'up';
+    pin.elevationLabel = '▲ HIGH / CLIMB UP';
+  } else if (downHits > upHits && downHits >= 2) {
+    pin.elevation = 'down';
+    pin.elevationLabel = '▼ LOW / IN RAVINE / PIT';
+  }
+
+  if (wallHits >= 2 && !pin.obstacleNote) {
+    pin.obstacleNote = '🧱 Behind breakable rock / wall';
+  }
+
+  const candidate = summary || (comments[0] && comments[0].text) || '';
+  if (candidate) {
+    const clean = candidate.replace(/\s+/g, ' ').trim();
+    const sentence = clean.split(/[.!\n?]/)[0].trim();
+    if (sentence.length >= 6) {
+      pin.hint = sentence.length > 55 ? sentence.slice(0, 52) + '...' : sentence;
+    }
+  }
+}
+
 function toggleNavigation(index) {
   if (index < 0 || !data || !data.markers) return;
   const id = data.markers.id[index];
@@ -1120,16 +1372,63 @@ function toggleNavigation(index) {
     showToast('✕ Navigation cleared');
   } else {
     const type = data.types[data.markers.type[index]];
+    const isUg = data.markers.underground && data.markers.underground[index] === 1;
+    const floorName = (data.layers && data.markers.layerId) ? data.layers[data.markers.layerId[index]] : '';
+
+    let entrancePoint = null;
+    const entIds = (data.entrances && data.entrances[id]) || [];
+    if (entIds.length) {
+      for (const eId of entIds) {
+        const eIdx = markerIndexById.get(eId);
+        if (eIdx !== undefined) {
+          entrancePoint = {
+            id: eId,
+            index: eIdx,
+            x: data.markers.x[eIdx],
+            y: data.markers.y[eIdx],
+            name: (data.types[data.markers.type[eIdx]] && data.types[data.markers.type[eIdx]].name) || 'Cave Entrance'
+          };
+          break;
+        }
+      }
+    }
+
+    let elevation = 'level';
+    let elevationLabel = '━ SURFACE LEVEL';
+    if (floorName && floorName.startsWith('B')) {
+      elevation = 'down';
+      elevationLabel = `▼ UNDERGROUND (${floorName})`;
+    } else if (floorName && floorName.startsWith('L')) {
+      elevation = 'up';
+      elevationLabel = `▲ UPPER LEVEL (${floorName})`;
+    } else if (isUg) {
+      elevation = 'down';
+      elevationLabel = '▼ UNDERGROUND CAVE';
+    }
+
     navigatingPin = {
       id,
       index,
       x: data.markers.x[index],
       y: data.markers.y[index],
       name: type ? type.name : 'Target',
-      isUnderground: data.markers.underground && data.markers.underground[index] === 1,
-      floorName: (data.layers && data.markers.layerId) ? data.layers[data.markers.layerId[index]] : ''
+      isUnderground: isUg,
+      floorName,
+      entrancePoint,
+      elevation,
+      elevationLabel,
+      hint: '',
+      obstacleNote: entrancePoint ? '🚪 Uses Cave Entrance' : (isUg ? '🕳️ Underground' : '')
     };
     showToast(`🧭 Tracking ${navigatingPin.name}`);
+
+    const typeKey = type ? type.key : '';
+    api.comments(typeKey, id, 1).then((res) => {
+      if (navigatingPin && navigatingPin.id === id && res) {
+        parsePinIntelligence(navigatingPin, res);
+        requestDraw();
+      }
+    }).catch(() => {});
   }
   renderSpotNav();
   requestDraw();
@@ -2044,6 +2343,11 @@ api.on('view', (next) => {
       // Instant anchor: keep pins 100% stuck to map terrain when zooming
       view = { ...stamped };
     }
+    if (playerTrack.lastSeen === 0 && target && target.sx) {
+      playerTrack.x = (-target.ox + 0.5) / target.sx;
+      playerTrack.y = (-target.oy + 0.5) / target.sy;
+      playerTrack.lastSeen = performance.now();
+    }
   } else {
     target = null;
     velocity = null;
@@ -2066,30 +2370,48 @@ let lastMinimapTime = 0;
 let lastMinimapPos = null;
 
 api.on('minimap', (pos) => {
+  const now = performance.now();
   if (pos && typeof pos.x === 'number') {
+    const dt = playerTrack.lastStepTime > 0 ? Math.max(16, now - playerTrack.lastStepTime) : 100;
+    if (playerTrack.lastSeen > 0 && dt < 1000) {
+      playerTrack.vx = (pos.x - playerTrack.x) / dt;
+      playerTrack.vy = (pos.y - playerTrack.y) / dt;
+    } else {
+      playerTrack.vx = 0;
+      playerTrack.vy = 0;
+    }
+    playerTrack.x = pos.x;
+    playerTrack.y = pos.y;
+    playerTrack.scale = pos.scale;
+    playerTrack.lastSeen = now;
+    playerTrack.lastStepTime = now;
+    playerTrack.live = true;
+
     if (typeof pos.angle === 'number' && Number.isFinite(pos.angle)) {
       let diff = pos.angle - currentHeading;
       while (diff > Math.PI) diff -= 2 * Math.PI;
       while (diff < -Math.PI) diff += 2 * Math.PI;
-      currentHeading += diff * 0.35;
+      currentHeading += diff * 0.4;
     } else if (lastPlayerMapX && lastPlayerMapY) {
       const mdx = pos.x - lastPlayerMapX;
       const mdy = pos.y - lastPlayerMapY;
-      if (Math.hypot(mdx, mdy) > 0.02) {
+      const moveDist = Math.hypot(mdx, mdy);
+      if (moveDist > 0.005) {
         const moveAngle = Math.atan2(mdy, mdx);
         let diff = moveAngle - currentHeading;
         while (diff > Math.PI) diff -= 2 * Math.PI;
         while (diff < -Math.PI) diff += 2 * Math.PI;
-        currentHeading += diff * 0.25;
+        currentHeading += diff * 0.35;
       }
     }
     lastPlayerMapX = pos.x;
     lastPlayerMapY = pos.y;
     minimap = pos;
     lastMinimapPos = pos;
-    lastMinimapTime = performance.now();
+    lastMinimapTime = now;
   } else if (!pos) {
-    if (performance.now() - lastMinimapTime > 3500) {
+    playerTrack.live = false;
+    if (now - lastMinimapTime > 60000) {
       minimap = null;
     }
   }
