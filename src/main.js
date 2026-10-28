@@ -34,18 +34,25 @@ let fsSwitchTimer = null;
 function handleGenshinWindowUpdate(info) {
   if (!alive(overlayWin)) return;
 
+  if (info.cvTrack) {
+    sendToOverlay('cv:track', info);
+    return;
+  }
+
   if (info.rightClick) {
     let x, y;
-    if (typeof info.clientX === 'number' && typeof info.clientY === 'number') {
-      x = info.clientX;
-      y = info.clientY;
-    } else if (alive(overlayWin) && typeof info.screenX === 'number' && typeof info.screenY === 'number') {
+    const disp = targetDisplay();
+    const sf = disp.scaleFactor || 1;
+    if (typeof info.clientX === "number" && typeof info.clientY === "number") {
+      x = info.clientX / sf;
+      y = info.clientY / sf;
+    } else if (alive(overlayWin) && typeof info.screenX === "number" && typeof info.screenY === "number") {
       const bounds = overlayWin.getBounds();
-      x = info.screenX - bounds.x;
-      y = info.screenY - bounds.y;
+      x = (info.screenX / sf) - bounds.x;
+      y = (info.screenY / sf) - bounds.y;
     }
-    log(`window-tracker: rightClick detected at (${x}, ${y}) -> dispatching hotkey:markAt`);
-    sendToOverlay('hotkey:markAt', { x, y });
+    log(`window-tracker: rightClick detected at (${x}, ${y}) [sf: ${sf}] -> dispatching hotkey:markAt`);
+    sendToOverlay("hotkey:markAt", { x, y });
     return;
   }
 
@@ -287,7 +294,16 @@ async function start() {
   cfg = config.load();
   lang = resolveLanguage();
   if (cfg.tileset) Object.assign(TILESET, cfg.tileset);
-  store = new DataStore(path.join(app.getPath('userData'), 'cache'), TILESET, cfg.serverUrl);
+  const dataDir = fs.existsSync('D:\\') ? 'D:\\GenshinMapData' : app.getPath('userData');
+  const cacheDir = path.join(dataDir, 'cache');
+  try {
+    const oldCache = path.join(app.getPath('userData'), 'cache');
+    if (dataDir !== app.getPath('userData') && fs.existsSync(oldCache)) {
+      if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+      try { fs.rmSync(oldCache, { recursive: true, force: true }); } catch {}
+    }
+  } catch {}
+  store = new DataStore(cacheDir, TILESET, cfg.serverUrl);
   found = new FoundStore(path.join(app.getPath('userData'), 'found.json'));
   state.isAdmin = isAdmin();
   log(`start: Version ${app.getVersion()}, Electron ${process.versions.electron}, Sprache ${lang}, Admin ${state.isAdmin}, Bildschirme ${screen.getAllDisplays().map((d) => `${d.id}:${d.size.width}x${d.size.height}@${d.scaleFactor}`).join(' ')}`);
@@ -429,14 +445,17 @@ function keepOnTop() {
 // Genshin (Admin) vorne → forward-Mausereignisse fehlen, Cursor daher selbst abfragen.
 // Daran entscheidet das Overlay, ob es Klicks abfängt.
 let lastCursor = null;
+let lastCursorTime = 0;
 function pollCursor() {
   if (!alive(overlayWin) || !overlayWin.isVisible()) return;
   const point = screen.getCursorScreenPoint();
   const bounds = overlayWin.getBounds();
   const cursor = { x: point.x - bounds.x, y: point.y - bounds.y };
-  if (lastCursor && lastCursor.x === cursor.x && lastCursor.y === cursor.y) return;
+  const now = Date.now();
+  if (lastCursor && lastCursor.x === cursor.x && lastCursor.y === cursor.y && (now - lastCursorTime < 250)) return;
   lastCursor = cursor;
-  sendToOverlay('cursor', cursor);
+  lastCursorTime = now;
+  sendToOverlay("cursor", cursor);
 }
 
 function createTracker() {

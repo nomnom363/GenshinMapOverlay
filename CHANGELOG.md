@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.8] - 2026-10-28
+
+### Added & Integrated
+- **Official cvAutoTrack Native C++ Tracking Engine Hook**:
+  - Integrated official Kongying Tavern cvAutoTrack.dll (v7.11.1, C++/OpenCV multi-layer image recognition engine) running inside window_tracker.py as a high-frequency background worker thread.
+  - Native multi-layer support: Accurately identifies underground zones and layers (mapId), seamlessly maintaining tracking in subterranean caves, The Chasm Underground, and Enkanomiya.
+  - In-air & gliding support: Expanded minimap mask radius (rrowRadius: 28) to eliminate interference from wind glider wings during jumping, gliding, and falling. Increased maxJump: 100 and search: 42.
+  - Zero-lag performance: C++ native execution at 25 FPS with zero game frame drops or thread contention.
+
+- **Standalone KongYingMap Deployment**:
+  - Extracted portable official Kongying Tavern Unity client (Map.exe) to D:\KongYingMap for instant access and reference.
+  - Relocated all persistent data and cache to Drive D: (D:\GenshinMapData\cache), fully protecting Drive C: from low disk space issues.
+
+### Fixed
+- **Windowed Mode Ticking / Unticking Checkboxes & Right-Click Pins**:
+  - Fixed DPI scale-factor mismatch: win32 client coordinates in main.js (info.clientX, info.clientY) are now correctly converted by 	argetDisplay().scaleFactor, aligning mouse hit-testing in windowed mode at all display scaling percentages (100%, 125%, 150%).
+  - Immediate mouse capture on panel open: Opening the sidebar panel now immediately calls setCapture(true), preventing clicks from passing through to the game beneath.
+  - Protected interactive zone in overPanel: Extended hitboxes and added direct mouseenter and mousemove capture locks to $('panel'), $('spot'), and $('panel-handle') so category and item checkboxes can be ticked/unticked instantly in windowed mode without needing to enter fullscreen or click a map pin first.
+  - Stationary cursor polling: pollCursor now ensures periodic refresh (250ms) even when stationary so hover/capture states remain active over checkboxes.
+
+---
+
 ## [1.2.7] - 2026-10-28
 
 ### Performance & Responsiveness

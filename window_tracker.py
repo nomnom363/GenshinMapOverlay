@@ -4,6 +4,7 @@ import json
 import sys
 import threading
 import time
+import os
 
 user32 = ctypes.windll.user32
 kernel32 = ctypes.windll.kernel32
@@ -150,6 +151,77 @@ def input_watcher():
 
 input_thread = threading.Thread(target=input_watcher, daemon=True)
 input_thread.start()
+
+# Native cvAutoTrack image recognition worker thread
+cv_lib = None
+cv_initialized = False
+
+def cv_track_worker():
+    global cv_lib, cv_initialized
+    search_paths = [
+        os.path.join(os.path.dirname(__file__), 'tools', 'cvAutoTrack.dll'),
+        r'D:\GenshinMapOverlay\tools\cvAutoTrack.dll',
+        r'D:\temp\cvAutoTrack\7.11.1\cvAutoTrack.dll'
+    ]
+    dll_path = next((p for p in search_paths if os.path.exists(p)), None)
+    if not dll_path:
+        return
+
+    try:
+        cv_lib = ctypes.cdll.LoadLibrary(dll_path)
+        cv_lib.init.restype = ctypes.c_bool
+        cv_lib.init.argtypes = []
+        cv_lib.uninit.restype = ctypes.c_bool
+        cv_lib.uninit.argtypes = []
+        cv_lib.SetHandle.restype = ctypes.c_bool
+        cv_lib.SetHandle.argtypes = [ctypes.c_longlong]
+        cv_lib.GetTransformOfMap.restype = ctypes.c_bool
+        cv_lib.GetTransformOfMap.argtypes = [
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_int)
+        ]
+        if cv_lib.init():
+            cv_initialized = True
+    except Exception:
+        cv_initialized = False
+        return
+
+    x = ctypes.c_double(0)
+    y = ctypes.c_double(0)
+    a = ctypes.c_double(0)
+    mapId = ctypes.c_int(0)
+    last_sent = 0
+    attached_hwnd = 0
+
+    while True:
+        try:
+            hwnd = get_genshin_hwnd()
+            if hwnd and cv_initialized:
+                if hwnd != attached_hwnd:
+                    cv_lib.SetHandle(hwnd)
+                    attached_hwnd = hwnd
+                ok = cv_lib.GetTransformOfMap(ctypes.byref(x), ctypes.byref(y), ctypes.byref(a), ctypes.byref(mapId))
+                if ok:
+                    now = time.time()
+                    if now - last_sent >= 0.04:  # ~25 FPS
+                        last_sent = now
+                        safe_print({
+                            "cvTrack": True,
+                            "x": x.value,
+                            "y": y.value,
+                            "angle": a.value,
+                            "mapId": mapId.value
+                        })
+            else:
+                attached_hwnd = 0
+        except Exception:
+            pass
+        time.sleep(0.04)
+
+cv_thread = threading.Thread(target=cv_track_worker, daemon=True)
+cv_thread.start()
 
 # Main thread handles parent monitoring and window tracking
 parent_handle = None

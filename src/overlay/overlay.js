@@ -93,6 +93,10 @@ function setCapture(on, immediate = false) {
       api.mouse(true);
     }
   } else {
+    // Protect capture while mouse is inside open panel or spot modal
+    if ((panelOpen || spot) && mouse.x >= 0 && overPanel(mouse.x, mouse.y)) {
+      return;
+    }
     if (!captured) return;
     if (captureTimer) clearTimeout(captureTimer);
     if (immediate) {
@@ -101,6 +105,9 @@ function setCapture(on, immediate = false) {
       captureTimer = null;
     } else {
       captureTimer = setTimeout(() => {
+        if ((panelOpen || spot) && mouse.x >= 0 && overPanel(mouse.x, mouse.y)) {
+          return;
+        }
         captured = false;
         api.mouse(false);
         captureTimer = null;
@@ -1340,15 +1347,27 @@ function drawUndergroundBadge(x, y, half, size, u, floorName, isSelected = false
 // ---------- Maus ----------
 
 function overPanel(x, y) {
-  const inside = (el) => {
-    if (!el || el.hidden) return false;
-    const r = el.getBoundingClientRect();
-    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
-  };
   if (!$('lightbox').hidden) return true;
-  if (panelOpen && inside($('panel'))) return true;
-  if (spot && inside($('spot'))) return true;
-  return !$('panel-handle').hidden && inside($('panel-handle'));
+  if (spot) {
+    const el = $('spot');
+    if (el && !el.hidden) {
+      const r = el.getBoundingClientRect();
+      if (x >= r.left - 20 && x <= r.right + 20 && y >= r.top - 20 && y <= r.bottom + 20) return true;
+    }
+  }
+  if (panelOpen) {
+    const el = $('panel');
+    if (el) {
+      const r = el.getBoundingClientRect();
+      if (x >= r.left - 25 && x <= innerWidth + 10 && y >= r.top - 20 && y <= r.bottom + 20) return true;
+    }
+  }
+  const handle = $('panel-handle');
+  if (handle && !handle.hidden) {
+    const r = handle.getBoundingClientRect();
+    if (x >= r.left - 15 && x <= innerWidth + 10 && y >= r.top - 15 && y <= r.bottom + 15) return true;
+  }
+  return false;
 }
 
 function overSpot(x, y) {
@@ -1356,7 +1375,7 @@ function overSpot(x, y) {
   const el = $('spot');
   if (!el || el.hidden) return false;
   const r = el.getBoundingClientRect();
-  return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  return x >= r.left - 20 && x <= r.right + 20 && y >= r.top - 20 && y <= r.bottom + 20;
 }
 
 function renderHandle() {
@@ -1370,7 +1389,7 @@ function renderHandle() {
 function updateHover() {
   const u = uiScale();
   // Pin hit radius matching the icon size with generous margin so hover & capture locks reliably in window and fullscreen mode
-  const radius = Math.max(24, (settings.markerSize / 2 + 8) * u);
+  const radius = Math.max(26, (settings.markerSize / 2 + 10) * u);
   let best = -1;
   let bestDist = radius * radius;
   if (mouse.x >= 0 && !overPanel(mouse.x, mouse.y)) {
@@ -1390,7 +1409,6 @@ function updateHover() {
   }
   // Capture mouse when hovering over a pin (so it can be selected/right-clicked), over panel, or modal
   const isOverInteractive = (hover >= 0) || overPanel(mouse.x, mouse.y) || (spot !== null && overSpot(mouse.x, mouse.y));
-  // If moving out of interactive zone onto the game map, release capture IMMEDIATELY so in-game map is always clickable
   setCapture(isOverInteractive, !isOverInteractive);
   renderTooltip();
 }
@@ -1885,6 +1903,7 @@ async function openSpot(index) {
   clearTimeout(spotCloseTimer);
   closeLightbox();
   spot = { index, media: [], summary: '', loading: false, error: false };
+  setCapture(true);
   const type = data.types[data.markers.type[index]];
   $('spot-name').textContent = type.name;
   $('spot-icon').removeAttribute('src');
@@ -2457,6 +2476,10 @@ function renderDataInfo() {
 
 // ---------- Bedienelemente ----------
 
+$('panel').addEventListener('mouseenter', () => setCapture(true));
+$('panel').addEventListener('mousemove', () => setCapture(true));
+$('spot').addEventListener('mouseenter', () => setCapture(true));
+$('spot').addEventListener('mousemove', () => setCapture(true));
 $('close-panel').addEventListener('click', () => setPanel(false));
 $('panel-handle').addEventListener('click', () => setPanel(true));
 $('close-spot').addEventListener('click', closeSpot);
@@ -2640,6 +2663,13 @@ api.on('minimap', (pos) => {
         targetHeading = Math.atan2(mdy, mdx);
       }
     }
+    if (lastCvInfo && (!cvCalibrated || (pos.score && pos.score > 0.82))) {
+      cvAnchorX = lastCvInfo.x;
+      cvAnchorY = lastCvInfo.y;
+      cvMapAnchorX = pos.x;
+      cvMapAnchorY = pos.y;
+      cvCalibrated = true;
+    }
     lastPlayerMapX = pos.x;
     lastPlayerMapY = pos.y;
     minimap = pos;
@@ -2653,6 +2683,63 @@ api.on('minimap', (pos) => {
   }
   requestDraw();
 });
+let cvCalibrated = false;
+let cvAnchorX = 0;
+let cvAnchorY = 0;
+let cvMapAnchorX = 0;
+let cvMapAnchorY = 0;
+let lastCvInfo = null;
+const CV_SCALE = 1.0 / 15.0; // 15 meters per z13 map unit
+
+api.on('cv:track', (info) => {
+  if (!info || typeof info.x !== 'number') return;
+  lastCvInfo = info;
+  const now = performance.now();
+
+  // Continuously calibrate when the in-game map is locked and centered
+  if (target && target.sx && (target.locked || !cvCalibrated)) {
+    const mapCenterX = (-target.ox + 0.5) / target.sx;
+    const mapCenterY = (-target.oy + 0.5) / target.sy;
+    if (Number.isFinite(mapCenterX) && Number.isFinite(mapCenterY)) {
+      cvAnchorX = info.x;
+      cvAnchorY = info.y;
+      cvMapAnchorX = mapCenterX;
+      cvMapAnchorY = mapCenterY;
+      cvCalibrated = true;
+    }
+  }
+
+  if (cvCalibrated) {
+    const curX = cvMapAnchorX + (info.x - cvAnchorX) * CV_SCALE;
+    const curY = cvMapAnchorY - (info.y - cvAnchorY) * CV_SCALE;
+
+    playerTrack.x = curX;
+    playerTrack.y = curY;
+    playerTrack.lastSeen = now;
+    playerTrack.lastStepTime = now;
+    playerTrack.live = true;
+    playerTrack.mapId = info.mapId || 0;
+    playerTrack.isUnderground = (info.mapId > 0);
+
+    if (typeof info.angle === 'number' && Number.isFinite(info.angle)) {
+      targetHeading = (info.angle * Math.PI) / 180;
+    }
+
+    minimap = {
+      x: curX,
+      y: curY,
+      scale: 1.2,
+      angle: targetHeading,
+      mapId: info.mapId || 0,
+      isUnderground: (info.mapId > 0)
+    };
+
+    lastMinimapPos = minimap;
+    lastMinimapTime = now;
+    requestDraw();
+  }
+});
+
 api.on('nearby:done', () => {
   nearbyDoneUntil = performance.now() + 1500;
   renderNearby();

@@ -1,7 +1,7 @@
 {
   "name": "genshin-map-overlay",
   "productName": "Genshin Map Overlay",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Real-time, ban-safe in-game map overlay for Genshin Impact. Features visual CV tracking, multi-level underground/surface map layers, minimap radar with edge indicators, pin selection, right-click mark as found, and 1-click AppSample cloud sync.",
   "main": "src/main.js",
   "scripts": {
