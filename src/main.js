@@ -548,6 +548,10 @@ function sendToTracker(channel, payload) {
 }
 
 function updateSettings(patch) {
+  if (patch.hotkeys && typeof patch.hotkeys === 'object') {
+    cfg.hotkeys = { ...cfg.hotkeys, ...patch.hotkeys };
+    delete patch.hotkeys;
+  }
   Object.assign(cfg, patch);
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => config.save(cfg), 400);
@@ -930,7 +934,17 @@ ipcMain.on('overlay:settings', (event, patch) => {
   }
   if (Number.isFinite(patch.opacity)) allowed.opacity = Math.min(1, Math.max(0.2, patch.opacity));
   if (Number.isFinite(patch.markerSize)) allowed.markerSize = Math.min(48, Math.max(14, patch.markerSize));
+  if (patch.hotkeys && typeof patch.hotkeys === 'object') {
+    const valid = {};
+    for (const [k, v] of Object.entries(patch.hotkeys)) {
+      if (typeof v === 'string') valid[k] = v;
+    }
+    allowed.hotkeys = valid;
+  }
   updateSettings(allowed);
+  if (allowed.hotkeys) {
+    registerHotkeys();
+  }
   if (typeof patch.minimap === 'boolean') setMinimap(patch.minimap);
 });
 

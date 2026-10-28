@@ -679,3 +679,59 @@ input[type="range"]::-webkit-slider-thumb {
 .tele-focus-btn:hover {
   background: #1d4ed8;
 }
+
+/* Hotkey Editor */
+.hotkey-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(7 * var(--u)) calc(10 * var(--u));
+  border-radius: var(--radius);
+  background: var(--cream-dim);
+  color: var(--slate);
+  gap: calc(8 * var(--u));
+  transition: background 0.15s ease;
+}
+.hotkey-row:hover {
+  background: var(--cream-row);
+}
+.hotkey-info {
+  flex: 1;
+  min-width: 0;
+}
+.hotkey-title {
+  font-size: calc(12 * var(--u));
+  font-weight: 700;
+  color: var(--slate);
+}
+.hotkey-desc {
+  font-size: calc(10.5 * var(--u));
+  color: var(--slate-soft);
+  line-height: 1.25;
+  margin-top: calc(1 * var(--u));
+}
+.hotkey-btn {
+  flex: none;
+  min-width: calc(64 * var(--u));
+  padding: calc(4 * var(--u)) calc(8 * var(--u));
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: calc(11 * var(--u));
+  font-weight: 700;
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.hotkey-btn:hover {
+  background: #475569;
+  border-color: #64748b;
+}
+.hotkey-btn.recording {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 calc(8 * var(--u)) rgba(37, 99, 235, 0.6);
+}

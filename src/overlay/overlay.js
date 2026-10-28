@@ -989,29 +989,66 @@ api.on('cursor', (point) => {
 
 let mousePressInfo = null;
 
-function findAndMarkAt(checkX, checkY) {
-  if (checkX < 0 || checkY < 0 || !data) return false;
+function findPinIndexAt(x, y) {
+  if (x < 0 || y < 0 || !data || drawnCount <= 0) return -1;
   const u = uiScale();
   const radius = Math.max(38, (settings.markerSize + 16) * u);
   let best = -1;
   let bestDist = radius * radius;
-  if (drawnCount > 0) {
-    for (let k = 0; k < drawnCount; k++) {
-      const dx = drawnX[k] - checkX;
-      const dy = drawnY[k] - checkY;
-      const d = dx * dx + dy * dy;
-      if (d < bestDist) {
-        bestDist = d;
-        best = drawnIndex[k];
-      }
+  for (let k = 0; k < drawnCount; k++) {
+    const dx = drawnX[k] - x;
+    const dy = drawnY[k] - y;
+    const d = dx * dx + dy * dy;
+    if (d < bestDist) {
+      bestDist = d;
+      best = drawnIndex[k];
     }
   }
+  return best;
+}
+
+function findAndMarkAt(checkX, checkY) {
+  const best = findPinIndexAt(checkX, checkY);
   if (best >= 0) {
     toggleFoundMarker(best);
     return true;
   }
   return false;
 }
+
+function toggleNavigation(index) {
+  if (index < 0 || !data || !data.markers) return;
+  const id = data.markers.id[index];
+  if (navigatingPin && navigatingPin.id === id) {
+    navigatingPin = null;
+    showToast('✕ Navigation cleared');
+  } else {
+    const type = data.types[data.markers.type[index]];
+    navigatingPin = {
+      id,
+      index,
+      x: data.markers.x[index],
+      y: data.markers.y[index],
+      name: type ? type.name : 'Target',
+      isUnderground: data.markers.underground && data.markers.underground[index] === 1,
+      floorName: (data.layers && data.markers.layerId) ? data.layers[data.markers.layerId[index]] : ''
+    };
+    showToast(`🧭 Tracking ${navigatingPin.name}`);
+  }
+  renderSpotNav();
+  requestDraw();
+}
+
+window.addEventListener('dblclick', (event) => {
+  if (overPanel(event.clientX, event.clientY) || (spot !== null && overSpot(event.clientX, event.clientY))) {
+    return;
+  }
+  const targetIndex = hover >= 0 ? hover : findPinIndexAt(event.clientX, event.clientY);
+  if (targetIndex >= 0) {
+    event.preventDefault();
+    toggleNavigation(targetIndex);
+  }
+});
 
 window.addEventListener('mousedown', (event) => {
   // If clicked inside sidebar or spot popup, keep capture active and let DOM handle it
@@ -1600,6 +1637,107 @@ function renderStatus() {
   $('hud-progress').style.width = `${Math.round((trackerStatus.progress || 0) * 100)}%`;
 }
 
+const HOTKEY_DEFS = [
+  { action: 'toggleOverlay', defaultKey: 'F7', name: 'Toggle Overlay', desc: 'Show or hide the entire map overlay in-game' },
+  { action: 'togglePanel', defaultKey: 'F8', name: 'Toggle Sidebar', desc: 'Open or close this sidebar and categories' },
+  { action: 'toggleFound', defaultKey: 'F9', name: 'Hide/Show Collected', desc: 'Toggle visibility of already collected pins' },
+  { action: 'cycleOpacity', defaultKey: 'F10', name: 'Cycle Opacity', desc: 'Switch transparency between 100%, 75%, and 50%' },
+  { action: 'markHovered', defaultKey: 'F4', name: 'Mark Hovered Pin', desc: 'Mark the pin under your mouse cursor as collected' },
+  { action: 'markNearby', defaultKey: 'Alt+E', name: 'Mark Minimap Pin', desc: 'Mark the nearest pin detected on your minimap' },
+];
+
+let activeRecordingAction = null;
+
+function renderHotkeyEditor() {
+  const container = $('hotkey-editor');
+  if (!container) return;
+  container.innerHTML = '';
+  const currentHotkeys = settings.hotkeys || {};
+
+  HOTKEY_DEFS.forEach((def) => {
+    const row = document.createElement('div');
+    row.className = 'hotkey-row';
+
+    const info = document.createElement('div');
+    info.className = 'hotkey-info';
+
+    const title = document.createElement('div');
+    title.className = 'hotkey-title';
+    title.textContent = def.name;
+
+    const desc = document.createElement('div');
+    desc.className = 'hotkey-desc';
+    desc.textContent = def.desc;
+
+    info.append(title, desc);
+
+    const btn = document.createElement('button');
+    btn.className = 'hotkey-btn';
+    btn.type = 'button';
+    btn.dataset.action = def.action;
+    const keyVal = currentHotkeys[def.action] || def.defaultKey;
+    btn.textContent = keyVal;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeRecordingAction === def.action) {
+        cancelRecordingHotkey();
+      } else {
+        startRecordingHotkey(def.action, btn);
+      }
+    });
+
+    row.append(info, btn);
+    container.append(row);
+  });
+}
+
+function startRecordingHotkey(action, btn) {
+  cancelRecordingHotkey();
+  activeRecordingAction = action;
+  btn.classList.add('recording');
+  btn.textContent = 'Press key...';
+  setCapture(true);
+}
+
+function cancelRecordingHotkey() {
+  if (!activeRecordingAction) return;
+  const currentHotkeys = settings.hotkeys || {};
+  const btn = document.querySelector(`.hotkey-btn[data-action="${activeRecordingAction}"]`);
+  if (btn) {
+    btn.classList.remove('recording');
+    const def = HOTKEY_DEFS.find(d => d.action === activeRecordingAction);
+    btn.textContent = currentHotkeys[activeRecordingAction] || (def ? def.defaultKey : '');
+  }
+  activeRecordingAction = null;
+}
+
+function formatKeyToAccelerator(e) {
+  if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return null;
+
+  const parts = [];
+  if (e.ctrlKey) parts.push('Ctrl');
+  if (e.altKey) parts.push('Alt');
+  if (e.shiftKey) parts.push('Shift');
+  if (e.metaKey) parts.push('Super');
+
+  let key = e.key;
+  if (/^F\d{1,2}$/i.test(key)) {
+    key = key.toUpperCase();
+  } else if (key.length === 1) {
+    key = key.toUpperCase();
+  } else if (key.startsWith('Arrow')) {
+    key = key.replace('Arrow', '');
+  } else if (key === ' ') {
+    key = 'Space';
+  } else if (key === 'Escape') {
+    return 'Escape';
+  }
+
+  parts.push(key);
+  return parts.join('+');
+}
+
 function renderSettings() {
   $('hide-found').checked = settings.hideFound;
   $('show-captures').checked = !!settings.showInCaptures;
@@ -1610,6 +1748,7 @@ function renderSettings() {
   $('size-value').textContent = `${settings.markerSize} px`;
   updateRangeFill($('opacity'));
   updateRangeFill($('size'));
+  renderHotkeyEditor();
   const hk = settings.hotkeys || {};
   $('kbd-found').textContent = hk.toggleFound || '';
   const keys = [
@@ -1618,6 +1757,7 @@ function renderSettings() {
     hk.toggleFound && `${hk.toggleFound} ${tt('ui.key.toggleFound')}`,
     hk.cycleOpacity && `${hk.cycleOpacity} ${tt('ui.key.cycleOpacity')}`,
     hk.markNearby && `${hk.markNearby} ${tt('ui.key.markNearby')}`,
+    hk.markHovered && `${hk.markHovered} Mark Hovered`,
   ].filter(Boolean).join(' · ');
   const errors = settings.hotkeyErrors || [];
   $('keys').textContent = errors.length ? `${keys} – ${tt('ui.keysUnavailable', { keys: errors.join(', ') })}` : keys;
@@ -1831,25 +1971,7 @@ const btnNav = $('spot-nav');
 if (btnNav) {
   btnNav.addEventListener('click', () => {
     if (!spot || !data) return;
-    const id = data.markers.id[spot.index];
-    if (navigatingPin && navigatingPin.id === id) {
-      navigatingPin = null;
-      showToast('❌ Navigation cleared');
-    } else {
-      const type = data.types[data.markers.type[spot.index]];
-      navigatingPin = {
-        id,
-        index: spot.index,
-        x: data.markers.x[spot.index],
-        y: data.markers.y[spot.index],
-        name: type ? type.name : 'Target',
-        isUnderground: data.markers.underground && data.markers.underground[spot.index] === 1,
-        floorName: (data.layers && data.markers.layerId) ? data.layers[data.markers.layerId[spot.index]] : ''
-      };
-      showToast(`📍 Tracking ${navigatingPin.name} on Minimap`);
-    }
-    renderSpotNav();
-    requestDraw();
+    toggleNavigation(spot.index);
   });
 }
 
@@ -1937,7 +2059,44 @@ if (spotElem) {
   });
 }
 window.addEventListener('keydown', (e) => {
+  if (activeRecordingAction) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.key === 'Escape') {
+      cancelRecordingHotkey();
+      showToast('Hotkey recording cancelled');
+      return;
+    }
+    const combo = formatKeyToAccelerator(e);
+    if (!combo) return;
+
+    const action = activeRecordingAction;
+    const def = HOTKEY_DEFS.find(d => d.action === action);
+    cancelRecordingHotkey();
+
+    const patch = { hotkeys: { [action]: combo } };
+    if (!settings.hotkeys) settings.hotkeys = {};
+    settings.hotkeys[action] = combo;
+    api.saveSettings(patch);
+    renderHotkeyEditor();
+    showToast(`✓ Hotkey set: ${def ? def.name : action} → ${combo}`);
+    return;
+  }
+
   if (e.key === 'Escape' && panelOpen) {
     setPanel(false);
   }
 });
+
+const btnResetHotkeys = $('reset-hotkeys');
+if (btnResetHotkeys) {
+  btnResetHotkeys.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const defaults = {};
+    HOTKEY_DEFS.forEach(d => { defaults[d.action] = d.defaultKey; });
+    settings.hotkeys = { ...defaults };
+    api.saveSettings({ hotkeys: defaults });
+    renderHotkeyEditor();
+    showToast('✓ Hotkeys reset to defaults');
+  });
+}
