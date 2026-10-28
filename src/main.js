@@ -1009,6 +1009,20 @@ ipcMain.handle('overlay:icon', async (event, type) => {
   }
 });
 
+ipcMain.handle('overlay:image', async (event, id) => {
+  if (!fromOverlay(event)) return null;
+  const n = Number(id);
+  const cacheFile = path.join(store.cacheDir, 'overlays', `${n}.png`);
+  const bundleFile = path.join(__dirname, 'data', 'overlays', `${n}.png`);
+  const file = fs.existsSync(cacheFile) ? cacheFile : (fs.existsSync(bundleFile) ? bundleFile : null);
+  if (file) {
+    try {
+      return fs.readFileSync(file);
+    } catch {}
+  }
+  return null;
+});
+
 // Fehler kommen als { error } zurück
 ipcMain.handle('overlay:comments', async (event, type, id, page) => {
   if (!fromOverlay(event)) return null;

@@ -30,10 +30,15 @@ const LAYER_NAMES = [
 ];
 const layerNameToId = new Map(LAYER_NAMES.map((name, idx) => [name, idx]));
 
-const teyvatOverlays = (OVERLAYS && OVERLAYS['2']) || [];
+const allOverlays = [];
+if (OVERLAYS && typeof OVERLAYS === 'object') {
+  for (const list of Object.values(OVERLAYS)) {
+    if (Array.isArray(list)) allOverlays.push(...list);
+  }
+}
 const groupFloorMap = new Map();
 const groupDefaultMap = new Map();
-for (const o of teyvatOverlays) {
+for (const o of allOverlays) {
   if (!groupFloorMap.has(o.overlayGroupId)) {
     groupFloorMap.set(o.overlayGroupId, new Map());
     groupDefaultMap.set(o.overlayGroupId, o.name);
@@ -380,7 +385,7 @@ function decodeMarkers(json, names, lang = 'de') {
   rest.sort((a, b) => types[a].name.localeCompare(types[b].name, lang));
   if (rest.length) categories.push({ key: 'other', title: lang === 'de' ? 'Weitere' : 'Other', types: rest });
 
-  const formattedOverlays = teyvatOverlays.map((o) => {
+  const formattedOverlays = allOverlays.map((o) => {
     const x0 = geo.lngToMapX(o.bounds.west);
     const y0 = geo.latToMapY(o.bounds.north);
     const x1 = geo.lngToMapX(o.bounds.east);

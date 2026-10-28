@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('overlayApi', {
   refreshData: () => ipcRenderer.send('overlay:refresh-data'),
   hide: () => ipcRenderer.send('overlay:hide'),
   icon: (type) => ipcRenderer.invoke('overlay:icon', type),
+  overlayImage: (id) => ipcRenderer.invoke('overlay:image', id),
   comments: (type, id, page) => ipcRenderer.invoke('overlay:comments', type, id, page),
   commentImage: (imagePath) => ipcRenderer.invoke('overlay:comment-image', imagePath),
   videoThumb: (videoId) => ipcRenderer.invoke('overlay:video-thumb', videoId),

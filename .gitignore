@@ -30,3 +30,7 @@ __pycache__/
 Thumbs.db
 desktop.ini
 *.tmp
+
+# Overlays binary assets
+src/data/kongying_overlays/
+src/data/overlays/

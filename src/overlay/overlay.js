@@ -306,18 +306,33 @@ function tick(now) {
 }
 
 
-const overlayImageCache = new Map();
-function getOverlayImage(url) {
-  if (!url) return null;
-  let img = overlayImageCache.get(url);
-  if (!img) {
-    img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = url;
-    img.onload = () => requestDraw();
-    overlayImageCache.set(url, img);
+function findActiveCaveOverlay(px, py) {
+  if (!data || !data.overlays || !data.overlays.length) return null;
+  for (let k = 0; k < data.overlays.length; k++) {
+    const o = data.overlays[k];
+    if (px >= o.minX - 0.004 && px <= o.maxX + 0.004 && py >= o.minY - 0.004 && py <= o.maxY + 0.004) {
+      return o;
+    }
   }
-  return (img.complete && img.naturalWidth > 0) ? img : null;
+  return null;
+}
+
+const overlayBitmaps = new Map();
+function overlayBitmap(id) {
+  if (!id) return null;
+  if (overlayBitmaps.has(id)) return overlayBitmaps.get(id);
+  overlayBitmaps.set(id, null);
+  if (window.api && window.api.overlayImage) {
+    window.api.overlayImage(id).then(async (bytes) => {
+      if (!bytes || !bytes.length) return;
+      try {
+        const bmp = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+        overlayBitmaps.set(id, bmp);
+        requestDraw();
+      } catch (err) {}
+    });
+  }
+  return null;
 }
 
 function drawUndergroundOverlays(W, H, view) {
@@ -328,7 +343,7 @@ function drawUndergroundOverlays(W, H, view) {
   const oy = view.oy * H;
 
   ctx.save();
-  ctx.globalAlpha = Math.min(1.0, visibility * 0.92);
+  ctx.globalAlpha = Math.min(1.0, visibility * 0.95);
   for (let k = 0; k < data.overlays.length; k++) {
     const o = data.overlays[k];
     const screenX = sx * o.x + ox;
@@ -340,7 +355,7 @@ function drawUndergroundOverlays(W, H, view) {
     if (screenX + screenW < 0 || screenX > W || screenY + screenH < 0 || screenY > H) continue;
     if (screenW < 8 || screenH < 8) continue;
 
-    const img = getOverlayImage(o.img);
+    const img = overlayBitmap(o.id);
     if (img) {
       ctx.drawImage(img, Math.round(screenX), Math.round(screenY), Math.round(screenW), Math.round(screenH));
     }
@@ -481,17 +496,17 @@ function drawMinimap() {
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.clip();
 
-  // If in cave, draw the cave map overlay inside the minimap radar circle
-  if (playerTrack.isUnderground && data && data.overlays && data.overlays.length) {
+  // If in cave or near a cave overlay, draw the cave map overlay inside the minimap radar circle
+  if (data && data.overlays && data.overlays.length) {
     const px = minimap ? minimap.x : playerTrack.x;
     const py = minimap ? minimap.y : playerTrack.y;
     for (let k = 0; k < data.overlays.length; k++) {
       const o = data.overlays[k];
       if (px >= o.minX - 0.005 && px <= o.maxX + 0.005 && py >= o.minY - 0.005 && py <= o.maxY + 0.005) {
-        const img = getOverlayImage(o.img);
+        const img = overlayBitmap(o.id);
         if (img) {
           ctx.save();
-          ctx.globalAlpha = 0.85;
+          ctx.globalAlpha = 0.92;
           const radarScale = (r / reach);
           const screenX = cx + (o.x - px) * radarScale;
           const screenY = cy + (o.y - py) * radarScale;
@@ -512,11 +527,9 @@ function drawMinimap() {
     const icon = iconBitmap(data.types[t].key);
     for (const i of list) {
       const isUg = ug && ug[i] === 1;
-      // If player is in a cave, always show underground pins on the radar!
-      if (!playerTrack.isUnderground) {
-        if (activeLayer === 'surface' && isUg) continue;
-        if (activeLayer === 'underground' && !isUg) continue;
-      }
+      // Layer filtering: in 'all' mode, both surface & underground pins always show!
+      if (activeLayer === 'surface' && isUg) continue;
+      if (activeLayer === 'underground' && !isUg) continue;
 
       const dx = mx[i] - minimap.x;
       const dy = my[i] - minimap.y;
@@ -2801,7 +2814,10 @@ api.on('cv:track', (info) => {
     playerTrack.lastStepTime = now;
     playerTrack.live = true;
     playerTrack.mapId = info.mapId || 0;
-    playerTrack.isUnderground = (info.mapId > 0);
+
+    const cave = findActiveCaveOverlay(curX, curY);
+    playerTrack.isUnderground = (info.mapId > 0) || !!cave;
+    playerTrack.activeCave = cave;
 
     if (typeof info.angle === 'number' && Number.isFinite(info.angle)) {
       targetHeading = (info.angle * Math.PI) / 180;
@@ -2915,11 +2931,32 @@ if (btnKyExe) {
   });
 }
 
+let mapOpenedManually = false;
 api.on('map:keyM', () => {
-  if (target) {
+  if (target || mapOpenedManually) {
     target = null;
     velocity = null;
     visibility = 0;
+    mapOpenedManually = false;
+    requestDraw();
+  } else {
+    mapOpenedManually = true;
+    const px = playerTrack.x || 0.5;
+    const py = playerTrack.y || 0.5;
+    const W = innerWidth;
+    const H = innerHeight;
+    const s = 1.0;
+    const synthetic = {
+      sx: s / W,
+      sy: s / H,
+      ox: 0.5 - px * (s / W),
+      oy: 0.5 - py * (s / H),
+      locked: true,
+      at: performance.now()
+    };
+    target = synthetic;
+    view = { ...synthetic };
+    visibility = 1.0;
     requestDraw();
   }
 });
