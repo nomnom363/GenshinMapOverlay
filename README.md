@@ -39,20 +39,6 @@ A high-performance, real-time in-game map overlay for **Genshin Impact**. Displa
 ### ☁️ 1-Click AppSample Cloud Sync
 - Built-in local bridge at `http://127.0.0.1:48762/sync` allows seamless two-way progress synchronization with [genshin-impact-map.appsample.com](https://genshin-impact-map.appsample.com/).
 
----
-
-## 🛡️ 100% Ban Safe Guarantee
-
-Unlike unsafe cheat tools or injectors, **Genshin Map Overlay does not touch Genshin Impact**:
-- ❌ **No DLL Injection**
-- ❌ **No Memory Reading or Process Hooking**
-- ❌ **No Game File Modification**
-
-**How it works:**
-1. The app captures your desktop screen through the standard Windows Desktop Duplication / Graphics Capture API.
-2. An offline OpenCV computer vision engine detects your map location and zoom scale purely by analyzing map landmarks.
-3. Markers are drawn onto an independent, transparent, click-through overlay window positioned over the game.
-4. From the perspective of Genshin Impact and anti-cheat (mhyprot2 / HoYoKProtect), this application is identical to watching a video or running Discord overlay.
 
 ---
 
