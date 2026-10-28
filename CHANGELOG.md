@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0] - 2026-10-28
+
+### Added & Enhanced
+- **Subterranean Cave Map Rendering (Surface + Underground Overlays)**:
+  - Added dedicated underground cave overlay renderer in `overlay.js` (`drawUndergroundOverlays`): renders all 290+ subterranean cave systems, chambers, tunnels, and multi-floor structures directly on the in-game map canvas beneath the pins.
+  - Implemented real-time minimap cave radar: when inside a cave (`playerTrack.isUnderground`), the active subterranean cave floor is clipped and drawn directly inside the circular minimap radar under the player's arrow.
+  - Pre-calculated and passed all 290 Teyvat cave overlays with bounding coordinates from `store.js` (`decodeMarkers`) to the overlay client.
+- **Preserved 100% English Community Pins & Data**:
+  - Maintained the entire English community database (item names, categories, comments, media guides, right-click marking) from the current clean build — with zero Chinese text or clutter from external tools.
+- **Layer & Cave Map Visibility Controls**:
+  - Automatically activates cave overlays and highlights underground pins whenever the player is detected inside a cave or subterranean zone.
+  - Retained manual layer filter controls (`All`, `Surface`, `Underground`) in the sidebar panel.
+
+---
+
 ## [1.2.9] - 2026-10-28
 
 ### Added & Fixed

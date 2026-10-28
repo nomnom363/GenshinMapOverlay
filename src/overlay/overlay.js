@@ -305,6 +305,49 @@ function tick(now) {
   if (animating) requestDraw();
 }
 
+
+const overlayImageCache = new Map();
+function getOverlayImage(url) {
+  if (!url) return null;
+  let img = overlayImageCache.get(url);
+  if (!img) {
+    img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = url;
+    img.onload = () => requestDraw();
+    overlayImageCache.set(url, img);
+  }
+  return (img.complete && img.naturalWidth > 0) ? img : null;
+}
+
+function drawUndergroundOverlays(W, H, view) {
+  if (!data || !data.overlays || !data.overlays.length) return;
+  const sx = view.sx * W;
+  const ox = view.ox * W;
+  const sy = view.sy * H;
+  const oy = view.oy * H;
+
+  ctx.save();
+  ctx.globalAlpha = Math.min(1.0, visibility * 0.92);
+  for (let k = 0; k < data.overlays.length; k++) {
+    const o = data.overlays[k];
+    const screenX = sx * o.x + ox;
+    const screenY = sy * o.y + oy;
+    const screenW = sx * o.w;
+    const screenH = sy * o.h;
+
+    // Viewport frustum cull
+    if (screenX + screenW < 0 || screenX > W || screenY + screenH < 0 || screenY > H) continue;
+    if (screenW < 8 || screenH < 8) continue;
+
+    const img = getOverlayImage(o.img);
+    if (img) {
+      ctx.drawImage(img, Math.round(screenX), Math.round(screenY), Math.round(screenW), Math.round(screenH));
+    }
+  }
+  ctx.restore();
+}
+
 function draw() {
   const W = innerWidth;
   const H = innerHeight;
@@ -336,6 +379,12 @@ function draw() {
   const by = view.oy * H;
   const baseAlpha = settings.opacity * visibility;
   const activeLayer = settings.layerFilter || 'all';
+
+  // Draw underground cave map layers directly beneath the pins
+  const showCaveOverlays = (activeLayer === 'underground' || (activeLayer === 'all' && (playerTrack.isUnderground || settings.showCaveMaps !== false)));
+  if (showCaveOverlays && data.overlays && data.overlays.length) {
+    drawUndergroundOverlays(W, H, view);
+  }
 
   // Symbole sind Stecknadeln wie im Spiel: Spitze (unten Mitte) sitzt auf der Markerposition.
   // (x, y) = Spitze, cy = Symbolmitte
@@ -431,6 +480,31 @@ function drawMinimap() {
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.clip();
+
+  // If in cave, draw the cave map overlay inside the minimap radar circle
+  if (playerTrack.isUnderground && data && data.overlays && data.overlays.length) {
+    const px = minimap ? minimap.x : playerTrack.x;
+    const py = minimap ? minimap.y : playerTrack.y;
+    for (let k = 0; k < data.overlays.length; k++) {
+      const o = data.overlays[k];
+      if (px >= o.minX - 0.005 && px <= o.maxX + 0.005 && py >= o.minY - 0.005 && py <= o.maxY + 0.005) {
+        const img = getOverlayImage(o.img);
+        if (img) {
+          ctx.save();
+          ctx.globalAlpha = 0.85;
+          const radarScale = (r / reach);
+          const screenX = cx + (o.x - px) * radarScale;
+          const screenY = cy + (o.y - py) * radarScale;
+          const screenW = o.w * radarScale;
+          const screenH = o.h * radarScale;
+          ctx.drawImage(img, Math.round(screenX), Math.round(screenY), Math.round(screenW), Math.round(screenH));
+          ctx.restore();
+          break;
+        }
+      }
+    }
+  }
+
   for (const t of enabled) {
     const list = markersByType[t];
     if (!list) continue;

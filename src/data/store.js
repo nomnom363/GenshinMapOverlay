@@ -380,7 +380,28 @@ function decodeMarkers(json, names, lang = 'de') {
   rest.sort((a, b) => types[a].name.localeCompare(types[b].name, lang));
   if (rest.length) categories.push({ key: 'other', title: lang === 'de' ? 'Weitere' : 'Other', types: rest });
 
-  return { types, categories, markers, layers: LAYER_NAMES, entrances };
+  const formattedOverlays = teyvatOverlays.map((o) => {
+    const x0 = geo.lngToMapX(o.bounds.west);
+    const y0 = geo.latToMapY(o.bounds.north);
+    const x1 = geo.lngToMapX(o.bounds.east);
+    const y1 = geo.latToMapY(o.bounds.south);
+    return {
+      id: o.id,
+      name: o.name,
+      groupId: o.overlayGroupId,
+      img: o.img,
+      x: Math.min(x0, x1),
+      y: Math.min(y0, y1),
+      w: Math.abs(x1 - x0),
+      h: Math.abs(y1 - y0),
+      minX: Math.min(x0, x1),
+      maxX: Math.max(x0, x1),
+      minY: Math.min(y0, y1),
+      maxY: Math.max(y0, y1),
+    };
+  });
+
+  return { types, categories, markers, layers: LAYER_NAMES, entrances, overlays: formattedOverlays };
 }
 
 module.exports = { DataStore, decodeMarkers, COMMENT_IMAGE_BASE };
