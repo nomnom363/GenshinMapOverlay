@@ -46,6 +46,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Screen Capture Hooking Chrome**:
   - Fixed `setupCapture()` mistakenly latching onto `"Genshin Impact Interactive World Map - Google Chrome"`.
   - Added strict exclusions for browsers (`chrome`, `edge`, `firefox`, `browser`) to ensure capture exclusively targets the actual game process.
+- **OpenCV Runtime Initialization**:
+  - Restored `node_modules/@techstark/opencv-js` in the packaged archive so `window.cv` loads properly, eliminating `TypeError: Cannot read properties of undefined (reading 'then')`.
+  - Added polling retry logic and defensive validation in `loadCv()` to ensure graceful initialization.
 - **Draw Loop Runtime ReferenceError**:
   - Moved `const u = uiScale();` to the top of `draw()` to resolve an out-of-order `ReferenceError` when navigating pins.
 - **Right-Click Pin Marking**:
