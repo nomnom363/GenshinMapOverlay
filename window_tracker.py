@@ -182,6 +182,19 @@ def cv_track_worker():
             ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_int)
         ]
+        cv_lib.GetPositionOfMap.restype = ctypes.c_bool
+        cv_lib.GetPositionOfMap.argtypes = [
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_int)
+        ]
+        if hasattr(cv_lib, 'SetUseDx11CaptureMode'):
+            cv_lib.SetUseDx11CaptureMode.restype = ctypes.c_bool
+            cv_lib.SetUseDx11CaptureMode.argtypes = []
+            try:
+                cv_lib.SetUseDx11CaptureMode()
+            except Exception:
+                pass
         if cv_lib.init():
             cv_initialized = True
     except Exception:
@@ -203,6 +216,8 @@ def cv_track_worker():
                     cv_lib.SetHandle(hwnd)
                     attached_hwnd = hwnd
                 ok = cv_lib.GetTransformOfMap(ctypes.byref(x), ctypes.byref(y), ctypes.byref(a), ctypes.byref(mapId))
+                if not ok:
+                    ok = cv_lib.GetPositionOfMap(ctypes.byref(x), ctypes.byref(y), ctypes.byref(mapId))
                 if ok:
                     now = time.time()
                     if now - last_sent >= 0.04:  # ~25 FPS

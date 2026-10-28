@@ -909,6 +909,9 @@ function updateTrayMenu() {
           },
         },
         { type: 'separator' },
+        { label: '🗺️ Open KongYing Tavern Map (v3.yuanshen.site)', click: openKongYingMapWindow },
+        { label: '🚀 Launch KongYing Portable Client (Map.exe)', click: launchKongYingPortable },
+        { type: 'separator' },
         { label: tr('tray.openSettings'), click: () => shell.openPath(config.filePath()) },
         { label: tr('tray.reloadSettings'), click: reloadSettings },
       ],
@@ -1406,3 +1409,44 @@ function startChromeSyncServer() {
 ipcMain.on('appsample:open-chrome', () => {
   shell.openExternal('http://127.0.0.1:48762/sync');
 });
+
+let kongyingWin = null;
+function openKongYingMapWindow() {
+  if (alive(kongyingWin)) {
+    kongyingWin.focus();
+    return;
+  }
+  kongyingWin = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    minWidth: 800,
+    minHeight: 600,
+    title: 'KongYing Tavern Interactive Map (v3.yuanshen.site)',
+    icon: path.join(__dirname, '..', 'assets', 'icon.png'),
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: false,
+      webSecurity: false
+    }
+  });
+  kongyingWin.webContents.setUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+  );
+  kongyingWin.loadURL('https://v3.yuanshen.site/');
+  kongyingWin.on('closed', () => {
+    kongyingWin = null;
+  });
+}
+
+function launchKongYingPortable() {
+  const exePath = 'D:\\KongYingMap\\Map.exe';
+  if (fs.existsSync(exePath)) {
+    spawn(exePath, [], { detached: true, stdio: 'ignore' }).unref();
+    notify('Launching KongYing Portable Map (Map.exe)...');
+  } else {
+    notify('KongYing Map.exe not found at D:\\KongYingMap\\Map.exe');
+  }
+}
+
+ipcMain.on('kongying:open', () => openKongYingMapWindow());
+ipcMain.on('kongying:launch-exe', () => launchKongYingPortable());

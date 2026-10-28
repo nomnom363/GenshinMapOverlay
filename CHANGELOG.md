@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.9] - 2026-10-28
+
+### Added & Fixed
+- **Direct KongYing Tavern Map Integration**:
+  - Integrated full **KongYing Tavern Interactive Map** (`https://v3.yuanshen.site/`) accessible via tray menu and sidebar panel button (`🗺️ KongYing Map`).
+  - Added 1-click launcher for the standalone portable KongYing client (`🚀 Portable App` -> `D:\KongYingMap\Map.exe`).
+- **Critical Fix: Preload Bridge Whitelist for cvAutoTrack**:
+  - Identified and fixed critical bug where `'cv:track'`, `'window:bounds'`, and `'map:keyM'` were missing from `EVENTS` whitelist in `src/overlay/preload.js`, blocking `cvAutoTrack` events from reaching the overlay.
+- **Underground & Cave Tracking Fix**:
+  - Added DirectX 11 capture mode (`SetUseDx11CaptureMode()`) in `window_tracker.py` for direct hardware-accelerated game frame capture on Windows 10/11.
+  - Added `GetPositionOfMap` fallback in `window_tracker.py` when angle confidence is low.
+  - Fixed race condition where surface minimap null reports (`reportMinimap(null)`) wiped out active `cvAutoTrack` tracking when entering caves. Active cv tracking now keeps the player position and radar pins alive.
+  - Removed underground pin filtering in caves: when the player is subterranean, all underground pins within radar reach are prominently displayed and never hidden.
+
+---
+
 ## [1.2.8] - 2026-10-28
 
 ### Added & Integrated

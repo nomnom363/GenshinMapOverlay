@@ -346,7 +346,7 @@ function draw() {
     for (let k = 0; k < list.length && drawnCount < MAX_DRAWN; k++) {
       const i = list[k];
       const isUg = ug && ug[i] === 1;
-      if (activeLayer === 'surface' && isUg) continue;
+      if (activeLayer === 'surface' && isUg && !playerTrack.isUnderground) continue;
       if (activeLayer === 'underground' && !isUg) continue;
 
       const x = ax * mx[i] + bx;
@@ -438,8 +438,11 @@ function drawMinimap() {
     const icon = iconBitmap(data.types[t].key);
     for (const i of list) {
       const isUg = ug && ug[i] === 1;
-      if (activeLayer === 'surface' && isUg) continue;
-      if (activeLayer === 'underground' && !isUg) continue;
+      // If player is in a cave, always show underground pins on the radar!
+      if (!playerTrack.isUnderground) {
+        if (activeLayer === 'surface' && isUg) continue;
+        if (activeLayer === 'underground' && !isUg) continue;
+      }
 
       const dx = mx[i] - minimap.x;
       const dy = my[i] - minimap.y;
@@ -2676,6 +2679,11 @@ api.on('minimap', (pos) => {
     lastMinimapPos = pos;
     lastMinimapTime = now;
   } else if (!pos) {
+    const isCvActive = lastCvInfo && (now - playerTrack.lastSeen < 3000);
+    if (isCvActive) {
+      // cvAutoTrack is actively tracking (e.g. in cave or in air)! Do not kill tracking
+      return;
+    }
     playerTrack.live = false;
     if (now - lastMinimapTime > 60000) {
       minimap = null;
@@ -2814,6 +2822,22 @@ const btnSyncChrome = $('btn-sync-chrome');
 if (btnSyncChrome) {
   btnSyncChrome.addEventListener('click', () => {
     api.openLink('http://127.0.0.1:48762/sync');
+  });
+}
+
+const btnKy = $('btn-open-kongying');
+if (btnKy) {
+  btnKy.addEventListener('click', () => {
+    if (api.openKongYingMap) api.openKongYingMap();
+    else if (api.send) api.send('kongying:open');
+  });
+}
+
+const btnKyExe = $('btn-launch-kongying-exe');
+if (btnKyExe) {
+  btnKyExe.addEventListener('click', () => {
+    if (api.launchKongYingExe) api.launchKongYingExe();
+    else if (api.send) api.send('kongying:launch-exe');
   });
 }
 

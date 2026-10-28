@@ -3,13 +3,16 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 const EVENTS = [
   'settings', 'found:all', 'found:changed', 'tracker:status', 'data:markers',
-  'view', 'minimap', 'nearby:done', 'notice', 'panel:toggle', 'cursor',
+  'view', 'minimap', 'cv:track', 'window:bounds', 'map:keyM', 'nearby:done', 'notice', 'panel:toggle', 'cursor',
   'hotkey:markCurrent', 'hotkey:markAt', 'hotkey:navigateTarget', 'appsample:status'
 ];
 
 contextBridge.exposeInMainWorld('overlayApi', {
   on: (channel, callback) => {
     if (EVENTS.includes(channel)) ipcRenderer.on(channel, (_event, payload) => callback(payload));
+  },
+  send: (channel, ...args) => {
+    ipcRenderer.send(channel, ...args);
   },
   mouse: (capture) => ipcRenderer.send('overlay:mouse', capture),
   keyboard: (wanted) => ipcRenderer.send('overlay:keyboard', wanted),
@@ -27,4 +30,6 @@ contextBridge.exposeInMainWorld('overlayApi', {
   openAppSampleSync: () => ipcRenderer.send('appsample:open'),
   openChromeSync: () => ipcRenderer.send('appsample:open-chrome'),
   getSyncStatus: () => ipcRenderer.invoke('appsample:get-status'),
+  openKongYingMap: () => ipcRenderer.send('kongying:open'),
+  launchKongYingExe: () => ipcRenderer.send('kongying:launch-exe'),
 });
