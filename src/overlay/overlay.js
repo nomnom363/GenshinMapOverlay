@@ -81,7 +81,7 @@ function resizeCanvas() {
 }
 
 let captureTimer = null;
-function setCapture(on) {
+function setCapture(on, immediate = false) {
   if (on) {
     if (captureTimer) clearTimeout(captureTimer);
     captureTimer = null;
@@ -92,11 +92,17 @@ function setCapture(on) {
   } else {
     if (!captured) return;
     if (captureTimer) clearTimeout(captureTimer);
-    captureTimer = setTimeout(() => {
+    if (immediate) {
       captured = false;
       api.mouse(false);
       captureTimer = null;
-    }, 250);
+    } else {
+      captureTimer = setTimeout(() => {
+        captured = false;
+        api.mouse(false);
+        captureTimer = null;
+      }, 40);
+    }
   }
 }
 
@@ -768,82 +774,117 @@ function drawWorldNavigationArrow(W, H, u) {
 
 function drawBigMapNavigation(W, H, u, ax, ay, bx, by) {
   if (!navigatingPin || !data) return;
+  const half = (settings.markerSize * u) / 2;
   const targetX = ax * navigatingPin.x + bx;
-  const targetY = ay * navigatingPin.y + by;
+  const targetY = ay * navigatingPin.y + by - half;
 
-  const bestTele = findBestTeleport(navigatingPin.index);
-  if (bestTele) {
-    const teleX = ax * bestTele.x + bx;
-    const teleY = ay * bestTele.y + by;
-
-    // 1. Draw animated dashed route line
-    ctx.save();
-    ctx.setLineDash([10 * u, 6 * u]);
-    ctx.lineDashOffset = -performance.now() / 25;
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 2.8 * u;
-    ctx.shadowColor = '#38bdf8';
-    ctx.shadowBlur = 8 * u;
-    ctx.globalAlpha = Math.min(0.85, visibility);
-
-    ctx.beginPath();
-    ctx.moveTo(teleX, teleY);
-    ctx.lineTo(targetX, targetY);
-    ctx.stroke();
-
-    const dLine = Math.hypot(targetX - teleX, targetY - teleY);
-    const numC = Math.floor(dLine / (55 * u));
-    const aLine = Math.atan2(targetY - teleY, targetX - teleX);
-    ctx.fillStyle = '#ffffff';
-    for (let k = 1; k <= numC; k++) {
-      const t = k / (numC + 1);
-      const px = teleX + (targetX - teleX) * t;
-      const py = teleY + (targetY - teleY) * t;
-      ctx.save();
-      ctx.translate(px, py);
-      ctx.rotate(aLine);
-      ctx.beginPath();
-      ctx.moveTo(4 * u, 0);
-      ctx.lineTo(-4 * u, -3.5 * u);
-      ctx.lineTo(-2 * u, 0);
-      ctx.lineTo(-4 * u, 3.5 * u);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-    }
-    ctx.restore();
-
-    // 2. Draw glowing beacon ring on recommended teleport
-    ctx.save();
-    const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 180);
-    const r = (settings.markerSize * u * 0.6) + 10 * u + pulse * 6 * u;
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 2.5 * u;
-    ctx.shadowColor = '#38bdf8';
-    ctx.shadowBlur = 12 * u;
-    ctx.globalAlpha = Math.min(0.95, visibility);
-
-    ctx.beginPath();
-    ctx.arc(teleX, teleY, r, 0, Math.PI * 2);
-    ctx.stroke();
-
-    const distM = Math.round(bestTele.dist * 15);
-    drawNavPill(teleX, teleY - r - 12 * u, `⚡ Fastest Teleport (~ ${distM}m)`, '#38bdf8', u);
-    ctx.restore();
-  }
-
-  // 3. Draw pulsating focal beacon on target pin
+  // 1. Draw pulsating focal beacon and clear badge on target pin
   ctx.save();
   const pulseT = 0.5 + 0.5 * Math.sin(performance.now() / 200);
+  const targetR = (settings.markerSize * u * 0.6) + 10 * u + pulseT * 6 * u;
   ctx.strokeStyle = '#f59e0b';
   ctx.lineWidth = 2.5 * u;
   ctx.shadowColor = '#f59e0b';
   ctx.shadowBlur = 10 * u;
   ctx.globalAlpha = Math.min(0.95, visibility);
   ctx.beginPath();
-  ctx.arc(targetX, targetY, (settings.markerSize * u * 0.6) + 12 * u + pulseT * 8 * u, 0, Math.PI * 2);
+  ctx.arc(targetX, targetY, targetR, 0, Math.PI * 2);
   ctx.stroke();
   ctx.restore();
+
+  // Target name badge
+  drawNavPill(targetX, targetY - targetR - 12 * u, `🎯 ${navigatingPin.name}`, '#f59e0b', u);
+
+  // 2. Teleport & Route planning
+  const bestTele = findBestTeleport(navigatingPin.index);
+  if (bestTele) {
+    const teleX = ax * bestTele.x + bx;
+    const teleY = ay * bestTele.y + by - half;
+    const distM = Math.round(bestTele.dist * 15);
+
+    // Check if teleport is on screen or nearby
+    const teleOnScreen = teleX >= -40 && teleX <= W + 40 && teleY >= -40 && teleY <= H + 40;
+    const targetOnScreen = targetX >= -40 && targetX <= W + 40 && targetY >= -40 && targetY <= H + 40;
+
+    // Check player proximity
+    let usePlayerOrigin = false;
+    let originX = teleX;
+    let originY = teleY;
+
+    if (minimap && typeof minimap.x === 'number') {
+      const pDistM = Math.round(Math.hypot(navigatingPin.x - minimap.x, navigatingPin.y - minimap.y) * 15);
+      // If player is already closer to target than teleport is, route from player!
+      if (pDistM < distM || pDistM < 160) {
+        usePlayerOrigin = true;
+        originX = ax * minimap.x + bx;
+        originY = ay * minimap.y + by - half;
+      }
+    }
+
+    if (teleOnScreen && !usePlayerOrigin) {
+      // Draw glowing beacon ring on recommended teleport
+      ctx.save();
+      const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 180);
+      const r = (settings.markerSize * u * 0.6) + 10 * u + pulse * 6 * u;
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5 * u;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 12 * u;
+      ctx.globalAlpha = Math.min(0.95, visibility);
+      ctx.beginPath();
+      ctx.arc(teleX, teleY, r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      drawNavPill(teleX, teleY - r - 12 * u, `⚡ ${bestTele.name} (~${distM}m)`, '#38bdf8', u);
+    } else if (!teleOnScreen && !usePlayerOrigin && targetOnScreen) {
+      // Teleport is off-screen when zoomed in: show directional edge hint so user knows where to teleport
+      const angle = Math.atan2(teleY - H / 2, teleX - W / 2);
+      const edgeX = Math.max(90 * u, Math.min(W - 90 * u, W / 2 + Math.cos(angle) * (W / 2 - 50 * u)));
+      const edgeY = Math.max(30 * u, Math.min(H - 30 * u, H / 2 + Math.sin(angle) * (H / 2 - 40 * u)));
+      drawNavPill(edgeX, edgeY, `⚡ Warp to: ${bestTele.name} (~${distM}m)`, '#38bdf8', u);
+    }
+
+    // Draw route line only if origin is on screen or nearby
+    const originOnScreen = originX >= -120 && originX <= W + 120 && originY >= -120 && originY <= H + 120;
+    if (originOnScreen && targetOnScreen) {
+      ctx.save();
+      ctx.setLineDash([10 * u, 6 * u]);
+      ctx.lineDashOffset = -performance.now() / 25;
+      ctx.strokeStyle = usePlayerOrigin ? '#10b981' : '#38bdf8';
+      ctx.lineWidth = 2.8 * u;
+      ctx.shadowColor = usePlayerOrigin ? '#10b981' : '#38bdf8';
+      ctx.shadowBlur = 8 * u;
+      ctx.globalAlpha = Math.min(0.85, visibility);
+
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(targetX, targetY);
+      ctx.stroke();
+
+      const dLine = Math.hypot(targetX - originX, targetY - originY);
+      const numC = Math.floor(dLine / (55 * u));
+      const aLine = Math.atan2(targetY - originY, targetX - originX);
+      ctx.fillStyle = '#ffffff';
+      for (let k = 1; k <= numC; k++) {
+        const t = k / (numC + 1);
+        const px = originX + (targetX - originX) * t;
+        const py = originY + (targetY - originY) * t;
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(aLine);
+        ctx.beginPath();
+        ctx.moveTo(4 * u, 0);
+        ctx.lineTo(-4 * u, -3.5 * u);
+        ctx.lineTo(-2 * u, 0);
+        ctx.lineTo(-4 * u, 3.5 * u);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+  }
 }
 
 function drawCheck(x, y, r) {
@@ -926,7 +967,7 @@ function renderHandle() {
 function updateHover() {
   const u = uiScale();
   // Pin hit radius matching the icon size so empty map dragging is effortless
-  const radius = Math.max(16, (settings.markerSize / 2 + 5) * u);
+  const radius = Math.max(14, (settings.markerSize / 2 + 2) * u);
   let best = -1;
   let bestDist = radius * radius;
   if (mouse.x >= 0 && !overPanel(mouse.x, mouse.y)) {
@@ -946,7 +987,8 @@ function updateHover() {
   }
   // Capture mouse when hovering over a pin (so it can be selected/right-clicked), over panel, or modal
   const isOverInteractive = (hover >= 0) || overPanel(mouse.x, mouse.y) || (spot !== null && overSpot(mouse.x, mouse.y));
-  setCapture(isOverInteractive);
+  // If moving out of interactive zone onto the game map, release capture IMMEDIATELY so in-game map is always clickable
+  setCapture(isOverInteractive, !isOverInteractive);
   renderTooltip();
 }
 
@@ -1122,6 +1164,7 @@ window.addEventListener('mousedown', (event) => {
   // Clicked outside spot popup: close spot if not clicking another pin
   if (spot && hover < 0) {
     closeSpot();
+    setCapture(false, true);
   }
 
   if (event.button === 2) {
@@ -1133,9 +1176,17 @@ window.addEventListener('mousedown', (event) => {
   if (hover >= 0 && event.button === 0) {
     mousePressInfo = { x: event.clientX, y: event.clientY, index: hover };
   } else if (event.button === 0 && !panelOpen && !spot) {
-    setCapture(false);
+    setCapture(false, true);
   }
 });
+
+window.addEventListener('wheel', (e) => {
+  if (overPanel(e.clientX, e.clientY) || (spot !== null && overSpot(e.clientX, e.clientY))) {
+    return;
+  }
+  // Immediately release capture so mouse wheel zooms the in-game map without delay!
+  setCapture(false, true);
+}, { passive: true });
 
 window.addEventListener('mousemove', (event) => {
   mouse = { x: event.clientX, y: event.clientY };
@@ -1976,14 +2027,22 @@ api.on('view', (next) => {
   const wasLocked = !!target;
   if (next.locked) {
     const now = performance.now();
-    if (!target || isJump(target, next)) Object.values(viewFilter).forEach((f) => f.reset());
-    const stamped = { ...smoothView(next, now), at: now };
+    const isZooming = target && (Math.abs(next.sx - target.sx) / Math.max(0.0001, target.sx) > 0.003);
+    if (!target || isJump(target, next) || isZooming) {
+      Object.values(viewFilter).forEach((f) => f.reset());
+      velocity = null;
+    }
+    const stamped = isZooming ? { ...next, at: now } : { ...smoothView(next, now), at: now };
     if (holdStill(target, stamped)) {
       velocity = null;
     } else {
-      if (target) updateVelocity(target, stamped);
+      if (target && !isZooming) updateVelocity(target, stamped);
       else velocity = null;
       target = stamped;
+    }
+    if (isZooming) {
+      // Instant anchor: keep pins 100% stuck to map terrain when zooming
+      view = { ...stamped };
     }
   } else {
     target = null;

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.2] - 2026-10-28
+
+### Fixed
+- **In-Game Map Selection & Click-Through**:
+  - Fixed an issue where the transparent overlay window intercepted clicks and prevented selecting in-game Teleport Waypoints, domains, or dragging the in-game map.
+  - Removed lingering capture buffers when cursor leaves pins, immediately releasing mouse events to the game (`api.mouse(false)`).
+  - Added a dedicated `wheel` event handler on the overlay canvas to immediately release capture, ensuring mouse wheel zoom smoothly reaches Genshin without interruption.
+  - Clicking outside the spot card now immediately releases mouse capture to the in-game map.
+- **Navigation Route Stickiness & Zoom Anchoring**:
+  - Fixed pins and the navigation route line sliding and drifting across the screen when zooming in and out.
+  - Implemented Instant Zoom Anchoring: whenever zoom scale changes, velocity extrapolation and low-pass lag are bypassed, locking pins and navigation 100% solidly to the in-game map terrain.
+  - Aligned navigation beacon and focal rings with pin icon centers instead of bottom tips.
+  - Cleaned up navigation route rendering: off-screen teleport waypoints now show a neat border guide indicator rather than piercing lines cutting across the map, and the target pin displays an unmistakable `🎯 [Marker Name]` badge.
+
+---
+
 ## [1.2.1] - 2026-10-28
 
 ### Added
