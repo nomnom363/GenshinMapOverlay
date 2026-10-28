@@ -309,7 +309,6 @@ function draw() {
       if (minimap && settings.minimap !== false) drawMinimap();
       if (navigatingPin) {
         drawMinimapNavigation(u);
-        drawWorldNavigationArrow(W, H, u);
       }
     } else if (nearby >= 0) {
       setNearby(-1);
@@ -363,7 +362,8 @@ function draw() {
       }
       if (isUg) {
         const floorName = (data.layers && lId) ? data.layers[lId[i]] : 'Underground';
-        drawUndergroundBadge(x, y, half, size, u, floorName);
+        const isSelected = (spot && spot.index === i) || (hover === i) || (navigatingPin && navigatingPin.index === i);
+        drawUndergroundBadge(x, y, half, size, u, floorName, isSelected);
       }
       if (isFound) drawCheck(x + half * 0.5, cy - half * 0.5, Math.max(6 * u, size * 0.28));
 
@@ -463,13 +463,17 @@ function drawMinimap() {
             ctx.fill();
           }
           if (isUg) {
-            ctx.fillStyle = '#38bdf8';
+            const mbr = 4.2 * u;
+            ctx.save();
+            ctx.fillStyle = 'rgba(20, 24, 33, 0.96)';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1 * u;
             ctx.beginPath();
-            ctx.moveTo(edgeX - 4 * u, edgeY + 6 * u);
-            ctx.lineTo(edgeX + 4 * u, edgeY + 6 * u);
-            ctx.lineTo(edgeX, edgeY + 10 * u);
-            ctx.closePath();
+            ctx.arc(edgeX + 5 * u, edgeY + 4 * u, mbr, 0, Math.PI * 2);
             ctx.fill();
+            ctx.stroke();
+            drawGenshinLayerGlyph(ctx, edgeX + 5 * u, edgeY + 4 * u, mbr * 0.55, '#ffffff', u);
+            ctx.restore();
           }
           ctx.restore();
         }
@@ -489,14 +493,18 @@ function drawMinimap() {
         ctx.fill();
       }
       if (isUg) {
+        const mbr = Math.max(3.8 * u, size * 0.24);
+        const mbx = x + half * 0.44;
+        const mby = y - half * 0.32;
         ctx.save();
-        ctx.fillStyle = '#38bdf8';
+        ctx.fillStyle = 'rgba(20, 24, 33, 0.96)';
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = Math.max(0.8, 1 * u);
         ctx.beginPath();
-        ctx.moveTo(x - 3 * u, y + 1 * u);
-        ctx.lineTo(x + 3 * u, y + 1 * u);
-        ctx.lineTo(x, y + 5 * u);
-        ctx.closePath();
+        ctx.arc(mbx, mby, mbr, 0, Math.PI * 2);
         ctx.fill();
+        ctx.stroke();
+        drawGenshinLayerGlyph(ctx, mbx, mby, mbr * 0.55, '#ffffff', u);
         ctx.restore();
       }
     }
@@ -1270,35 +1278,62 @@ function drawCheck(x, y, r) {
   ctx.stroke();
 }
 
-function drawUndergroundBadge(x, y, half, size, u, floorName) {
-  const isFloor = floorName && floorName !== 'Underground' && floorName !== 'Surface';
-  const text = isFloor ? floorName : '▼';
-  const h = Math.max(10 * u, size * 0.42);
-  const w = isFloor ? Math.max(18 * u, size * 0.72) : Math.max(12 * u, size * 0.48);
-  const bx = x + half * 0.45;
-  const by = y - half * 0.35;
-  const r = h / 2;
+function drawGenshinLayerGlyph(ctx, cx, cy, r, color, u) {
+  const w = r * 0.95;
+  const h = w * 0.46;
+  const gap = r * 0.52;
+
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  // 1. Top isometric diamond
+  const topY = cy - gap * 0.6;
+  ctx.beginPath();
+  ctx.moveTo(cx, topY - h);
+  ctx.lineTo(cx + w, topY);
+  ctx.lineTo(cx, topY + h);
+  ctx.lineTo(cx - w, topY);
+  ctx.closePath();
+  ctx.fill();
+
+  // 2. Bottom isometric layer (lower chevron band)
+  const botY = cy + gap * 0.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - w, botY);
+  ctx.lineTo(cx, botY + h);
+  ctx.lineTo(cx + w, botY);
+  ctx.lineTo(cx + w, botY - h * 0.35);
+  ctx.lineTo(cx, botY + h * 0.65);
+  ctx.lineTo(cx - w, botY - h * 0.35);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawUndergroundBadge(x, y, half, size, u, floorName, isSelected = false) {
+  const bx = x + half * 0.44;
+  const by = y - half * 0.32;
+  const br = Math.max(5.5 * u, size * 0.25);
 
   ctx.save();
   ctx.globalAlpha = Math.min(1, (settings.opacity || 1) * (visibility || 1));
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-  ctx.strokeStyle = '#38bdf8';
+
+  // Circular badge matching Genshin Impact in-game style
+  ctx.fillStyle = isSelected ? '#0284c7' : 'rgba(20, 24, 33, 0.96)';
+  ctx.strokeStyle = isSelected ? '#ffffff' : '#94a3b8';
   ctx.lineWidth = Math.max(1, 1.2 * u);
 
   ctx.beginPath();
-  if (ctx.roundRect) {
-    ctx.roundRect(bx - w / 2, by - h / 2, w, h, r);
-  } else {
-    ctx.rect(bx - w / 2, by - h / 2, w, h);
-  }
+  ctx.arc(bx, by, br, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 
-  ctx.fillStyle = '#38bdf8';
-  ctx.font = `bold ${Math.round(h * 0.75)}px sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, bx, by + (isFloor ? 0.5 * u : 0));
+  // Draw the Genshin stacked layers glyph inside
+  drawGenshinLayerGlyph(ctx, bx, by, br * 0.56, '#ffffff', u);
   ctx.restore();
 }
 

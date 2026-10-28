@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.6] - 2026-10-28
+
+### Removed & Redesigned
+- **Clean In-World View (On-Screen Arrow & Top Banner Removed)**:
+  - Removed the on-screen 3D ground arrow and top banner HUD card during in-world gameplay.
+  - Guided navigation now operates exclusively through the **minimap** (`drawMinimapNavigation`), providing an unobstructed, 100% clean gameplay screen while preserving compass direction and distance metrics.
+- **Authentic Genshin Impact Multi-Layer / Underground Badge**:
+  - Implemented the official Genshin Impact stacked-isometric-diamond layer glyph (`drawGenshinLayerGlyph`) based on in-game screenshots.
+  - Placed a circular dark-slate/white badge on the lower-right quadrant of all subterranean pins (turning vibrant cyan when hovered or selected).
+  - Applied the authentic layer badge across both the big map and the minimap radar.
+
+---
+
 ## [1.2.5] - 2026-10-28
 
 ### Fixed & Enhanced
