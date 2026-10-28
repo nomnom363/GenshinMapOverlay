@@ -718,6 +718,7 @@ const HOTKEY_ACTIONS = {
   togglePanel,
   toggleFound: toggleFoundVisibility,
   cycleOpacity,
+  navigateTarget: () => sendToOverlay('hotkey:navigateTarget'),
   markNearby,
   markHovered: () => {
     sendToOverlay('hotkey:markCurrent');
@@ -740,6 +741,7 @@ function activeHotkeys() {
   const hotkeys = { ...cfg.hotkeys };
   if (!hotkeys.markNearby) hotkeys.markNearby = 'Alt+E';
   if (!hotkeys.markHovered) hotkeys.markHovered = 'F4';
+  if (!hotkeys.navigateTarget) hotkeys.navigateTarget = 'F6';
   return hotkeys;
 }
 
@@ -948,10 +950,19 @@ ipcMain.on('overlay:settings', (event, patch) => {
   if (typeof patch.minimap === 'boolean') setMinimap(patch.minimap);
 });
 
-ipcMain.on('overlay:found-toggle', (event, id) => {
+ipcMain.on('overlay:found-toggle', (event, id, explicitState) => {
   if (!fromOverlay(event)) return;
-  const isFound = found.toggle(id);
-  sendToOverlay('found:changed', { id: Number(id), found: isFound });
+  const n = Number(id);
+  let isFound;
+  if (typeof explicitState === 'boolean') {
+    if (explicitState) found.ids.add(n);
+    else found.ids.delete(n);
+    found.saveSoon();
+    isFound = explicitState;
+  } else {
+    isFound = found.toggle(n);
+  }
+  sendToOverlay('found:changed', { id: n, found: isFound });
 });
 
 ipcMain.on('overlay:refresh-data', (event) => {

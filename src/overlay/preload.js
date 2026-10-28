@@ -4,7 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 const EVENTS = [
   'settings', 'found:all', 'found:changed', 'tracker:status', 'data:markers',
   'view', 'minimap', 'nearby:done', 'notice', 'panel:toggle', 'cursor',
-  'hotkey:markCurrent', 'hotkey:markAt', 'appsample:status'
+  'hotkey:markCurrent', 'hotkey:markAt', 'hotkey:navigateTarget', 'appsample:status'
 ];
 
 contextBridge.exposeInMainWorld('overlayApi', {
@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('overlayApi', {
   mouse: (capture) => ipcRenderer.send('overlay:mouse', capture),
   keyboard: (wanted) => ipcRenderer.send('overlay:keyboard', wanted),
   saveSettings: (patch) => ipcRenderer.send('overlay:settings', patch),
-  toggleFound: (id) => ipcRenderer.send('overlay:found-toggle', id),
+  toggleFound: (id, state) => ipcRenderer.send('overlay:found-toggle', id, state),
   nearby: (id) => ipcRenderer.send('overlay:nearby', id),
   refreshData: () => ipcRenderer.send('overlay:refresh-data'),
   hide: () => ipcRenderer.send('overlay:hide'),

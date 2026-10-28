@@ -9,6 +9,7 @@ const DEFAULTS = {
     togglePanel: 'F8',
     toggleFound: 'F9',
     cycleOpacity: 'F10',
+    navigateTarget: 'F6',
     markNearby: 'Alt+E',
     markHovered: 'F4',
   },

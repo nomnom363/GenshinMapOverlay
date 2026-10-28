@@ -88,8 +88,8 @@
       'ui.dataInfo': '{count} Marker · Stand {date}',
       'ui.noResults': 'Nichts gefunden für „{query}“',
       'ui.categoryToggle': 'Ganze Kategorie ein/aus',
-      'ui.tipFound': 'Gefunden ✓ · Klick: Fotos · Rechtsklick: wieder offen',
-      'ui.tipOpen': 'Klick: Fotos · Rechtsklick: als gefunden markieren',
+      'ui.tipFound': 'Gefunden ✓ · Klick: Details · Doppelklick/T: Route · Rechtsklick: als offen markieren',
+      'ui.tipOpen': 'Klick: Details · Doppelklick/T: Route · Rechtsklick: als erledigt markieren',
       'ui.sectionDisplay': 'Anzeige',
       'ui.sectionMarkers': 'Marker',
 
@@ -197,8 +197,8 @@
       'ui.dataInfo': '{count} markers · updated {date}',
       'ui.noResults': 'Nothing found for “{query}”',
       'ui.categoryToggle': 'Toggle whole category',
-      'ui.tipFound': 'Found ✓ · Click: photos · Right-click: mark as not found',
-      'ui.tipOpen': 'Click: photos · Right-click: mark as found',
+      'ui.tipFound': 'Found ✓ · Click: Details · Double-click/T: Track · Right-click: Mark uncollected',
+      'ui.tipOpen': 'Click: Details · Double-click/T: Track · Right-click: Mark collected',
       'ui.sectionDisplay': 'Display',
       'ui.sectionMarkers': 'Markers',
 

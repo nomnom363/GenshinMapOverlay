@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.1] - 2026-10-28
+
+### Added
+- **Dedicated Pin Navigation Hotkey (`navigateTarget`, Default: `F6`)**:
+  - Added a configurable global hotkey to instantly start/stop GPS tracking to the hovered pin or currently inspected spot card.
+  - Fully customizable in Settings > Hotkeys & Shortcuts.
+  - Added direct keyboard shortcuts (`T` / `N`) while hovering over any pin on the map or in the spot card to immediately begin navigation.
+- **Immediate Undo for Last Marked Pin**:
+  - Pressing the Mark Hotkey (`F4`) when no pin is hovered automatically unmarks the last marked pin, allowing quick one-key undo.
+
+### Fixed
+- **Pin Unmarking & Re-toggling**:
+  - Fixed an issue where pins marked as collected could not be unmarked when "Hide collected" was enabled.
+  - Implemented `findAnyPinAt()` coordinate search that detects collected/hidden pins near cursor position, allowing right-clicking to unmark and restore them immediately.
+  - Fixed duplicate right-click firing on both `mousedown` and `mouseup`, unifying right-click toggle strictly onto `mouseup`.
+  - Added explicit state forwarding to `FoundStore` to eliminate any synchronization drift between renderer and main process.
+  - Removed debounce delay on direct `#spot-found` button clicks so users can toggle collected/uncollected without hesitation.
+- **Software Double-Click Detection**:
+  - Implemented high-precision software double-click detection (~450ms click interval tracking) on map pins.
+  - Completely bypasses transparent Electron window native `dblclick` event dropouts, ensuring double-clicking pins reliably triggers navigation every time.
+
+---
+
 ## [1.2.0] - 2026-10-28
 
 ### Added

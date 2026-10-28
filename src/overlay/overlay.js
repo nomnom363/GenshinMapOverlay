@@ -988,6 +988,10 @@ api.on('cursor', (point) => {
 });
 
 let mousePressInfo = null;
+let rightPressInfo = null;
+let lastDomRightClickTime = 0;
+let lastPinClickTime = 0;
+let lastPinClickIndex = -1;
 
 function findPinIndexAt(x, y) {
   if (x < 0 || y < 0 || !data || drawnCount <= 0) return -1;
@@ -1007,8 +1011,58 @@ function findPinIndexAt(x, y) {
   return best;
 }
 
+function findAnyPinAt(x, y, maxDistance) {
+  if (!data || !data.markers || x < 0 || y < 0) return -1;
+  const u = uiScale();
+  const radius = maxDistance || Math.max(38, (settings.markerSize + 16) * u);
+  let best = -1;
+  let bestDist = radius * radius;
+
+  // 1. Check visible drawn pins first
+  for (let k = 0; k < drawnCount; k++) {
+    const dx = drawnX[k] - x;
+    const dy = drawnY[k] - y;
+    const d = dx * dx + dy * dy;
+    if (d < bestDist) {
+      bestDist = d;
+      best = drawnIndex[k];
+    }
+  }
+  if (best >= 0) return best;
+
+  // 2. If no drawn pin found (e.g. marked as done and settings.hideFound is true),
+  // search through enabled pins so user can UNMARK them!
+  if (!view) return -1;
+  const W = innerWidth;
+  const H = innerHeight;
+  const ax = view.sx * W;
+  const bx = view.ox * W;
+  const ay = view.sy * H;
+  const by = view.oy * H;
+  const { x: mx, y: my } = data.markers;
+  const half = (settings.markerSize * u) / 2;
+
+  for (const t of enabled) {
+    const list = markersByType[t];
+    if (!list) continue;
+    for (let j = 0; j < list.length; j++) {
+      const i = list[j];
+      const px = ax * mx[i] + bx;
+      const py = ay * my[i] + by - half;
+      const dx = px - x;
+      const dy = py - y;
+      const d = dx * dx + dy * dy;
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    }
+  }
+  return best;
+}
+
 function findAndMarkAt(checkX, checkY) {
-  const best = findPinIndexAt(checkX, checkY);
+  const best = findAnyPinAt(checkX, checkY);
   if (best >= 0) {
     toggleFoundMarker(best);
     return true;
@@ -1043,7 +1097,7 @@ window.addEventListener('dblclick', (event) => {
   if (overPanel(event.clientX, event.clientY) || (spot !== null && overSpot(event.clientX, event.clientY))) {
     return;
   }
-  const targetIndex = hover >= 0 ? hover : findPinIndexAt(event.clientX, event.clientY);
+  const targetIndex = hover >= 0 ? hover : findAnyPinAt(event.clientX, event.clientY);
   if (targetIndex >= 0) {
     event.preventDefault();
     toggleNavigation(targetIndex);
@@ -1072,11 +1126,7 @@ window.addEventListener('mousedown', (event) => {
 
   if (event.button === 2) {
     event.preventDefault();
-    if (hover >= 0) {
-      toggleFoundMarker(hover);
-    } else {
-      findAndMarkAt(event.clientX, event.clientY);
-    }
+    rightPressInfo = { x: event.clientX, y: event.clientY, hoverIndex: hover };
     return;
   }
 
@@ -1097,6 +1147,12 @@ window.addEventListener('mousemove', (event) => {
       setCapture(false);
     }
   }
+  if (rightPressInfo) {
+    const dist = Math.hypot(event.clientX - rightPressInfo.x, event.clientY - rightPressInfo.y);
+    if (dist > 8) {
+      rightPressInfo = null;
+    }
+  }
   updateHover();
 });
 
@@ -1104,18 +1160,38 @@ window.addEventListener('mouseup', (event) => {
   if (overPanel(event.clientX, event.clientY) || (spot !== null && overSpot(event.clientX, event.clientY))) {
     return;
   }
+
+  // Right-click: Toggle found / unmark marker cleanly on mouseup
   if (event.button === 2) {
     event.preventDefault();
-    if (hover >= 0) {
-      toggleFoundMarker(hover);
-    } else {
-      findAndMarkAt(event.clientX, event.clientY);
+    lastDomRightClickTime = performance.now();
+    if (rightPressInfo) {
+      rightPressInfo = null;
+      if (hover >= 0) {
+        toggleFoundMarker(hover);
+      } else {
+        findAndMarkAt(event.clientX, event.clientY);
+      }
     }
     return;
   }
+
+  // Left-click: Single click opens spot, Double click triggers navigation
   if (mousePressInfo && event.button === 0) {
     const idx = mousePressInfo.index;
     mousePressInfo = null;
+    const now = performance.now();
+
+    if (lastPinClickIndex === idx && (now - lastPinClickTime < 450)) {
+      // Software double-click detected!
+      lastPinClickTime = 0;
+      lastPinClickIndex = -1;
+      toggleNavigation(idx);
+      return;
+    }
+
+    lastPinClickTime = now;
+    lastPinClickIndex = idx;
     openSpot(idx);
   } else {
     mousePressInfo = null;
@@ -1131,19 +1207,26 @@ window.addEventListener('contextmenu', (event) => {
 api.on('hotkey:markCurrent', () => {
   if (hover >= 0) {
     toggleFoundMarker(hover);
-  } else if (spot) {
-    toggleFoundMarker(spot.index);
+  } else if (spot && typeof spot.index === 'number') {
+    toggleFoundMarker(spot.index, true);
+  } else if (lastMarkedPinId !== null) {
+    const lastIdx = markerIndexById.get(lastMarkedPinId);
+    if (lastIdx !== undefined && found.has(lastMarkedPinId)) {
+      toggleFoundMarker(lastIdx, true);
+      lastMarkedPinId = null;
+    }
   }
 });
 
 let lastToggleId = null;
 let lastToggleTime = 0;
+let lastMarkedPinId = null;
 
-function toggleFoundMarker(index) {
+function toggleFoundMarker(index, force = false) {
   if (index < 0 || !data || !data.markers) return;
   const id = data.markers.id[index];
   const now = performance.now();
-  if (lastToggleId === id && (now - lastToggleTime < 400)) {
+  if (!force && lastToggleId === id && (now - lastToggleTime < 200)) {
     return;
   }
   lastToggleId = id;
@@ -1151,16 +1234,22 @@ function toggleFoundMarker(index) {
 
   const newState = !found.has(id);
   setFound(id, newState);
-  api.toggleFound(id);
+  api.toggleFound(id, newState);
 
-  // Auto-remove navigation if collected
-  if (newState && navigatingPin && navigatingPin.id === id) {
-    navigatingPin = null;
-    renderSpotNav();
+  if (newState) {
+    lastMarkedPinId = id;
+    // Auto-remove navigation if collected
+    if (navigatingPin && navigatingPin.id === id) {
+      navigatingPin = null;
+      renderSpotNav();
+    }
+  } else {
+    if (lastMarkedPinId === id) lastMarkedPinId = null;
   }
 
   const type = data.types[data.markers.type[index]];
-  showToast(newState ? `✓ Marked found: ${type ? type.name : 'Marker'}` : `↶ Unmarked: ${type ? type.name : 'Marker'}`);
+  const typeName = type ? type.name : 'Marker';
+  showToast(newState ? `✓ Marked done: ${typeName}` : `↶ Unmarked: ${typeName}`);
 }
 
 // ---------- Gefunden ----------
@@ -1180,8 +1269,13 @@ function setFound(id, isFound) {
   else found.delete(id);
   const i = markerIndexById.get(id);
   if (i !== undefined) {
-    foundByType[data.markers.type[i]] += isFound ? 1 : -1;
-    updateTypeCount(data.markers.type[i]);
+    const t = data.markers.type[i];
+    if (isFound) {
+      foundByType[t] = (foundByType[t] || 0) + 1;
+    } else {
+      foundByType[t] = Math.max(0, (foundByType[t] || 0) - 1);
+    }
+    updateTypeCount(t);
   }
   if (spot && data.markers.id[spot.index] === id) renderSpotFound();
   requestDraw();
@@ -1642,7 +1736,8 @@ const HOTKEY_DEFS = [
   { action: 'togglePanel', defaultKey: 'F8', name: 'Toggle Sidebar', desc: 'Open or close this sidebar and categories' },
   { action: 'toggleFound', defaultKey: 'F9', name: 'Hide/Show Collected', desc: 'Toggle visibility of already collected pins' },
   { action: 'cycleOpacity', defaultKey: 'F10', name: 'Cycle Opacity', desc: 'Switch transparency between 100%, 75%, and 50%' },
-  { action: 'markHovered', defaultKey: 'F4', name: 'Mark Hovered Pin', desc: 'Mark the pin under your mouse cursor as collected' },
+  { action: 'navigateTarget', defaultKey: 'F6', name: 'Navigate/Track Pin', desc: 'Start or stop GPS tracking/arrow to hovered or selected pin' },
+  { action: 'markHovered', defaultKey: 'F4', name: 'Mark/Unmark Pin', desc: 'Toggle collected status for the pin under cursor or selected pin' },
   { action: 'markNearby', defaultKey: 'Alt+E', name: 'Mark Minimap Pin', desc: 'Mark the nearest pin detected on your minimap' },
 ];
 
@@ -1778,7 +1873,7 @@ $('panel-handle').addEventListener('click', () => setPanel(true));
 $('close-spot').addEventListener('click', closeSpot);
 $('lightbox').addEventListener('click', closeLightbox);
 $('spot-found').addEventListener('click', () => {
-  if (spot) toggleFoundMarker(spot.index);
+  if (spot) toggleFoundMarker(spot.index, true);
 });
 $('none').addEventListener('click', () => {
   enabled.clear();
@@ -2028,6 +2123,7 @@ api.on('map:keyM', () => {
 });
 
 api.on('hotkey:markAt', (pt) => {
+  if (performance.now() - lastDomRightClickTime < 300) return;
   if (hover >= 0) {
     toggleFoundMarker(hover);
     return;
@@ -2035,6 +2131,26 @@ api.on('hotkey:markAt', (pt) => {
   const checkX = (pt && typeof pt.x === 'number') ? pt.x : mouse.x;
   const checkY = (pt && typeof pt.y === 'number') ? pt.y : mouse.y;
   findAndMarkAt(checkX, checkY);
+});
+
+api.on('hotkey:navigateTarget', () => {
+  let targetIndex = -1;
+  if (hover >= 0) {
+    targetIndex = hover;
+  } else if (spot && typeof spot.index === 'number') {
+    targetIndex = spot.index;
+  } else if (navigatingPin) {
+    navigatingPin = null;
+    renderSpotNav();
+    requestDraw();
+    showToast('✕ Navigation cleared');
+    return;
+  }
+  if (targetIndex >= 0) {
+    toggleNavigation(targetIndex);
+  } else {
+    showToast('🧭 Hover over a pin or open a pin to navigate');
+  }
 });
 
 
@@ -2085,6 +2201,25 @@ window.addEventListener('keydown', (e) => {
 
   if (e.key === 'Escape' && panelOpen) {
     setPanel(false);
+    return;
+  }
+
+  // Quick navigation / mark keys when overlay is active
+  if (!activeRecordingAction && document.activeElement && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+    if (e.key === 't' || e.key === 'T' || e.key === 'n' || e.key === 'N') {
+      const targetIndex = hover >= 0 ? hover : (spot ? spot.index : -1);
+      if (targetIndex >= 0 || navigatingPin) {
+        e.preventDefault();
+        if (targetIndex >= 0) {
+          toggleNavigation(targetIndex);
+        } else if (navigatingPin) {
+          navigatingPin = null;
+          renderSpotNav();
+          requestDraw();
+          showToast('✕ Navigation cleared');
+        }
+      }
+    }
   }
 });
 
