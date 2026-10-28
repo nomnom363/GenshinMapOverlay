@@ -12,7 +12,7 @@ const MASK = { purple: true, erode: 13, gray: 70, sea: 80 };
 const CHECK_MS_WORKER = 250;
 const CHECK_MS_INLINE = 1000;
 // Minimap: Takt in der Weltansicht; Anker nur nach so langer Weltansicht (sonst wäre es eine verschobene Karte)
-const MINIMAP_FPS = 15;
+const MINIMAP_FPS = 8;
 const ANCHOR_AFTER_MS = 1500;
 
 let cv = null;

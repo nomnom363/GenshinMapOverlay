@@ -1,8 +1,10 @@
 let navigatingPin = null;
 let currentHeading = -Math.PI / 2;
+let targetHeading = -Math.PI / 2;
 let lastPlayerMapX = 0;
 let lastPlayerMapY = 0;
 let playerTrack = { x: 0, y: 0, lastSeen: 0, live: false, vx: 0, vy: 0, lastStepTime: 0 };
+let lastWorldDraw = 0;
 // Overlay: Marker auf der Ingame-Karte + Panel.
 // Maus nur über Marker/Panel abfangen, sonst geht alles ans Spiel (ziehen, zoomen, Wegpunkte).
 /* global I18n, Media, Hud */
@@ -269,7 +271,29 @@ function tick(now) {
   } else {
     visibility = Math.max(0, visibility - 0.2);
   }
+
+  // Smooth heading interpolation toward targetHeading (deadband + spring)
+  if (navigatingPin) {
+    let hDiff = targetHeading - currentHeading;
+    while (hDiff > Math.PI) hDiff -= 2 * Math.PI;
+    while (hDiff < -Math.PI) hDiff += 2 * Math.PI;
+    if (Math.abs(hDiff) > 0.015) {
+      currentHeading += hDiff * 0.14;
+      animating = true;
+    }
+  }
+
   animating = animating || (target ? visibility < 1 : visibility > 0) || !!navigatingPin;
+
+  // Frame rate limiter in 3D world: cap to ~35 FPS (28ms) to eliminate game lag
+  if (visibility <= 0 && !!navigatingPin) {
+    if (now - lastWorldDraw < 28) {
+      if (animating) requestDraw();
+      return;
+    }
+    lastWorldDraw = now;
+  }
+
   draw();
   if (animating) requestDraw();
 }
@@ -582,9 +606,9 @@ function drawNavPill(x, y, text, color, u) {
 function drawNavCard(x, y, lines, color, u) {
   if (!lines || !lines.length) return;
   ctx.save();
-  const paddingX = 14 * u;
+  const paddingX = 16 * u;
   const paddingY = 8 * u;
-  const lineH = 15 * u;
+  const lineH = 16 * u;
 
   let maxW = 0;
   for (const line of lines) {
@@ -594,24 +618,22 @@ function drawNavCard(x, y, lines, color, u) {
     if (w > maxW) maxW = w;
   }
 
-  const cardW = Math.max(140 * u, maxW + paddingX * 2);
+  const cardW = Math.max(160 * u, maxW + paddingX * 2);
   const cardH = lines.length * lineH + paddingY * 2;
 
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+  // Crisp background with hardware-accelerated border (NO software shadowBlur)
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
   ctx.strokeStyle = color || '#38bdf8';
   ctx.lineWidth = 1.4 * u;
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-  ctx.shadowBlur = 10 * u;
 
   const rx = x - cardW / 2;
   const ry = y - cardH / 2;
   ctx.beginPath();
-  if (ctx.roundRect) ctx.roundRect(rx, ry, cardW, cardH, 7 * u);
+  if (ctx.roundRect) ctx.roundRect(rx, ry, cardW, cardH, 8 * u);
   else ctx.rect(rx, ry, cardW, cardH);
   ctx.fill();
   ctx.stroke();
 
-  ctx.shadowBlur = 0;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
@@ -734,7 +756,7 @@ function drawWorldNavigationArrow(W, H, u) {
   const hasLock = (minimap && typeof minimap.x === 'number') || (playerTrack.lastSeen > 0 && now - playerTrack.lastSeen < 60000);
 
   if (!hasLock) {
-    drawNavCard(W * 0.5, H * 0.65 - 45 * u, [
+    drawNavCard(W * 0.5, 52 * u, [
       { text: `🧭 Tracking: ${navigatingPin.name}`, color: '#38bdf8', bold: true },
       { text: 'Press M in game to sync GPS location', color: '#f59e0b', bold: false }
     ], '#38bdf8', u);
@@ -776,146 +798,129 @@ function drawWorldNavigationArrow(W, H, u) {
   while (relAngle < -Math.PI) relAngle += 2 * Math.PI;
 
   const charX = W * 0.5;
-  const charY = H * 0.65;
+  const charY = H * 0.70;
 
   ctx.save();
 
   // Arrival / Close Proximity (< 12m)
   if (activeDistM < 12) {
     const pulse = 0.5 + 0.5 * Math.sin(now / 200);
-    const radius = (28 + pulse * 14) * u;
+    const radius = (26 + pulse * 10) * u;
     const ringColor = navigatingPin.elevation === 'up' ? '#f59e0b' : (navigatingPin.elevation === 'down' ? '#06b6d4' : '#10b981');
 
     ctx.save();
     ctx.translate(charX, charY);
     ctx.scale(1, 0.45);
     ctx.strokeStyle = ringColor;
-    ctx.lineWidth = 3 * u;
+    ctx.lineWidth = 2.5 * u;
     ctx.globalAlpha = 0.6 + 0.3 * pulse;
-    ctx.shadowColor = ringColor;
-    ctx.shadowBlur = 15 * u;
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.fillStyle = ringColor;
-    ctx.globalAlpha = 0.15;
+    ctx.globalAlpha = 0.12;
     ctx.fill();
     ctx.restore();
 
     let arriveTitle = `🎯 Arrived (~${activeDistM}m)`;
-    let arriveSub = navigatingPin.name;
     if (navigatingPin.elevation === 'up') {
       arriveTitle = `🧗 LOOK UP! (~${activeDistM}m above)`;
-      arriveSub = navigatingPin.hint || 'Target is on cliff / peak / ruins above';
     } else if (navigatingPin.elevation === 'down' || navStage === 'inside_cave' || navStage === 'underground') {
       arriveTitle = `🕳️ LOOK DOWN! (~${activeDistM}m below)`;
-      arriveSub = navigatingPin.hint || 'Target is in cave / ravine / water below';
     } else if (navStage === 'entrance') {
       arriveTitle = '🚪 Cave Entrance Reached!';
-      arriveSub = `Enter cave to find ${navigatingPin.name}`;
     }
 
-    drawNavCard(charX, charY - 48 * u, [
-      { text: arriveTitle, color: ringColor, bold: true },
-      { text: arriveSub, color: '#e2e8f0', bold: false }
-    ], ringColor, u);
+    drawNavPill(charX, charY - 34 * u, arriveTitle, ringColor, u);
+  } else {
+    // 2. Draw 3D Ground Navigation Arrow In Front of Character
+    const orbitR = 76 * u;
+    const groundSquash = 0.52;
+    const arrowX = charX + Math.sin(relAngle) * orbitR;
+    const arrowY = charY - Math.cos(relAngle) * (orbitR * groundSquash);
+    const arrowAngle = Math.atan2(arrowY - charY, arrowX - charX);
+
+    ctx.save();
+    ctx.translate(arrowX, arrowY);
+    ctx.rotate(arrowAngle);
+
+    const arrowLen = 36 * u;
+    const arrowW = 22 * u;
+
+    let mainColor = '#38bdf8';
+    if (navigatingPin.elevation === 'up') {
+      mainColor = '#f59e0b';
+    } else if (navigatingPin.elevation === 'down' || navStage === 'inside_cave' || navStage === 'entrance' || navStage === 'underground') {
+      mainColor = '#06b6d4';
+    }
+
+    const grad = ctx.createLinearGradient(-arrowLen * 0.4, 0, arrowLen * 0.6, 0);
+    grad.addColorStop(0, mainColor + '20');
+    grad.addColorStop(1, mainColor + 'cc');
+
+    // Outer soft glow (hardware accelerated, NO shadowBlur)
+    ctx.strokeStyle = mainColor + '30';
+    ctx.lineWidth = 5 * u;
+    ctx.beginPath();
+    ctx.moveTo(arrowLen * 0.6, 0);
+    ctx.lineTo(-arrowLen * 0.4, -arrowW * 0.5);
+    ctx.lineTo(-arrowLen * 0.15, 0);
+    ctx.lineTo(-arrowLen * 0.4, arrowW * 0.5);
+    ctx.closePath();
+    ctx.stroke();
+
+    // Crisp Arrow Body
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = mainColor;
+    ctx.lineWidth = 2 * u;
+    ctx.fill();
+    ctx.stroke();
+
+    // Forward pulsing chevron inside arrow
+    const pulseOff = ((now / 600) % 1) * (arrowLen * 0.4);
+    ctx.strokeStyle = mainColor;
+    ctx.globalAlpha = 0.75 - (pulseOff / (arrowLen * 0.4)) * 0.5;
+    ctx.lineWidth = 1.8 * u;
+    ctx.beginPath();
+    ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
+    ctx.lineTo(-arrowLen * 0.6 - pulseOff, -arrowW * 0.32);
+    ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
+    ctx.lineTo(-arrowLen * 0.6 - pulseOff, arrowW * 0.32);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // 3D Elevation Chevrons
+    if (navigatingPin.elevation === 'up') {
+      const climb = ((now / 500) % 1) * (5 * u);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.2 * u;
+      ctx.beginPath();
+      ctx.moveTo(-arrowLen * 0.1, -arrowW * 0.6 - climb);
+      ctx.lineTo(arrowLen * 0.1, -arrowW * 0.88 - climb);
+      ctx.lineTo(arrowLen * 0.3, -arrowW * 0.6 - climb);
+      ctx.stroke();
+    } else if (navigatingPin.elevation === 'down') {
+      const drop = ((now / 500) % 1) * (5 * u);
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2.2 * u;
+      ctx.beginPath();
+      ctx.moveTo(-arrowLen * 0.1, arrowW * 0.6 + drop);
+      ctx.lineTo(arrowLen * 0.1, arrowW * 0.88 + drop);
+      ctx.lineTo(arrowLen * 0.3, arrowW * 0.6 + drop);
+      ctx.stroke();
+    }
 
     ctx.restore();
-    return;
   }
 
-  // Draw 3D-styled navigation arrow around character orbit
-  const orbitX = 118 * u;
-  const orbitY = 62 * u;
-  const bob = Math.sin(now / 220) * (5 * u);
+  // 3. Static Top-Center HUD Card (100% stable, no bouncing or shaking)
+  const cardX = W * 0.5;
+  const cardY = 52 * u;
 
-  const dirX = Math.sin(relAngle);
-  const dirY = -Math.cos(relAngle);
-
-  const arrowX = charX + dirX * (orbitX + bob);
-  const arrowY = charY + dirY * (orbitY + bob * 0.55);
-  const arrowScreenAngle = Math.atan2(dirY, dirX);
-
-  ctx.save();
-  ctx.translate(arrowX, arrowY);
-  ctx.rotate(arrowScreenAngle);
-
-  const arrowLen = 40 * u;
-  const arrowW = 26 * u;
-
-  // Visual styling based on Elevation & Cave Stage
   let mainColor = '#38bdf8';
-  let glowColor = '#38bdf8';
-  if (navigatingPin.elevation === 'up') {
-    mainColor = '#f59e0b';
-    glowColor = '#fbbf24';
-  } else if (navigatingPin.elevation === 'down' || navStage === 'inside_cave' || navStage === 'entrance' || navStage === 'underground') {
-    mainColor = '#06b6d4';
-    glowColor = '#38bdf8';
-  }
-
-  ctx.shadowColor = glowColor;
-  ctx.shadowBlur = 14 * u;
-
-  // Arrow gradient
-  const grad = ctx.createLinearGradient(-arrowLen * 0.4, 0, arrowLen * 0.6, 0);
-  grad.addColorStop(0, mainColor + '26');
-  grad.addColorStop(1, mainColor + 'b3');
-
-  ctx.fillStyle = grad;
-  ctx.strokeStyle = mainColor;
-  ctx.lineWidth = 2.2 * u;
-
-  // Main Arrow Body
-  ctx.beginPath();
-  ctx.moveTo(arrowLen * 0.6, 0);
-  ctx.lineTo(-arrowLen * 0.4, -arrowW * 0.5);
-  ctx.lineTo(-arrowLen * 0.15, 0);
-  ctx.lineTo(-arrowLen * 0.4, arrowW * 0.5);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  // Forward pulsing chevron inside arrow
-  const pulseOff = ((now / 600) % 1) * (arrowLen * 0.4);
-  ctx.strokeStyle = mainColor;
-  ctx.globalAlpha = 0.7 - (pulseOff / (arrowLen * 0.4)) * 0.5;
-  ctx.lineWidth = 2 * u;
-  ctx.beginPath();
-  ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
-  ctx.lineTo(-arrowLen * 0.6 - pulseOff, -arrowW * 0.35);
-  ctx.moveTo(arrowLen * 0.3 - pulseOff, 0);
-  ctx.lineTo(-arrowLen * 0.6 - pulseOff, arrowW * 0.35);
-  ctx.stroke();
-  ctx.globalAlpha = 1;
-
-  // 3D Elevation Chevrons (Up / Down indicator directly on arrow)
-  if (navigatingPin.elevation === 'up') {
-    const climb = ((now / 500) % 1) * (6 * u);
-    ctx.strokeStyle = '#fbbf24';
-    ctx.lineWidth = 2.4 * u;
-    ctx.beginPath();
-    ctx.moveTo(-arrowLen * 0.1, -arrowW * 0.65 - climb);
-    ctx.lineTo(arrowLen * 0.1, -arrowW * 0.95 - climb);
-    ctx.lineTo(arrowLen * 0.3, -arrowW * 0.65 - climb);
-    ctx.stroke();
-  } else if (navigatingPin.elevation === 'down') {
-    const drop = ((now / 500) % 1) * (6 * u);
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 2.4 * u;
-    ctx.beginPath();
-    ctx.moveTo(-arrowLen * 0.1, arrowW * 0.65 + drop);
-    ctx.lineTo(arrowLen * 0.1, arrowW * 0.95 + drop);
-    ctx.lineTo(arrowLen * 0.3, arrowW * 0.65 + drop);
-    ctx.stroke();
-  }
-
-  ctx.restore();
-
-  // Draw Informative Multi-Line Navigation Card
-  const cardX = Math.max(120 * u, Math.min(W - 120 * u, arrowX));
-  const cardY = Math.max(40 * u, Math.min(H - 65 * u, arrowY + 28 * u));
+  if (navigatingPin.elevation === 'up') mainColor = '#f59e0b';
+  else if (navigatingPin.elevation === 'down' || navStage === 'inside_cave' || navStage === 'entrance' || navStage === 'underground') mainColor = '#06b6d4';
 
   const lines = [];
   if (navStage === 'entrance') {
@@ -2388,20 +2393,13 @@ api.on('minimap', (pos) => {
     playerTrack.live = true;
 
     if (typeof pos.angle === 'number' && Number.isFinite(pos.angle)) {
-      let diff = pos.angle - currentHeading;
-      while (diff > Math.PI) diff -= 2 * Math.PI;
-      while (diff < -Math.PI) diff += 2 * Math.PI;
-      currentHeading += diff * 0.4;
+      targetHeading = pos.angle;
     } else if (lastPlayerMapX && lastPlayerMapY) {
       const mdx = pos.x - lastPlayerMapX;
       const mdy = pos.y - lastPlayerMapY;
       const moveDist = Math.hypot(mdx, mdy);
-      if (moveDist > 0.005) {
-        const moveAngle = Math.atan2(mdy, mdx);
-        let diff = moveAngle - currentHeading;
-        while (diff > Math.PI) diff -= 2 * Math.PI;
-        while (diff < -Math.PI) diff += 2 * Math.PI;
-        currentHeading += diff * 0.35;
+      if (moveDist > 0.008) {
+        targetHeading = Math.atan2(mdy, mdx);
       }
     }
     lastPlayerMapX = pos.x;
