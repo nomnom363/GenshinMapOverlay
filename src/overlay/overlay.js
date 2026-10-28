@@ -80,10 +80,24 @@ function resizeCanvas() {
   requestDraw();
 }
 
+let captureTimer = null;
 function setCapture(on) {
-  if (on === captured) return;
-  captured = on;
-  api.mouse(on);
+  if (on) {
+    if (captureTimer) clearTimeout(captureTimer);
+    captureTimer = null;
+    if (!captured) {
+      captured = true;
+      api.mouse(true);
+    }
+  } else {
+    if (!captured) return;
+    if (captureTimer) clearTimeout(captureTimer);
+    captureTimer = setTimeout(() => {
+      captured = false;
+      api.mouse(false);
+      captureTimer = null;
+    }, 250);
+  }
 }
 
 function showToast(text) {
@@ -256,6 +270,7 @@ function tick(now) {
 function draw() {
   const W = innerWidth;
   const H = innerHeight;
+  const u = uiScale();
   ctx.clearRect(0, 0, W, H);
   drawnCount = 0;
   if (!data || !view || visibility <= 0) {
@@ -269,7 +284,6 @@ function draw() {
     return;
   }
 
-  const u = uiScale();
   const size = settings.markerSize * u;
   const half = size / 2;
   // keine Marker über den Knöpfen der Ingame-Karte (verdecken sie, fangen Klicks ab)
@@ -975,6 +989,30 @@ api.on('cursor', (point) => {
 
 let mousePressInfo = null;
 
+function findAndMarkAt(checkX, checkY) {
+  if (checkX < 0 || checkY < 0 || !data) return false;
+  const u = uiScale();
+  const radius = Math.max(38, (settings.markerSize + 16) * u);
+  let best = -1;
+  let bestDist = radius * radius;
+  if (drawnCount > 0) {
+    for (let k = 0; k < drawnCount; k++) {
+      const dx = drawnX[k] - checkX;
+      const dy = drawnY[k] - checkY;
+      const d = dx * dx + dy * dy;
+      if (d < bestDist) {
+        bestDist = d;
+        best = drawnIndex[k];
+      }
+    }
+  }
+  if (best >= 0) {
+    toggleFoundMarker(best);
+    return true;
+  }
+  return false;
+}
+
 window.addEventListener('mousedown', (event) => {
   // If clicked inside sidebar or spot popup, keep capture active and let DOM handle it
   if (overPanel(event.clientX, event.clientY)) {
@@ -995,22 +1033,20 @@ window.addEventListener('mousedown', (event) => {
     closeSpot();
   }
 
-  if (hover >= 0) {
-    if (event.button === 2) {
-      // Right-click on pin: mark as collected / found
-      event.preventDefault();
+  if (event.button === 2) {
+    event.preventDefault();
+    if (hover >= 0) {
       toggleFoundMarker(hover);
-      return;
+    } else {
+      findAndMarkAt(event.clientX, event.clientY);
     }
-    if (event.button === 0) {
-      // Left-click on pin: record start position to distinguish click vs drag
-      mousePressInfo = { x: event.clientX, y: event.clientY, index: hover };
-    }
-  } else {
-    // Click on empty map: immediately release capture so game pans freely
-    if (event.button === 0 && !panelOpen && !spot) {
-      setCapture(false);
-    }
+    return;
+  }
+
+  if (hover >= 0 && event.button === 0) {
+    mousePressInfo = { x: event.clientX, y: event.clientY, index: hover };
+  } else if (event.button === 0 && !panelOpen && !spot) {
+    setCapture(false);
   }
 });
 
@@ -1028,6 +1064,18 @@ window.addEventListener('mousemove', (event) => {
 });
 
 window.addEventListener('mouseup', (event) => {
+  if (overPanel(event.clientX, event.clientY) || (spot !== null && overSpot(event.clientX, event.clientY))) {
+    return;
+  }
+  if (event.button === 2) {
+    event.preventDefault();
+    if (hover >= 0) {
+      toggleFoundMarker(hover);
+    } else {
+      findAndMarkAt(event.clientX, event.clientY);
+    }
+    return;
+  }
   if (mousePressInfo && event.button === 0) {
     const idx = mousePressInfo.index;
     mousePressInfo = null;
@@ -1038,8 +1086,16 @@ window.addEventListener('mouseup', (event) => {
 });
 
 window.addEventListener('contextmenu', (event) => {
-  if (hover >= 0 || overPanel(event.clientX, event.clientY)) {
+  if (hover >= 0 || overPanel(event.clientX, event.clientY) || (spot !== null && overSpot(event.clientX, event.clientY))) {
     event.preventDefault();
+  }
+});
+
+api.on('hotkey:markCurrent', () => {
+  if (hover >= 0) {
+    toggleFoundMarker(hover);
+  } else if (spot) {
+    toggleFoundMarker(spot.index);
   }
 });
 
@@ -1441,15 +1497,11 @@ function buildPanel() {
     head.querySelector('.cat-title').textContent = cat.title;
     head.querySelector('.cat-all').title = tt('ui.categoryToggle');
     head.addEventListener('click', (event) => {
-      if (event.target.classList.contains('cat-all')) return;
+      if (event.target.closest('.cat-all')) return;
       section.classList.toggle('open');
     });
     const catAllBox = head.querySelector('.cat-all');
-    catAllBox.addEventListener('click', (event) => {
-      event.stopPropagation();
-    });
     catAllBox.addEventListener('change', (event) => {
-      event.stopPropagation();
       const isChecked = event.target.checked;
       for (const t of cat.types) {
         if (isChecked) enabled.add(t);
@@ -1470,11 +1522,7 @@ function buildPanel() {
       box.type = 'checkbox';
       box.dataset.type = t;
       box.checked = enabled.has(t);
-      box.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-      box.addEventListener('change', (e) => {
-        e.stopPropagation();
+      box.addEventListener('change', () => {
         if (box.checked) enabled.add(t);
         else enabled.delete(t);
         saveEnabled();
@@ -1864,25 +1912,7 @@ api.on('hotkey:markAt', (pt) => {
   }
   const checkX = (pt && typeof pt.x === 'number') ? pt.x : mouse.x;
   const checkY = (pt && typeof pt.y === 'number') ? pt.y : mouse.y;
-  if (checkX >= 0 && checkY >= 0 && data && drawnCount > 0) {
-    const u = uiScale();
-    const radius = Math.max(35, (settings.markerSize + 15) * u);
-    let best = -1;
-    let bestDist = radius * radius;
-    for (let k = 0; k < drawnCount; k++) {
-      const dx = drawnX[k] - checkX;
-      const dy = drawnY[k] - checkY;
-      const d = dx * dx + dy * dy;
-      if (d < bestDist) {
-        bestDist = d;
-        best = drawnIndex[k];
-      }
-    }
-    if (best >= 0) {
-      toggleFoundMarker(best);
-      return;
-    }
-  }
+  findAndMarkAt(checkX, checkY);
 });
 
 

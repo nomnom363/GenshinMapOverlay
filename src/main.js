@@ -29,6 +29,7 @@ let genshinBounds = null;
 let genshinMinimized = false;
 let windowTrackerProc = null;
 let foregroundDebounceTimer = null;
+let fsSwitchTimer = null;
 
 function handleGenshinWindowUpdate(info) {
   if (!alive(overlayWin)) return;
@@ -112,8 +113,12 @@ function handleGenshinWindowUpdate(info) {
       const wasFs = genshinBounds && genshinBounds.x === 0 && genshinBounds.y === 0 && genshinBounds.width >= (disp.size ? disp.size.width : 1366);
       const nextFs = nextBounds.x === 0 && nextBounds.y === 0 && nextBounds.width >= (disp.size ? disp.size.width : 1366);
       if (genshinBounds && wasFs !== nextFs) {
-        log(`window-tracker: display mode switched (fullscreen: ${nextFs}) -> restarting capture`);
-        sendToTracker('tracker:restart-capture');
+        if (fsSwitchTimer) clearTimeout(fsSwitchTimer);
+        fsSwitchTimer = setTimeout(() => {
+          fsSwitchTimer = null;
+          log(`window-tracker: display mode switched (fullscreen: ${nextFs}) -> restarting capture`);
+          sendToTracker('tracker:restart-capture');
+        }, 500);
       }
       genshinBounds = nextBounds;
       overlayWin.setBounds(genshinBounds);
@@ -128,6 +133,7 @@ function handleGenshinWindowUpdate(info) {
 function startWindowTracker() {
   if (!IS_WIN) return;
   const candidates = [
+    'D:\\GenshinMapOverlay\\window_tracker.py',
     path.join(__dirname, '..', 'window_tracker.py'),
     path.join(__dirname, 'window_tracker.py'),
     path.join(process.resourcesPath || '', 'window_tracker.py'),
@@ -467,11 +473,16 @@ function setupCapture() {
       const sources = await desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: 0, height: 0 } });
       const wantedDisplay = String(targetDisplay().id);
 
-      // NEVER select the overlay itself!
-      const nonOverlay = sources.filter(s => s.name && !s.name.toLowerCase().includes('overlay'));
+      // Filter out browsers and self
+      const nonOverlay = sources.filter(s => {
+        if (!s.name) return false;
+        const n = s.name.toLowerCase();
+        if (n.includes('chrome') || n.includes('edge') || n.includes('firefox') || n.includes('opera') || n.includes('browser') || n.includes('overlay')) return false;
+        return true;
+      });
       const genshinWindow = nonOverlay.find(s => {
         const n = s.name.toLowerCase();
-        return n.includes('genshin impact') || n.includes('原神') || n.includes('genshinimpact') || n === 'genshin';
+        return n === 'genshin impact' || n === '原神' || n === 'genshinimpact' || n.startsWith('genshin impact');
       });
       const screenSource = sources.find(s => s.id.startsWith('screen:') && (s.display_id === wantedDisplay || !s.display_id)) || sources.find(s => s.id.startsWith('screen:'));
 
@@ -894,7 +905,11 @@ ipcMain.on('overlay:panel-open', (event, open) => {
 
 ipcMain.on('overlay:mouse', (event, capture) => {
   if (!fromOverlay(event)) return;
-  overlayWin.setIgnoreMouseEvents(!capture, { forward: true });
+  if (capture) {
+    overlayWin.setIgnoreMouseEvents(false);
+  } else {
+    overlayWin.setIgnoreMouseEvents(true, { forward: true });
+  }
 });
 
 // Fokus nur fürs Suchfeld, danach zurück ans Spiel
