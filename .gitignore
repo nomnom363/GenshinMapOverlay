@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Production build outputs
+dist/
+build/
+*.asar
+
+# Local user data & state
+found.json
+settings.json
+overlay.log
+overlay.log.old
+overlay.log*
+installation.json
+progress/
+
+# Cache directories
+.cache/
+cache/
+Cache/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp

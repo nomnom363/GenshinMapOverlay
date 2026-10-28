@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Genshin Map Overlay</title>
+  <link rel="stylesheet" href="overlay.css">
+</head>
+<body>
+  <!-- data-i18n*: Texte kommen zur Laufzeit (shared/i18n.js) -->
+  <canvas id="markers"></canvas>
+
+  <div id="tooltip" class="tooltip" hidden>
+    <strong id="tooltip-name"></strong>
+    <span id="tooltip-hint"></span>
+  </div>
+
+  <div id="hud" class="hud" hidden>
+    <span id="hud-text"></span>
+    <span class="hud-bar"><span id="hud-progress"></span></span>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+  <div id="nearby" class="nearby" hidden>
+    <img id="nearby-icon" alt="">
+    <div class="nearby-text"><strong id="nearby-name"></strong><span id="nearby-action"></span></div>
+  </div>
+
+  <button id="panel-handle" class="panel-handle" type="button" hidden data-i18n-title="ui.handleTitle" data-i18n-aria="ui.handleTitle">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+    <span data-i18n="ui.handle"></span>
+  </button>
+
+  <!-- Fundort-Karte: Fotos/Video aus den Kommentaren zum angeklickten Marker -->
+  <aside id="spot" class="panel spot" aria-live="polite">
+    <header class="panel-head">
+      <div class="title">
+        <img id="spot-icon" alt="" width="28" height="28">
+        <span id="spot-name"></span>
+      </div>
+      <button id="close-spot" class="close-btn" type="button" data-i18n-title="spot.close" data-i18n-aria="spot.close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.1 6.3 13.4 12l5.7 5.7-1.4 1.4-5.7-5.7-5.7 5.7-1.4-1.4 5.7-5.7-5.7-5.7 1.4-1.4 5.7 5.7 5.7-5.7z"/></svg>
+      </button>
+    </header>
+    <div id="spot-layer-badge" class="spot-layer-badge" style="margin:8px 14px 4px;"></div>
+    <div id="spot-body" class="panel-scroll"></div>
+    <div class="spot-actions" style="display:flex;gap:8px;">
+      <button id="spot-found" class="gi-btn" type="button" style="flex:1;"></button>
+      <button id="spot-nav" class="gi-btn" type="button" style="flex:1;background:#2563eb;color:#ffffff;border:none;">📍 Track</button>
+    </div>
+  </aside>
+
+  <aside id="panel" class="panel" data-i18n-aria="ui.title">
+    <header class="panel-head">
+      <div class="title">
+        <img src="../../assets/icon.png" alt="" width="22" height="22">
+        <span data-i18n="ui.title"></span>
+      </div>
+      <button id="close-panel" class="close-btn" type="button" data-i18n-title="ui.closePanel" data-i18n-aria="ui.closePanel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.1 6.3 13.4 12l5.7 5.7-1.4 1.4-5.7-5.7-5.7 5.7-1.4-1.4 5.7-5.7-5.7-5.7 1.4-1.4 5.7 5.7 5.7-5.7z"/></svg>
+      </button>
+    </header>
+
+    <div class="panel-scroll">
+      <div id="status" class="pill status" data-state="search">
+        <span class="dot"></span>
+        <span id="status-text"></span>
+      </div>
+
+      <div class="section-head"><h2>AppSample Cloud Sync</h2></div>
+      <div class="pill setting" style="flex-direction: column; align-items: stretch; gap: 8px; padding: 10px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 13px; font-weight: 600;">Account</span>
+          <span id="sync-user-label" style="font-size: 12px; color: #93c5fd; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Not connected</span>
+        </div>
+        <div id="sync-stats-label" style="font-size: 11px; color: #94a3b8; line-height: 1.3;">Connect your genshin-impact-map.appsample.com account to sync all marked items.</div>
+        <div style="display:flex;gap:8px;width:100%;">
+          <button id="btn-sync-chrome" type="button" class="gi-btn" style="flex:1; padding: 8px 10px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; border-radius: 4px; background: #059669; color: #ffffff; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            🌐 Sync in Chrome
+          </button>
+          <button id="btn-sync-open" type="button" class="gi-btn" style="flex:1; padding: 8px 10px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; border-radius: 4px; background: #2563eb; color: #ffffff; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            🪟 App Window
+          </button>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Map Layer</h2></div>
+      <div class="layer-filter-bar" id="layer-filter-bar" style="display:flex;gap:6px;margin:6px 0 12px;">
+        <button id="layer-filter-all" class="layer-btn active" type="button" data-layer="all" style="flex:1;padding:6px 8px;font-size:11px;font-weight:600;border-radius:4px;border:1px solid #38bdf8;background:rgba(56,189,248,0.2);color:#38bdf8;cursor:pointer;">All</button>
+        <button id="layer-filter-surface" class="layer-btn" type="button" data-layer="surface" style="flex:1;padding:6px 8px;font-size:11px;font-weight:600;border-radius:4px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#94a3b8;cursor:pointer;">☀️ Surface</button>
+        <button id="layer-filter-underground" class="layer-btn" type="button" data-layer="underground" style="flex:1;padding:6px 8px;font-size:11px;font-weight:600;border-radius:4px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#94a3b8;cursor:pointer;">🕳️ Underground</button>
+      </div>
+
+      <div class="section-head"><h2 data-i18n="ui.sectionDisplay"></h2></div>
+      <label class="pill setting">
+        <span class="setting-name" data-i18n="ui.hideFound"></span>
+        <kbd id="kbd-found"></kbd>
+        <input id="hide-found" type="checkbox">
+      </label>
+      <label class="pill setting" data-i18n-title="ui.minimapHint">
+        <span class="setting-name" data-i18n="ui.minimap"></span>
+        <kbd id="kbd-nearby">Alt+E / F4</kbd>
+        <input id="minimap" type="checkbox">
+      </label>
+      <label class="pill setting" data-i18n-title="ui.showInCapturesHint">
+        <span class="setting-name" data-i18n="ui.showInCaptures"></span>
+        <input id="show-captures" type="checkbox">
+      </label>
+      <label class="pill setting">
+        <span class="setting-name" data-i18n="ui.opacity"></span>
+        <output id="opacity-value" class="value-box"></output>
+        <input id="opacity" type="range" min="20" max="100" step="5">
+      </label>
+      <label class="pill setting">
+        <span class="setting-name" data-i18n="ui.size"></span>
+        <output id="size-value" class="value-box"></output>
+        <input id="size" type="range" min="14" max="48" step="2">
+      </label>
+
+      <div class="section-head">
+        <h2 data-i18n="ui.sectionMarkers"></h2>
+        <span id="enabled-count"></span>
+        <button id="none" class="link-btn" type="button" data-i18n="ui.none"></button>
+      </div>
+      <input id="search" class="search" type="search" data-i18n-placeholder="ui.search" autocomplete="off" spellcheck="false">
+      <div id="categories" class="categories"></div>
+    </div>
+
+    <footer class="panel-foot">
+      <div class="foot-row">
+        <span id="data-info" data-i18n="ui.loadingData"></span>
+        <button id="refresh" class="link-btn" type="button" data-i18n="ui.refresh"></button>
+      </div>
+      <div id="keys" class="keys"></div>
+    </footer>
+  </aside>
+
+  <div id="lightbox" class="lightbox" hidden>
+    <img id="lightbox-img" alt="">
+    <span data-i18n="spot.lightboxClose"></span>
+  </div>
+
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/media.js"></script>
+  <script src="../shared/hud.js"></script>
+  <script src="overlay.js"></script>
+</body>
+</html>

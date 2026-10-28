@@ -1,0 +1,4074 @@
+{
+  "2": [
+    {
+      "id": 27,
+      "name": "B1",
+      "overlayGroupId": 2,
+      "img": "https://game-cdn.appsample.com/gim/overlays/27-zrbl.png",
+      "bounds": {
+        "north": 0.05787,
+        "west": 0.2311,
+        "south": 0.03133,
+        "east": 0.26223
+      }
+    },
+    {
+      "id": 28,
+      "name": "B1",
+      "overlayGroupId": 3,
+      "img": "https://game-cdn.appsample.com/gim/overlays/28-bhdx.png",
+      "bounds": {
+        "north": 0.03068,
+        "west": 0.23826,
+        "south": 0.00495,
+        "east": 0.25872
+      }
+    },
+    {
+      "id": 29,
+      "name": "B1",
+      "overlayGroupId": 4,
+      "img": "https://game-cdn.appsample.com/gim/overlays/29-0u1j.png",
+      "bounds": {
+        "north": -0.00419,
+        "west": 0.27207,
+        "south": -0.01221,
+        "east": 0.28396
+      }
+    },
+    {
+      "id": 30,
+      "name": "B1",
+      "overlayGroupId": 5,
+      "img": "https://game-cdn.appsample.com/gim/overlays/30-z90f.png",
+      "bounds": {
+        "north": -0.01541,
+        "west": 0.25253,
+        "south": -0.0473,
+        "east": 0.27276
+      }
+    },
+    {
+      "id": 31,
+      "name": "B1",
+      "overlayGroupId": 6,
+      "img": "https://game-cdn.appsample.com/gim/overlays/31-0se0.png",
+      "bounds": {
+        "north": -0.03598,
+        "west": 0.24793,
+        "south": -0.06672,
+        "east": 0.27223
+      }
+    },
+    {
+      "id": 32,
+      "name": "B1",
+      "overlayGroupId": 7,
+      "img": "https://game-cdn.appsample.com/gim/overlays/32-bur5.png",
+      "bounds": {
+        "north": -0.08508,
+        "west": 0.25878,
+        "south": -0.12219,
+        "east": 0.28628
+      }
+    },
+    {
+      "id": 33,
+      "name": "B1",
+      "overlayGroupId": 8,
+      "img": "https://game-cdn.appsample.com/gim/overlays/33-brwe.png",
+      "bounds": {
+        "north": -0.10917,
+        "west": 0.28658,
+        "south": -0.1196,
+        "east": 0.30109
+      }
+    },
+    {
+      "id": 34,
+      "name": "B1",
+      "overlayGroupId": 9,
+      "img": "https://game-cdn.appsample.com/gim/overlays/34-l3n8.png",
+      "bounds": {
+        "north": -0.12691,
+        "west": 0.25021,
+        "south": -0.16039,
+        "east": 0.28532
+      }
+    },
+    {
+      "id": 35,
+      "name": "B1",
+      "overlayGroupId": 10,
+      "img": "https://game-cdn.appsample.com/gim/overlays/35-1zdq.png",
+      "bounds": {
+        "north": -0.09655,
+        "west": 0.20074,
+        "south": -0.12625,
+        "east": 0.23114
+      }
+    },
+    {
+      "id": 36,
+      "name": "B1",
+      "overlayGroupId": 11,
+      "img": "https://game-cdn.appsample.com/gim/overlays/36-6z0z.png",
+      "bounds": {
+        "north": -0.14491,
+        "west": 0.16418,
+        "south": -0.17067,
+        "east": 0.18941
+      }
+    },
+    {
+      "id": 37,
+      "name": "B1",
+      "overlayGroupId": 12,
+      "img": "https://game-cdn.appsample.com/gim/overlays/37-3kyk.png",
+      "bounds": {
+        "north": -0.12072,
+        "west": 0.22556,
+        "south": -0.1336,
+        "east": 0.25132
+      }
+    },
+    {
+      "id": 79,
+      "name": "B2",
+      "overlayGroupId": 12,
+      "img": "https://game-cdn.appsample.com/gim/overlays/79-ilm4.png",
+      "bounds": {
+        "north": -0.13008,
+        "west": 0.2158,
+        "south": -0.15189,
+        "east": 0.23901
+      }
+    },
+    {
+      "id": 38,
+      "name": "B1",
+      "overlayGroupId": 13,
+      "img": "https://game-cdn.appsample.com/gim/overlays/38-tpl4.png",
+      "bounds": {
+        "north": -0.14496,
+        "west": 0.13707,
+        "south": -0.1629,
+        "east": 0.1708
+      }
+    },
+    {
+      "id": 39,
+      "name": "B1",
+      "overlayGroupId": 15,
+      "img": "https://game-cdn.appsample.com/gim/overlays/39-1nts.png",
+      "bounds": {
+        "north": -0.08844,
+        "west": 0.12184,
+        "south": -0.11448,
+        "east": 0.15511
+      }
+    },
+    {
+      "id": 40,
+      "name": "B1",
+      "overlayGroupId": 18,
+      "img": "https://game-cdn.appsample.com/gim/overlays/40-d9jv.png",
+      "bounds": {
+        "north": -0.0439,
+        "west": 0.11622,
+        "south": -0.05832,
+        "east": 0.14318
+      }
+    },
+    {
+      "id": 80,
+      "name": "B2",
+      "overlayGroupId": 18,
+      "img": "https://game-cdn.appsample.com/gim/overlays/80-qjn9.png",
+      "bounds": {
+        "north": -0.04466,
+        "west": 0.10229,
+        "south": -0.07743,
+        "east": 0.13907
+      }
+    },
+    {
+      "id": 41,
+      "name": "B1",
+      "overlayGroupId": 19,
+      "img": "https://game-cdn.appsample.com/gim/overlays/41-d014.png",
+      "bounds": {
+        "north": -0.06291,
+        "west": 0.16782,
+        "south": -0.08528,
+        "east": 0.19564
+      }
+    },
+    {
+      "id": 107,
+      "name": "B2",
+      "overlayGroupId": 19,
+      "img": "https://game-cdn.appsample.com/gim/overlays/107-b08i.png",
+      "bounds": {
+        "north": -0.0657,
+        "west": 0.17209,
+        "south": -0.08478,
+        "east": 0.19481
+      }
+    },
+    {
+      "id": 108,
+      "name": "B3",
+      "overlayGroupId": 19,
+      "img": "https://game-cdn.appsample.com/gim/overlays/108-miuo.png",
+      "bounds": {
+        "north": -0.05056,
+        "west": 0.15784,
+        "south": -0.07766,
+        "east": 0.17695
+      }
+    },
+    {
+      "id": 109,
+      "name": "B4",
+      "overlayGroupId": 19,
+      "img": "https://game-cdn.appsample.com/gim/overlays/109-cvbh.png",
+      "bounds": {
+        "north": -0.06596,
+        "west": 0.16667,
+        "south": -0.08322,
+        "east": 0.1952
+      }
+    },
+    {
+      "id": 42,
+      "name": "B1",
+      "overlayGroupId": 20,
+      "img": "https://game-cdn.appsample.com/gim/overlays/42-r79x.png",
+      "bounds": {
+        "north": 0.39469,
+        "west": 0.04079,
+        "south": 0.37039,
+        "east": 0.06955
+      }
+    },
+    {
+      "id": 110,
+      "name": "B2",
+      "overlayGroupId": 20,
+      "img": "https://game-cdn.appsample.com/gim/overlays/110-ko4p.png",
+      "bounds": {
+        "north": 0.3875,
+        "west": 0.05016,
+        "south": 0.36702,
+        "east": 0.07456
+      }
+    },
+    {
+      "id": 111,
+      "name": "B3",
+      "overlayGroupId": 20,
+      "img": "https://game-cdn.appsample.com/gim/overlays/111-aff8.png",
+      "bounds": {
+        "north": 0.38761,
+        "west": 0.05527,
+        "south": 0.37588,
+        "east": 0.07048
+      }
+    },
+    {
+      "id": 112,
+      "name": "B4",
+      "overlayGroupId": 20,
+      "img": "https://game-cdn.appsample.com/gim/overlays/112-w5xr.png",
+      "bounds": {
+        "north": 0.39104,
+        "west": 0.05173,
+        "south": 0.37576,
+        "east": 0.07054
+      }
+    },
+    {
+      "id": 113,
+      "name": "B5",
+      "overlayGroupId": 20,
+      "img": "https://game-cdn.appsample.com/gim/overlays/113-baqv.png",
+      "bounds": {
+        "north": 0.41691,
+        "west": 0.04496,
+        "south": 0.38608,
+        "east": 0.06581
+      }
+    },
+    {
+      "id": 122,
+      "name": "B6",
+      "overlayGroupId": 20,
+      "img": "https://game-cdn.appsample.com/gim/overlays/122-foi8.png",
+      "bounds": {
+        "north": 0.3826,
+        "west": 0.06685,
+        "south": 0.36887,
+        "east": 0.07758
+      }
+    },
+    {
+      "id": 43,
+      "name": "B1",
+      "overlayGroupId": 21,
+      "img": "https://game-cdn.appsample.com/gim/overlays/43-8181.png",
+      "bounds": {
+        "north": -0.01927,
+        "west": 0.16046,
+        "south": -0.03894,
+        "east": 0.18548
+      }
+    },
+    {
+      "id": 44,
+      "name": "B1",
+      "overlayGroupId": 22,
+      "img": "https://game-cdn.appsample.com/gim/overlays/44-4p6i.png",
+      "bounds": {
+        "north": 0.00031,
+        "west": 0.11438,
+        "south": -0.02943,
+        "east": 0.13508
+      }
+    },
+    {
+      "id": 45,
+      "name": "B1",
+      "overlayGroupId": 23,
+      "img": "https://game-cdn.appsample.com/gim/overlays/45-p9l6.png",
+      "bounds": {
+        "north": 0.02531,
+        "west": 0.19244,
+        "south": -0.00028,
+        "east": 0.22052
+      }
+    },
+    {
+      "id": 46,
+      "name": "B1",
+      "overlayGroupId": 26,
+      "img": "https://game-cdn.appsample.com/gim/overlays/46-06fv.png",
+      "bounds": {
+        "north": 0.0225,
+        "west": 0.26274,
+        "south": -0.00232,
+        "east": 0.28412
+      }
+    },
+    {
+      "id": 47,
+      "name": "B1",
+      "overlayGroupId": 27,
+      "img": "https://game-cdn.appsample.com/gim/overlays/47-8mz5.png",
+      "bounds": {
+        "north": -0.09522,
+        "west": 0.23333,
+        "south": -0.10651,
+        "east": 0.25677
+      }
+    },
+    {
+      "id": 48,
+      "name": "B1",
+      "overlayGroupId": 31,
+      "img": "https://game-cdn.appsample.com/gim/overlays/48-si0y.png",
+      "bounds": {
+        "north": -0.16416,
+        "west": -0.05896,
+        "south": -0.19655,
+        "east": -0.04132
+      }
+    },
+    {
+      "id": 102,
+      "name": "B2",
+      "overlayGroupId": 31,
+      "img": "https://game-cdn.appsample.com/gim/overlays/102-qska.png",
+      "bounds": {
+        "north": -0.16707,
+        "west": -0.06218,
+        "south": -0.21502,
+        "east": -0.012
+      }
+    },
+    {
+      "id": 103,
+      "name": "B3",
+      "overlayGroupId": 31,
+      "img": "https://game-cdn.appsample.com/gim/overlays/103-3tqt.png",
+      "bounds": {
+        "north": -0.17873,
+        "west": -0.04892,
+        "south": -0.21383,
+        "east": -0.02294
+      }
+    },
+    {
+      "id": 86,
+      "name": "B1",
+      "overlayGroupId": 32,
+      "img": "https://game-cdn.appsample.com/gim/overlays/86-srup.png",
+      "bounds": {
+        "north": -0.19557,
+        "west": 0.01808,
+        "south": -0.20802,
+        "east": 0.0307
+      }
+    },
+    {
+      "id": 87,
+      "name": "B2",
+      "overlayGroupId": 32,
+      "img": "https://game-cdn.appsample.com/gim/overlays/87-9w0u.png",
+      "bounds": {
+        "north": -0.19051,
+        "west": 0.00286,
+        "south": -0.21154,
+        "east": 0.01831
+      }
+    },
+    {
+      "id": 88,
+      "name": "B3",
+      "overlayGroupId": 32,
+      "img": "https://game-cdn.appsample.com/gim/overlays/88-xm01.png",
+      "bounds": {
+        "north": -0.20502,
+        "west": 0.00354,
+        "south": -0.20983,
+        "east": 0.0093
+      }
+    },
+    {
+      "id": 89,
+      "name": "B4",
+      "overlayGroupId": 32,
+      "img": "https://game-cdn.appsample.com/gim/overlays/89-3l6e.png",
+      "bounds": {
+        "north": -0.19942,
+        "west": 0.00548,
+        "south": -0.20422,
+        "east": 0.01449
+      }
+    },
+    {
+      "id": 50,
+      "name": "B1",
+      "overlayGroupId": 33,
+      "img": "https://game-cdn.appsample.com/gim/overlays/50-o1i2.png",
+      "bounds": {
+        "north": 0.19732,
+        "west": 0.07268,
+        "south": 0.17549,
+        "east": 0.09003
+      }
+    },
+    {
+      "id": 49,
+      "name": "B1",
+      "overlayGroupId": 34,
+      "img": "https://game-cdn.appsample.com/gim/overlays/49-szn4.png",
+      "bounds": {
+        "north": -0.19754,
+        "west": -0.02119,
+        "south": -0.20542,
+        "east": -0.01538
+      }
+    },
+    {
+      "id": 97,
+      "name": "B2",
+      "overlayGroupId": 34,
+      "img": "https://game-cdn.appsample.com/gim/overlays/97-yvr4.png",
+      "bounds": {
+        "north": -0.19371,
+        "west": -0.0241,
+        "south": -0.20916,
+        "east": 0.00621
+      }
+    },
+    {
+      "id": 98,
+      "name": "B3",
+      "overlayGroupId": 34,
+      "img": "https://game-cdn.appsample.com/gim/overlays/98-tcw3.png",
+      "bounds": {
+        "north": -0.19734,
+        "west": -0.02255,
+        "south": -0.20729,
+        "east": -0.01175
+      }
+    },
+    {
+      "id": 74,
+      "name": "B1",
+      "overlayGroupId": 35,
+      "img": "https://game-cdn.appsample.com/gim/overlays/74-85u0.png",
+      "bounds": {
+        "north": -0.25273,
+        "west": -0.02032,
+        "south": -0.25827,
+        "east": 0.00271
+      }
+    },
+    {
+      "id": 75,
+      "name": "B1",
+      "overlayGroupId": 36,
+      "img": "https://game-cdn.appsample.com/gim/overlays/75-1wek.png",
+      "bounds": {
+        "north": -0.22676,
+        "west": -0.05762,
+        "south": -0.24995,
+        "east": -0.04721
+      }
+    },
+    {
+      "id": 51,
+      "name": "B1",
+      "overlayGroupId": 39,
+      "img": "https://game-cdn.appsample.com/gim/overlays/51-24j1.png",
+      "bounds": {
+        "north": -0.23552,
+        "west": 0.05448,
+        "south": -0.28094,
+        "east": 0.09758
+      }
+    },
+    {
+      "id": 91,
+      "name": "B2",
+      "overlayGroupId": 39,
+      "img": "https://game-cdn.appsample.com/gim/overlays/91-imu5.png",
+      "bounds": {
+        "north": -0.25226,
+        "west": 0.05388,
+        "south": -0.28116,
+        "east": 0.06515
+      }
+    },
+    {
+      "id": 52,
+      "name": "B1",
+      "overlayGroupId": 40,
+      "img": "https://game-cdn.appsample.com/gim/overlays/52-943z.png",
+      "bounds": {
+        "north": -0.25214,
+        "west": 0.03519,
+        "south": -0.28056,
+        "east": 0.05711
+      }
+    },
+    {
+      "id": 1,
+      "name": "B1",
+      "overlayGroupId": 41,
+      "img": "https://game-cdn.appsample.com/gim/overlays/1-9x4m.png",
+      "bounds": {
+        "north": -0.17288,
+        "west": 0.05392,
+        "south": -0.21511,
+        "east": 0.09899
+      }
+    },
+    {
+      "id": 2,
+      "name": "B2",
+      "overlayGroupId": 41,
+      "img": "https://game-cdn.appsample.com/gim/overlays/2-pjdj.png",
+      "bounds": {
+        "north": -0.19422,
+        "west": 0.0777,
+        "south": -0.21457,
+        "east": 0.09731
+      }
+    },
+    {
+      "id": 12,
+      "name": "B1",
+      "overlayGroupId": 42,
+      "img": "https://game-cdn.appsample.com/gim/overlays/12-wu94.png",
+      "bounds": {
+        "north": -0.19183,
+        "west": 0.10393,
+        "south": -0.21911,
+        "east": 0.12489
+      }
+    },
+    {
+      "id": 53,
+      "name": "B1",
+      "overlayGroupId": 43,
+      "img": "https://game-cdn.appsample.com/gim/overlays/53-bywi.png",
+      "bounds": {
+        "north": 0.07152,
+        "west": -0.13869,
+        "south": 0.02854,
+        "east": -0.08066
+      }
+    },
+    {
+      "id": 54,
+      "name": "B1",
+      "overlayGroupId": 44,
+      "img": "https://game-cdn.appsample.com/gim/overlays/54-c29j.png",
+      "bounds": {
+        "north": -0.02367,
+        "west": 0.11611,
+        "south": -0.04115,
+        "east": 0.13015
+      }
+    },
+    {
+      "id": 55,
+      "name": "B1",
+      "overlayGroupId": 49,
+      "img": "https://game-cdn.appsample.com/gim/overlays/55-i1kq.png",
+      "bounds": {
+        "north": 0.2539,
+        "west": 0.08608,
+        "south": 0.22672,
+        "east": 0.11115
+      }
+    },
+    {
+      "id": 56,
+      "name": "B1",
+      "overlayGroupId": 50,
+      "img": "https://game-cdn.appsample.com/gim/overlays/56-7n9b.png",
+      "bounds": {
+        "north": -0.20242,
+        "west": 0.112,
+        "south": -0.21694,
+        "east": 0.13141
+      }
+    },
+    {
+      "id": 57,
+      "name": "B1",
+      "overlayGroupId": 51,
+      "img": "https://game-cdn.appsample.com/gim/overlays/57-rgyo.png",
+      "bounds": {
+        "north": -0.19703,
+        "west": -0.0528,
+        "south": -0.24767,
+        "east": -0.00873
+      }
+    },
+    {
+      "id": 100,
+      "name": "B2",
+      "overlayGroupId": 51,
+      "img": "https://game-cdn.appsample.com/gim/overlays/100-42tc.png",
+      "bounds": {
+        "north": -0.20987,
+        "west": -0.03898,
+        "south": -0.22558,
+        "east": -0.02696
+      }
+    },
+    {
+      "id": 101,
+      "name": "B3",
+      "overlayGroupId": 51,
+      "img": "https://game-cdn.appsample.com/gim/overlays/101-fcpy.png",
+      "bounds": {
+        "north": -0.21809,
+        "west": -0.04351,
+        "south": -0.23171,
+        "east": -0.02715
+      }
+    },
+    {
+      "id": 99,
+      "name": "B1",
+      "overlayGroupId": 52,
+      "img": "https://game-cdn.appsample.com/gim/overlays/99-59el.png",
+      "bounds": {
+        "north": 0.30898,
+        "west": 0.05795,
+        "south": 0.29049,
+        "east": 0.08165
+      }
+    },
+    {
+      "id": 24,
+      "name": "B1",
+      "overlayGroupId": 53,
+      "img": "https://game-cdn.appsample.com/gim/overlays/24-1h43.png",
+      "bounds": {
+        "north": 0.04007,
+        "west": -0.05282,
+        "south": 0.0257,
+        "east": -0.03845
+      }
+    },
+    {
+      "id": 76,
+      "name": "B1",
+      "overlayGroupId": 54,
+      "img": "https://game-cdn.appsample.com/gim/overlays/76-ek13.png",
+      "bounds": {
+        "north": -0.11604,
+        "west": -0.0105,
+        "south": -0.12712,
+        "east": 0.00423
+      }
+    },
+    {
+      "id": 13,
+      "name": "B1",
+      "overlayGroupId": 55,
+      "img": "https://game-cdn.appsample.com/gim/overlays/13-ifux.png",
+      "bounds": {
+        "north": -0.05255,
+        "west": 0.04346,
+        "south": -0.09501,
+        "east": 0.08874
+      }
+    },
+    {
+      "id": 14,
+      "name": "B2",
+      "overlayGroupId": 55,
+      "img": "https://game-cdn.appsample.com/gim/overlays/14-koer.png",
+      "bounds": {
+        "north": -0.05233,
+        "west": 0.06813,
+        "south": -0.08518,
+        "east": 0.08668
+      }
+    },
+    {
+      "id": 15,
+      "name": "B3",
+      "overlayGroupId": 55,
+      "img": "https://game-cdn.appsample.com/gim/overlays/15-no75.png",
+      "bounds": {
+        "north": -0.05242,
+        "west": 0.07038,
+        "south": -0.07019,
+        "east": 0.08134
+      }
+    },
+    {
+      "id": 95,
+      "name": "B4",
+      "overlayGroupId": 55,
+      "img": "https://game-cdn.appsample.com/gim/overlays/95-40at.png",
+      "bounds": {
+        "north": -0.07766,
+        "west": 0.06318,
+        "south": -0.10033,
+        "east": 0.0881
+      }
+    },
+    {
+      "id": 21,
+      "name": "B1",
+      "overlayGroupId": 56,
+      "img": "https://game-cdn.appsample.com/gim/overlays/21-tk3q.png",
+      "bounds": {
+        "north": -0.13167,
+        "west": -0.04792,
+        "south": -0.17073,
+        "east": -0.01192
+      }
+    },
+    {
+      "id": 22,
+      "name": "B2",
+      "overlayGroupId": 56,
+      "img": "https://game-cdn.appsample.com/gim/overlays/22-5f3d.png",
+      "bounds": {
+        "north": -0.13272,
+        "west": -0.0484,
+        "south": -0.16351,
+        "east": -0.00938
+      }
+    },
+    {
+      "id": 23,
+      "name": "B1",
+      "overlayGroupId": 57,
+      "img": "https://game-cdn.appsample.com/gim/overlays/23-m42b.png",
+      "bounds": {
+        "north": -0.00206,
+        "west": -0.04088,
+        "south": -0.03465,
+        "east": -0.01064
+      }
+    },
+    {
+      "id": 16,
+      "name": "B1",
+      "overlayGroupId": 58,
+      "img": "https://game-cdn.appsample.com/gim/overlays/16-hn9c.png",
+      "bounds": {
+        "north": -0.00726,
+        "west": 0.02847,
+        "south": -0.03138,
+        "east": 0.07071
+      }
+    },
+    {
+      "id": 58,
+      "name": "B1",
+      "overlayGroupId": 59,
+      "img": "https://game-cdn.appsample.com/gim/overlays/58-6zh6.png",
+      "bounds": {
+        "north": -0.0876,
+        "west": -0.03739,
+        "south": -0.12053,
+        "east": 0.00451
+      }
+    },
+    {
+      "id": 59,
+      "name": "B1",
+      "overlayGroupId": 60,
+      "img": "https://game-cdn.appsample.com/gim/overlays/59-x5fr.png",
+      "bounds": {
+        "north": -0.02205,
+        "west": -0.02499,
+        "south": -0.09026,
+        "east": 0.04569
+      }
+    },
+    {
+      "id": 96,
+      "name": "B2",
+      "overlayGroupId": 60,
+      "img": "https://game-cdn.appsample.com/gim/overlays/96-1z61.png",
+      "bounds": {
+        "north": -0.02065,
+        "west": -0.06633,
+        "south": -0.09204,
+        "east": 0.04212
+      }
+    },
+    {
+      "id": 60,
+      "name": "B1",
+      "overlayGroupId": 61,
+      "img": "https://game-cdn.appsample.com/gim/overlays/60-uxf1.png",
+      "bounds": {
+        "north": -0.16807,
+        "west": -0.02143,
+        "south": -0.24201,
+        "east": 0.0119
+      }
+    },
+    {
+      "id": 104,
+      "name": "B2",
+      "overlayGroupId": 61,
+      "img": "https://game-cdn.appsample.com/gim/overlays/104-gzgj.png",
+      "bounds": {
+        "north": -0.20972,
+        "west": -0.00815,
+        "south": -0.22732,
+        "east": 0.00841
+      }
+    },
+    {
+      "id": 61,
+      "name": "B1",
+      "overlayGroupId": 62,
+      "img": "https://game-cdn.appsample.com/gim/overlays/61-6ajr.png",
+      "bounds": {
+        "north": 0.43197,
+        "west": 0.01438,
+        "south": 0.39926,
+        "east": 0.06281
+      }
+    },
+    {
+      "id": 17,
+      "name": "B1",
+      "overlayGroupId": 63,
+      "img": "https://game-cdn.appsample.com/gim/overlays/17-le9d.png",
+      "bounds": {
+        "north": -0.04044,
+        "west": -0.0169,
+        "south": -0.1069,
+        "east": 0.06473
+      }
+    },
+    {
+      "id": 19,
+      "name": "B1",
+      "overlayGroupId": 64,
+      "img": "https://game-cdn.appsample.com/gim/overlays/19-9lx8.png",
+      "bounds": {
+        "north": -0.18853,
+        "west": 0.62673,
+        "south": -0.20667,
+        "east": 0.64423
+      }
+    },
+    {
+      "id": 20,
+      "name": "B2",
+      "overlayGroupId": 64,
+      "img": "https://game-cdn.appsample.com/gim/overlays/20-fpg1.png",
+      "bounds": {
+        "north": -0.17448,
+        "west": 0.62657,
+        "south": -0.20675,
+        "east": 0.66162
+      }
+    },
+    {
+      "id": 18,
+      "name": "B1",
+      "overlayGroupId": 65,
+      "img": "https://game-cdn.appsample.com/gim/overlays/18-rnge.png",
+      "bounds": {
+        "north": 0.24322,
+        "west": 0.02856,
+        "south": 0.20996,
+        "east": 0.05843
+      }
+    },
+    {
+      "id": 62,
+      "name": "B1",
+      "overlayGroupId": 66,
+      "img": "https://game-cdn.appsample.com/gim/overlays/62-zjsk.png",
+      "bounds": {
+        "north": 0.09282,
+        "west": -0.06528,
+        "south": 0.0735,
+        "east": -0.03557
+      }
+    },
+    {
+      "id": 77,
+      "name": "B1",
+      "overlayGroupId": 67,
+      "img": "https://game-cdn.appsample.com/gim/overlays/77-ffd8.png",
+      "bounds": {
+        "north": 0.04725,
+        "west": -0.0978,
+        "south": 0.00032,
+        "east": -0.02558
+      }
+    },
+    {
+      "id": 25,
+      "name": "B1",
+      "overlayGroupId": 68,
+      "img": "https://game-cdn.appsample.com/gim/overlays/25-7itb.png",
+      "bounds": {
+        "north": 0.09227,
+        "west": -0.08974,
+        "south": 0.06735,
+        "east": -0.05365
+      }
+    },
+    {
+      "id": 26,
+      "name": "B2",
+      "overlayGroupId": 68,
+      "img": "https://game-cdn.appsample.com/gim/overlays/26-c1po.png",
+      "bounds": {
+        "north": 0.08116,
+        "west": -0.06985,
+        "south": 0.07099,
+        "east": -0.05474
+      }
+    },
+    {
+      "id": 63,
+      "name": "B1",
+      "overlayGroupId": 69,
+      "img": "https://game-cdn.appsample.com/gim/overlays/63-xiii.png",
+      "bounds": {
+        "north": 0.09443,
+        "west": -0.06097,
+        "south": 0.05308,
+        "east": 0.00268
+      }
+    },
+    {
+      "id": 348,
+      "name": "B1",
+      "overlayGroupId": 70,
+      "img": "https://game-cdn.appsample.com/gim/overlays/348-gkjx.png",
+      "bounds": {
+        "north": 0.05246,
+        "west": -0.09559,
+        "south": 0.01297,
+        "east": -0.03483
+      }
+    },
+    {
+      "id": 64,
+      "name": "B1",
+      "overlayGroupId": 71,
+      "img": "https://game-cdn.appsample.com/gim/overlays/64-1ep1.png",
+      "bounds": {
+        "north": 0.10827,
+        "west": -0.10831,
+        "south": 0.06483,
+        "east": -0.07554
+      }
+    },
+    {
+      "id": 106,
+      "name": "B2",
+      "overlayGroupId": 71,
+      "img": "https://game-cdn.appsample.com/gim/overlays/106-axc6.png",
+      "bounds": {
+        "north": 0.08597,
+        "west": -0.10922,
+        "south": 0.06979,
+        "east": -0.09251
+      }
+    },
+    {
+      "id": 65,
+      "name": "B1",
+      "overlayGroupId": 72,
+      "img": "https://game-cdn.appsample.com/gim/overlays/65-ck5n.png",
+      "bounds": {
+        "north": 0.09737,
+        "west": -0.13912,
+        "south": 0.0222,
+        "east": -0.0571
+      }
+    },
+    {
+      "id": 105,
+      "name": "B2",
+      "overlayGroupId": 72,
+      "img": "https://game-cdn.appsample.com/gim/overlays/105-8oai.png",
+      "bounds": {
+        "north": 0.04763,
+        "west": -0.08877,
+        "south": 0.02812,
+        "east": -0.05126
+      }
+    },
+    {
+      "id": 66,
+      "name": "B1",
+      "overlayGroupId": 74,
+      "img": "https://game-cdn.appsample.com/gim/overlays/66-rk8a.png",
+      "bounds": {
+        "north": -0.1867,
+        "west": 0.67842,
+        "south": -0.20272,
+        "east": 0.69584
+      }
+    },
+    {
+      "id": 67,
+      "name": "B1",
+      "overlayGroupId": 75,
+      "img": "https://game-cdn.appsample.com/gim/overlays/67-eje4.png",
+      "bounds": {
+        "north": -0.36595,
+        "west": 0.62622,
+        "south": -0.37827,
+        "east": 0.63503
+      }
+    },
+    {
+      "id": 68,
+      "name": "B1",
+      "overlayGroupId": 76,
+      "img": "https://game-cdn.appsample.com/gim/overlays/68-ndrp.png",
+      "bounds": {
+        "north": -0.2259,
+        "west": 0.6372,
+        "south": -0.23617,
+        "east": 0.64524
+      }
+    },
+    {
+      "id": 69,
+      "name": "B1",
+      "overlayGroupId": 77,
+      "img": "https://game-cdn.appsample.com/gim/overlays/69-c7iv.png",
+      "bounds": {
+        "north": -0.32387,
+        "west": 0.45829,
+        "south": -0.35247,
+        "east": 0.49
+      }
+    },
+    {
+      "id": 70,
+      "name": "B1",
+      "overlayGroupId": 78,
+      "img": "https://game-cdn.appsample.com/gim/overlays/70-0ll8.png",
+      "bounds": {
+        "north": -0.29988,
+        "west": 0.36362,
+        "south": -0.31168,
+        "east": 0.37369
+      }
+    },
+    {
+      "id": 71,
+      "name": "B1",
+      "overlayGroupId": 79,
+      "img": "https://game-cdn.appsample.com/gim/overlays/71-6syn.png",
+      "bounds": {
+        "north": -0.31853,
+        "west": 0.35645,
+        "south": -0.33141,
+        "east": 0.37051
+      }
+    },
+    {
+      "id": 72,
+      "name": "B1",
+      "overlayGroupId": 80,
+      "img": "https://game-cdn.appsample.com/gim/overlays/72-nkcj.png",
+      "bounds": {
+        "north": -0.2976,
+        "west": 0.34201,
+        "south": -0.31151,
+        "east": 0.36046
+      }
+    },
+    {
+      "id": 7,
+      "name": "B1",
+      "overlayGroupId": 81,
+      "img": "https://game-cdn.appsample.com/gim/overlays/7-xh5m.png",
+      "bounds": {
+        "north": -0.49998,
+        "west": 0.48772,
+        "south": -0.524,
+        "east": 0.52135
+      }
+    },
+    {
+      "id": 8,
+      "name": "B2",
+      "overlayGroupId": 81,
+      "img": "https://game-cdn.appsample.com/gim/overlays/8-dbqg.png",
+      "bounds": {
+        "north": -0.51158,
+        "west": 0.50027,
+        "south": -0.51765,
+        "east": 0.5066
+      }
+    },
+    {
+      "id": 4,
+      "name": "B1",
+      "overlayGroupId": 82,
+      "img": "https://game-cdn.appsample.com/gim/overlays/4-6h0v.png",
+      "bounds": {
+        "north": -0.23622,
+        "west": 0.61696,
+        "south": -0.24189,
+        "east": 0.62315
+      }
+    },
+    {
+      "id": 5,
+      "name": "B2",
+      "overlayGroupId": 82,
+      "img": "https://game-cdn.appsample.com/gim/overlays/5-8pkk.png",
+      "bounds": {
+        "north": -0.23837,
+        "west": 0.61703,
+        "south": -0.24543,
+        "east": 0.62252
+      }
+    },
+    {
+      "id": 6,
+      "name": "B3",
+      "overlayGroupId": 82,
+      "img": "https://game-cdn.appsample.com/gim/overlays/6-infs.png",
+      "bounds": {
+        "north": -0.23815,
+        "west": 0.61672,
+        "south": -0.24702,
+        "east": 0.6253
+      }
+    },
+    {
+      "id": 73,
+      "name": "B1",
+      "overlayGroupId": 83,
+      "img": "https://game-cdn.appsample.com/gim/overlays/73-sgnv.png",
+      "bounds": {
+        "north": -0.32886,
+        "west": 0.52297,
+        "south": -0.33945,
+        "east": 0.53327
+      }
+    },
+    {
+      "id": 9,
+      "name": "B1",
+      "overlayGroupId": 84,
+      "img": "https://game-cdn.appsample.com/gim/overlays/9-7lzy.png",
+      "bounds": {
+        "north": -0.37772,
+        "west": 0.58866,
+        "south": -0.38323,
+        "east": 0.59689
+      }
+    },
+    {
+      "id": 10,
+      "name": "B2",
+      "overlayGroupId": 84,
+      "img": "https://game-cdn.appsample.com/gim/overlays/10-m9ht.png",
+      "bounds": {
+        "north": -0.37737,
+        "west": 0.58704,
+        "south": -0.38301,
+        "east": 0.59583
+      }
+    },
+    {
+      "id": 11,
+      "name": "B3",
+      "overlayGroupId": 84,
+      "img": "https://game-cdn.appsample.com/gim/overlays/11-xh0y.png",
+      "bounds": {
+        "north": -0.37095,
+        "west": 0.59185,
+        "south": -0.38275,
+        "east": 0.60184
+      }
+    },
+    {
+      "id": 78,
+      "name": "B1",
+      "overlayGroupId": 90,
+      "img": "https://game-cdn.appsample.com/gim/overlays/78-evzq.png",
+      "bounds": {
+        "north": 0.43507,
+        "west": 0.0082,
+        "south": 0.17422,
+        "east": 0.23126
+      }
+    },
+    {
+      "id": 81,
+      "name": "B1",
+      "overlayGroupId": 91,
+      "img": "https://game-cdn.appsample.com/gim/overlays/81-dap1.png",
+      "bounds": {
+        "north": 0.33447,
+        "west": 0.01833,
+        "south": 0.29851,
+        "east": 0.04255
+      }
+    },
+    {
+      "id": 82,
+      "name": "B2",
+      "overlayGroupId": 91,
+      "img": "https://game-cdn.appsample.com/gim/overlays/82-usws.png",
+      "bounds": {
+        "north": 0.33744,
+        "west": 0.03284,
+        "south": 0.32465,
+        "east": 0.04933
+      }
+    },
+    {
+      "id": 83,
+      "name": "B3",
+      "overlayGroupId": 91,
+      "img": "https://game-cdn.appsample.com/gim/overlays/83-n4dj.png",
+      "bounds": {
+        "north": 0.34512,
+        "west": 0.0295,
+        "south": 0.31533,
+        "east": 0.04547
+      }
+    },
+    {
+      "id": 84,
+      "name": "B1",
+      "overlayGroupId": 92,
+      "img": "https://game-cdn.appsample.com/gim/overlays/84-bkrq.png",
+      "bounds": {
+        "north": 0.2545,
+        "west": 0.01793,
+        "south": 0.18795,
+        "east": 0.06436
+      }
+    },
+    {
+      "id": 85,
+      "name": "B2",
+      "overlayGroupId": 92,
+      "img": "https://game-cdn.appsample.com/gim/overlays/85-3gk6.png",
+      "bounds": {
+        "north": 0.21532,
+        "west": 0.01944,
+        "south": 0.18222,
+        "east": 0.06909
+      }
+    },
+    {
+      "id": 3,
+      "name": "B1",
+      "overlayGroupId": 97,
+      "img": "https://game-cdn.appsample.com/gim/overlays/3-l7ed.png",
+      "bounds": {
+        "north": 0.1269,
+        "west": -0.05877,
+        "south": 0.09994,
+        "east": -0.01876
+      }
+    },
+    {
+      "id": 90,
+      "name": "B1",
+      "overlayGroupId": 98,
+      "img": "https://game-cdn.appsample.com/gim/overlays/90-o0ri.png",
+      "bounds": {
+        "north": 0.22683,
+        "west": 0.05651,
+        "south": 0.20729,
+        "east": 0.07735
+      }
+    },
+    {
+      "id": 92,
+      "name": "B1",
+      "overlayGroupId": 99,
+      "img": "https://game-cdn.appsample.com/gim/overlays/92-c2ir.png",
+      "bounds": {
+        "north": 0.29167,
+        "west": 0.05989,
+        "south": 0.27467,
+        "east": 0.08376
+      }
+    },
+    {
+      "id": 93,
+      "name": "B2",
+      "overlayGroupId": 99,
+      "img": "https://game-cdn.appsample.com/gim/overlays/93-gpnt.png",
+      "bounds": {
+        "north": 0.28871,
+        "west": 0.07865,
+        "south": 0.26441,
+        "east": 0.10673
+      }
+    },
+    {
+      "id": 94,
+      "name": "B3",
+      "overlayGroupId": 99,
+      "img": "https://game-cdn.appsample.com/gim/overlays/94-6zbh.png",
+      "bounds": {
+        "north": 0.33104,
+        "west": 0.08694,
+        "south": 0.27497,
+        "east": 0.10772
+      }
+    },
+    {
+      "id": 114,
+      "name": "B1",
+      "overlayGroupId": 100,
+      "img": "https://game-cdn.appsample.com/gim/overlays/114-p331.png",
+      "bounds": {
+        "north": 0.42013,
+        "west": 0.0489,
+        "south": 0.36028,
+        "east": 0.08376
+      }
+    },
+    {
+      "id": 115,
+      "name": "B1",
+      "overlayGroupId": 101,
+      "img": "https://game-cdn.appsample.com/gim/overlays/115-1cq4.png",
+      "bounds": {
+        "north": 0.38451,
+        "west": 0.13191,
+        "south": 0.37447,
+        "east": 0.14814
+      }
+    },
+    {
+      "id": 116,
+      "name": "B2",
+      "overlayGroupId": 101,
+      "img": "https://game-cdn.appsample.com/gim/overlays/116-a5mc.png",
+      "bounds": {
+        "north": 0.38348,
+        "west": 0.12712,
+        "south": 0.36459,
+        "east": 0.14962
+      }
+    },
+    {
+      "id": 117,
+      "name": "B3",
+      "overlayGroupId": 101,
+      "img": "https://game-cdn.appsample.com/gim/overlays/117-2rtc.png",
+      "bounds": {
+        "north": 0.38675,
+        "west": 0.11338,
+        "south": 0.37249,
+        "east": 0.13846
+      }
+    },
+    {
+      "id": 118,
+      "name": "B1",
+      "overlayGroupId": 102,
+      "img": "https://game-cdn.appsample.com/gim/overlays/118-xv1z.png",
+      "bounds": {
+        "north": 0.43244,
+        "west": 0.07143,
+        "south": 0.42455,
+        "east": 0.08349
+      }
+    },
+    {
+      "id": 119,
+      "name": "B2",
+      "overlayGroupId": 102,
+      "img": "https://game-cdn.appsample.com/gim/overlays/119-1l4w.png",
+      "bounds": {
+        "north": 0.43154,
+        "west": 0.06433,
+        "south": 0.41454,
+        "east": 0.08417
+      }
+    },
+    {
+      "id": 120,
+      "name": "B3",
+      "overlayGroupId": 102,
+      "img": "https://game-cdn.appsample.com/gim/overlays/120-91n5.png",
+      "bounds": {
+        "north": 0.43179,
+        "west": 0.06347,
+        "south": 0.40907,
+        "east": 0.08203
+      }
+    },
+    {
+      "id": 121,
+      "name": "B1",
+      "overlayGroupId": 103,
+      "img": "https://game-cdn.appsample.com/gim/overlays/121-k2te.png",
+      "bounds": {
+        "north": 0.39516,
+        "west": 0.01558,
+        "south": 0.35726,
+        "east": 0.04264
+      }
+    },
+    {
+      "id": 123,
+      "name": "B1",
+      "overlayGroupId": 104,
+      "img": "https://game-cdn.appsample.com/gim/overlays/123-hl56.png",
+      "bounds": {
+        "north": 0.36835,
+        "west": 0.11069,
+        "south": 0.36062,
+        "east": 0.1222
+      }
+    },
+    {
+      "id": 124,
+      "name": "B1",
+      "overlayGroupId": 105,
+      "img": "https://game-cdn.appsample.com/gim/overlays/124-n98u.png",
+      "bounds": {
+        "north": 0.43722,
+        "west": 0.10987,
+        "south": 0.42211,
+        "east": 0.11923
+      }
+    },
+    {
+      "id": 125,
+      "name": "B1",
+      "overlayGroupId": 106,
+      "img": "https://game-cdn.appsample.com/gim/overlays/125-i2p2.png",
+      "bounds": {
+        "north": 0.00318,
+        "west": 0.20211,
+        "south": -0.01451,
+        "east": 0.22145
+      }
+    },
+    {
+      "id": 126,
+      "name": "B1",
+      "overlayGroupId": 107,
+      "img": "https://game-cdn.appsample.com/gim/overlays/126-kmab.png",
+      "bounds": {
+        "north": 0.22382,
+        "west": 0.04555,
+        "south": 0.21309,
+        "east": 0.05654
+      }
+    },
+    {
+      "id": 127,
+      "name": "B2",
+      "overlayGroupId": 107,
+      "img": "https://game-cdn.appsample.com/gim/overlays/127-9085.png",
+      "bounds": {
+        "north": 0.22387,
+        "west": 0.04512,
+        "south": 0.20506,
+        "east": 0.07071
+      }
+    },
+    {
+      "id": 128,
+      "name": "B1",
+      "overlayGroupId": 108,
+      "img": "https://game-cdn.appsample.com/gim/overlays/128-32lc.png",
+      "bounds": {
+        "north": 0.31477,
+        "west": 0.16443,
+        "south": 0.28532,
+        "east": 0.19414
+      }
+    },
+    {
+      "id": 129,
+      "name": "B2",
+      "overlayGroupId": 108,
+      "img": "https://game-cdn.appsample.com/gim/overlays/129-b94d.png",
+      "bounds": {
+        "north": 0.35706,
+        "west": 0.15975,
+        "south": 0.29052,
+        "east": 0.19993
+      }
+    },
+    {
+      "id": 130,
+      "name": "B3",
+      "overlayGroupId": 108,
+      "img": "https://game-cdn.appsample.com/gim/overlays/130-fncl.png",
+      "bounds": {
+        "north": 0.33871,
+        "west": 0.13863,
+        "south": 0.30822,
+        "east": 0.17323
+      }
+    },
+    {
+      "id": 131,
+      "name": "B1",
+      "overlayGroupId": 109,
+      "img": "https://game-cdn.appsample.com/gim/overlays/131-m6kl.png",
+      "bounds": {
+        "north": 0.26278,
+        "west": 0.14533,
+        "south": 0.25506,
+        "east": 0.15331
+      }
+    },
+    {
+      "id": 132,
+      "name": "B2",
+      "overlayGroupId": 109,
+      "img": "https://game-cdn.appsample.com/gim/overlays/132-xw3v.png",
+      "bounds": {
+        "north": 0.26324,
+        "west": 0.13899,
+        "south": 0.25327,
+        "east": 0.1514
+      }
+    },
+    {
+      "id": 133,
+      "name": "B3",
+      "overlayGroupId": 109,
+      "img": "https://game-cdn.appsample.com/gim/overlays/133-jgdg.png",
+      "bounds": {
+        "north": 0.27114,
+        "west": 0.13792,
+        "south": 0.24807,
+        "east": 0.15075
+      }
+    },
+    {
+      "id": 134,
+      "name": "B4",
+      "overlayGroupId": 109,
+      "img": "https://game-cdn.appsample.com/gim/overlays/134-zcbi.png",
+      "bounds": {
+        "north": 0.27077,
+        "west": 0.1245,
+        "south": 0.24822,
+        "east": 0.14305
+      }
+    },
+    {
+      "id": 135,
+      "name": "B1",
+      "overlayGroupId": 110,
+      "img": "https://game-cdn.appsample.com/gim/overlays/135-jxcf.png",
+      "bounds": {
+        "north": 0.25173,
+        "west": 0.1611,
+        "south": 0.22588,
+        "east": 0.18186
+      }
+    },
+    {
+      "id": 136,
+      "name": "B2",
+      "overlayGroupId": 110,
+      "img": "https://game-cdn.appsample.com/gim/overlays/136-nk8n.png",
+      "bounds": {
+        "north": 0.25935,
+        "west": 0.16821,
+        "south": 0.24346,
+        "east": 0.17997
+      }
+    },
+    {
+      "id": 137,
+      "name": "B1",
+      "overlayGroupId": 111,
+      "img": "https://game-cdn.appsample.com/gim/overlays/137-brfs.png",
+      "bounds": {
+        "north": 0.29618,
+        "west": 0.1886,
+        "south": 0.28648,
+        "east": 0.19676
+      }
+    },
+    {
+      "id": 138,
+      "name": "B2",
+      "overlayGroupId": 111,
+      "img": "https://game-cdn.appsample.com/gim/overlays/138-735x.png",
+      "bounds": {
+        "north": 0.29598,
+        "west": 0.18885,
+        "south": 0.27899,
+        "east": 0.21011
+      }
+    },
+    {
+      "id": 139,
+      "name": "B3",
+      "overlayGroupId": 111,
+      "img": "https://game-cdn.appsample.com/gim/overlays/139-2l4v.png",
+      "bounds": {
+        "north": 0.2985,
+        "west": 0.19929,
+        "south": 0.28073,
+        "east": 0.21655
+      }
+    },
+    {
+      "id": 140,
+      "name": "B1",
+      "overlayGroupId": 112,
+      "img": "https://game-cdn.appsample.com/gim/overlays/140-jz0e.png",
+      "bounds": {
+        "north": 0.21539,
+        "west": 0.11745,
+        "south": 0.20255,
+        "east": 0.1295
+      }
+    },
+    {
+      "id": 141,
+      "name": "B2",
+      "overlayGroupId": 112,
+      "img": "https://game-cdn.appsample.com/gim/overlays/141-wfw8.png",
+      "bounds": {
+        "north": 0.21086,
+        "west": 0.10427,
+        "south": 0.19213,
+        "east": 0.12499
+      }
+    },
+    {
+      "id": 142,
+      "name": "B1",
+      "overlayGroupId": 113,
+      "img": "https://game-cdn.appsample.com/gim/overlays/142-l0ti.png",
+      "bounds": {
+        "north": 0.3032,
+        "west": -0.00453,
+        "south": 0.28053,
+        "east": 0.02561
+      }
+    },
+    {
+      "id": 143,
+      "name": "B1",
+      "overlayGroupId": 114,
+      "img": "https://game-cdn.appsample.com/gim/overlays/143-q07y.png",
+      "bounds": {
+        "north": 0.21049,
+        "west": 0.14627,
+        "south": 0.2013,
+        "east": 0.16816
+      }
+    },
+    {
+      "id": 144,
+      "name": "B2",
+      "overlayGroupId": 114,
+      "img": "https://game-cdn.appsample.com/gim/overlays/144-7g5r.png",
+      "bounds": {
+        "north": 0.21371,
+        "west": 0.15417,
+        "south": 0.19293,
+        "east": 0.17478
+      }
+    },
+    {
+      "id": 145,
+      "name": "B1",
+      "overlayGroupId": 115,
+      "img": "https://game-cdn.appsample.com/gim/overlays/145-hazr.png",
+      "bounds": {
+        "north": 0.33512,
+        "west": 0.19203,
+        "south": 0.31769,
+        "east": 0.21779
+      }
+    },
+    {
+      "id": 146,
+      "name": "B1",
+      "overlayGroupId": 116,
+      "img": "https://game-cdn.appsample.com/gim/overlays/146-kx0t.png",
+      "bounds": {
+        "north": 0.22724,
+        "west": 0.15254,
+        "south": 0.21736,
+        "east": 0.16224
+      }
+    },
+    {
+      "id": 147,
+      "name": "B1",
+      "overlayGroupId": 117,
+      "img": "https://game-cdn.appsample.com/gim/overlays/147-yamk.png",
+      "bounds": {
+        "north": 0.05933,
+        "west": -0.04057,
+        "south": 0.04173,
+        "east": -0.02245
+      }
+    },
+    {
+      "id": 148,
+      "name": "B1",
+      "overlayGroupId": 118,
+      "img": "https://game-cdn.appsample.com/gim/overlays/148-qqst.png",
+      "bounds": {
+        "north": 0.1441,
+        "west": 0.31752,
+        "south": 0.12933,
+        "east": 0.33478
+      }
+    },
+    {
+      "id": 150,
+      "name": "B1",
+      "overlayGroupId": 119,
+      "img": "https://game-cdn.appsample.com/gim/overlays/150-61qz.png",
+      "bounds": {
+        "north": 0.17731,
+        "west": 0.24849,
+        "south": 0.1464,
+        "east": 0.2818
+      }
+    },
+    {
+      "id": 151,
+      "name": "B1",
+      "overlayGroupId": 120,
+      "img": "https://game-cdn.appsample.com/gim/overlays/151-fhpz.png",
+      "bounds": {
+        "north": 0.14,
+        "west": 0.20023,
+        "south": 0.11922,
+        "east": 0.2332
+      }
+    },
+    {
+      "id": 152,
+      "name": "B1",
+      "overlayGroupId": 121,
+      "img": "https://game-cdn.appsample.com/gim/overlays/152-9atl.png",
+      "bounds": {
+        "north": 0.20905,
+        "west": 0.26804,
+        "south": 0.19343,
+        "east": 0.28788
+      }
+    },
+    {
+      "id": 153,
+      "name": "B1",
+      "overlayGroupId": 122,
+      "img": "https://game-cdn.appsample.com/gim/overlays/153-mgp8.png",
+      "bounds": {
+        "north": 0.19268,
+        "west": 0.26412,
+        "south": 0.1731,
+        "east": 0.28292
+      }
+    },
+    {
+      "id": 154,
+      "name": "B2",
+      "overlayGroupId": 122,
+      "img": "https://game-cdn.appsample.com/gim/overlays/154-25yp.png",
+      "bounds": {
+        "north": 0.19909,
+        "west": 0.26828,
+        "south": 0.18072,
+        "east": 0.28906
+      }
+    },
+    {
+      "id": 155,
+      "name": "B1",
+      "overlayGroupId": 123,
+      "img": "https://game-cdn.appsample.com/gim/overlays/155-uggb.png",
+      "bounds": {
+        "north": 0.15648,
+        "west": 0.23793,
+        "south": 0.11063,
+        "east": 0.2788
+      }
+    },
+    {
+      "id": 156,
+      "name": "B1",
+      "overlayGroupId": 124,
+      "img": "https://game-cdn.appsample.com/gim/overlays/156-sdmh.png",
+      "bounds": {
+        "north": 0.14234,
+        "west": 0.28685,
+        "south": 0.12182,
+        "east": 0.31741
+      }
+    },
+    {
+      "id": 162,
+      "name": "B1",
+      "overlayGroupId": 129,
+      "img": "https://game-cdn.appsample.com/gim/overlays/162-x703.png",
+      "bounds": {
+        "north": 0.11351,
+        "west": 0.09168,
+        "south": 0.09866,
+        "east": 0.13315
+      }
+    },
+    {
+      "id": 163,
+      "name": "B2",
+      "overlayGroupId": 129,
+      "img": "https://game-cdn.appsample.com/gim/overlays/163-iej1.png",
+      "bounds": {
+        "north": 0.11222,
+        "west": 0.12051,
+        "south": 0.1002,
+        "east": 0.13399
+      }
+    },
+    {
+      "id": 164,
+      "name": "B3",
+      "overlayGroupId": 129,
+      "img": "https://game-cdn.appsample.com/gim/overlays/164-ibkv.png",
+      "bounds": {
+        "north": 0.11377,
+        "west": 0.11922,
+        "south": 0.09728,
+        "east": 0.13236
+      }
+    },
+    {
+      "id": 165,
+      "name": "B4",
+      "overlayGroupId": 129,
+      "img": "https://game-cdn.appsample.com/gim/overlays/165-b057.png",
+      "bounds": {
+        "north": 0.1078,
+        "west": 0.11802,
+        "south": 0.09054,
+        "east": 0.14026
+      }
+    },
+    {
+      "id": 173,
+      "name": "B1",
+      "overlayGroupId": 133,
+      "img": "https://game-cdn.appsample.com/gim/overlays/173-n6ay.png",
+      "bounds": {
+        "north": -0.113,
+        "west": -0.32357,
+        "south": -0.1342,
+        "east": -0.30107
+      }
+    },
+    {
+      "id": 174,
+      "name": "B1",
+      "overlayGroupId": 134,
+      "img": "https://game-cdn.appsample.com/gim/overlays/174-jlk4.png",
+      "bounds": {
+        "north": -0.09745,
+        "west": -0.29506,
+        "south": -0.12905,
+        "east": -0.26192
+      }
+    },
+    {
+      "id": 175,
+      "name": "B1",
+      "overlayGroupId": 135,
+      "img": "https://game-cdn.appsample.com/gim/overlays/175-b8nt.png",
+      "bounds": {
+        "north": -0.15593,
+        "west": -0.32623,
+        "south": -0.16812,
+        "east": -0.3143
+      }
+    },
+    {
+      "id": 176,
+      "name": "B2",
+      "overlayGroupId": 135,
+      "img": "https://game-cdn.appsample.com/gim/overlays/176-t2h5.png",
+      "bounds": {
+        "north": -0.15945,
+        "west": -0.32632,
+        "south": -0.16387,
+        "east": -0.3185
+      }
+    },
+    {
+      "id": 177,
+      "name": "B1",
+      "overlayGroupId": 136,
+      "img": "https://game-cdn.appsample.com/gim/overlays/177-v52v.png",
+      "bounds": {
+        "north": -0.19663,
+        "west": -0.22826,
+        "south": -0.22101,
+        "east": -0.2135
+      }
+    },
+    {
+      "id": 178,
+      "name": "B1",
+      "overlayGroupId": 137,
+      "img": "https://game-cdn.appsample.com/gim/overlays/178-p41i.png",
+      "bounds": {
+        "north": -0.14537,
+        "west": -0.28605,
+        "south": -0.1737,
+        "east": -0.24836
+      }
+    },
+    {
+      "id": 179,
+      "name": "B1",
+      "overlayGroupId": 138,
+      "img": "https://game-cdn.appsample.com/gim/overlays/179-h2ap.png",
+      "bounds": {
+        "north": -0.18469,
+        "west": -0.32125,
+        "south": -0.21689,
+        "east": -0.24475
+      }
+    },
+    {
+      "id": 180,
+      "name": "B1",
+      "overlayGroupId": 139,
+      "img": "https://game-cdn.appsample.com/gim/overlays/180-b7rq.png",
+      "bounds": {
+        "north": -0.15387,
+        "west": -0.22878,
+        "south": -0.17104,
+        "east": -0.21058
+      }
+    },
+    {
+      "id": 181,
+      "name": "B1",
+      "overlayGroupId": 140,
+      "img": "https://game-cdn.appsample.com/gim/overlays/181-9ms9.png",
+      "bounds": {
+        "north": -0.18542,
+        "west": -0.27081,
+        "south": -0.20792,
+        "east": -0.24943
+      }
+    },
+    {
+      "id": 182,
+      "name": "B1",
+      "overlayGroupId": 141,
+      "img": "https://game-cdn.appsample.com/gim/overlays/182-6f5g.png",
+      "bounds": {
+        "north": -0.18916,
+        "west": -0.26106,
+        "south": -0.20693,
+        "east": -0.24501
+      }
+    },
+    {
+      "id": 183,
+      "name": "B1",
+      "overlayGroupId": 142,
+      "img": "https://game-cdn.appsample.com/gim/overlays/183-f0la.png",
+      "bounds": {
+        "north": -0.10484,
+        "west": -0.21392,
+        "south": -0.12871,
+        "east": -0.17365
+      }
+    },
+    {
+      "id": 184,
+      "name": "L1",
+      "overlayGroupId": 143,
+      "img": "https://game-cdn.appsample.com/gim/overlays/184-890z.png",
+      "bounds": {
+        "north": -0.22539,
+        "west": -0.28966,
+        "south": -0.26377,
+        "east": -0.25497
+      }
+    },
+    {
+      "id": 185,
+      "name": "B1",
+      "overlayGroupId": 144,
+      "img": "https://game-cdn.appsample.com/gim/overlays/185-yvin.png",
+      "bounds": {
+        "north": -0.22848,
+        "west": -0.28425,
+        "south": -0.24368,
+        "east": -0.27326
+      }
+    },
+    {
+      "id": 186,
+      "name": "B2",
+      "overlayGroupId": 144,
+      "img": "https://game-cdn.appsample.com/gim/overlays/186-hmqn.png",
+      "bounds": {
+        "north": -0.22779,
+        "west": -0.29343,
+        "south": -0.25046,
+        "east": -0.26759
+      }
+    },
+    {
+      "id": 187,
+      "name": "B1",
+      "overlayGroupId": 145,
+      "img": "https://game-cdn.appsample.com/gim/overlays/187-uhnd.png",
+      "bounds": {
+        "north": -0.17404,
+        "west": -0.20603,
+        "south": -0.1901,
+        "east": -0.19383
+      }
+    },
+    {
+      "id": 188,
+      "name": "B2",
+      "overlayGroupId": 145,
+      "img": "https://game-cdn.appsample.com/gim/overlays/188-gk8n.png",
+      "bounds": {
+        "north": -0.17353,
+        "west": -0.21684,
+        "south": -0.20161,
+        "east": -0.18121
+      }
+    },
+    {
+      "id": 189,
+      "name": "B1",
+      "overlayGroupId": 146,
+      "img": "https://game-cdn.appsample.com/gim/overlays/189-m7pt.png",
+      "bounds": {
+        "north": -0.10441,
+        "west": -0.29781,
+        "south": -0.1482,
+        "east": -0.23402
+      }
+    },
+    {
+      "id": 190,
+      "name": "B2",
+      "overlayGroupId": 146,
+      "img": "https://game-cdn.appsample.com/gim/overlays/190-2e5c.png",
+      "bounds": {
+        "north": -0.13772,
+        "west": -0.29292,
+        "south": -0.16116,
+        "east": -0.27592
+      }
+    },
+    {
+      "id": 191,
+      "name": "B1",
+      "overlayGroupId": 147,
+      "img": "https://game-cdn.appsample.com/gim/overlays/191-bamz.png",
+      "bounds": {
+        "north": -0.11222,
+        "west": -0.23445,
+        "south": -0.11892,
+        "east": -0.22577
+      }
+    },
+    {
+      "id": 192,
+      "name": "B2",
+      "overlayGroupId": 147,
+      "img": "https://game-cdn.appsample.com/gim/overlays/192-zyq1.png",
+      "bounds": {
+        "north": -0.11016,
+        "west": -0.2487,
+        "south": -0.14854,
+        "east": -0.22019
+      }
+    },
+    {
+      "id": 193,
+      "name": "B1",
+      "overlayGroupId": 148,
+      "img": "https://game-cdn.appsample.com/gim/overlays/193-sm8t.png",
+      "bounds": {
+        "north": -0.14665,
+        "west": -0.24621,
+        "south": -0.18023,
+        "east": -0.20439
+      }
+    },
+    {
+      "id": 194,
+      "name": "B2",
+      "overlayGroupId": 148,
+      "img": "https://game-cdn.appsample.com/gim/overlays/194-ppg2.png",
+      "bounds": {
+        "north": -0.13905,
+        "west": -0.2432,
+        "south": -0.17726,
+        "east": -0.21161
+      }
+    },
+    {
+      "id": 195,
+      "name": "B1",
+      "overlayGroupId": 149,
+      "img": "https://game-cdn.appsample.com/gim/overlays/195-r8nx.png",
+      "bounds": {
+        "north": -0.21703,
+        "west": -0.2667,
+        "south": -0.24834,
+        "east": -0.24589
+      }
+    },
+    {
+      "id": 196,
+      "name": "B1",
+      "overlayGroupId": 150,
+      "img": "https://game-cdn.appsample.com/gim/overlays/196-tnx6.png",
+      "bounds": {
+        "north": 0.35204,
+        "west": 0.16361,
+        "south": 0.33692,
+        "east": 0.1746
+      }
+    },
+    {
+      "id": 197,
+      "name": "B1",
+      "overlayGroupId": 151,
+      "img": "https://game-cdn.appsample.com/gim/overlays/197-xa6p.png",
+      "bounds": {
+        "north": -0.12648,
+        "west": -0.38462,
+        "south": -0.14811,
+        "east": -0.36865
+      }
+    },
+    {
+      "id": 198,
+      "name": "B1",
+      "overlayGroupId": 152,
+      "img": "https://game-cdn.appsample.com/gim/overlays/198-zu7l.png",
+      "bounds": {
+        "north": -0.09393,
+        "west": -0.3562,
+        "south": -0.13326,
+        "east": -0.33302
+      }
+    },
+    {
+      "id": 199,
+      "name": "B1",
+      "overlayGroupId": 153,
+      "img": "https://game-cdn.appsample.com/gim/overlays/199-i9hn.png",
+      "bounds": {
+        "north": -0.11428,
+        "west": -0.35628,
+        "south": -0.13395,
+        "east": -0.32992
+      }
+    },
+    {
+      "id": 200,
+      "name": "B2",
+      "overlayGroupId": 153,
+      "img": "https://game-cdn.appsample.com/gim/overlays/200-fybr.png",
+      "bounds": {
+        "north": -0.11703,
+        "west": -0.33688,
+        "south": -0.13609,
+        "east": -0.32091
+      }
+    },
+    {
+      "id": 201,
+      "name": "B3",
+      "overlayGroupId": 153,
+      "img": "https://game-cdn.appsample.com/gim/overlays/201-16ns.png",
+      "bounds": {
+        "north": -0.12699,
+        "west": -0.33946,
+        "south": -0.14219,
+        "east": -0.32297
+      }
+    },
+    {
+      "id": 202,
+      "name": "L1",
+      "overlayGroupId": 154,
+      "img": "https://game-cdn.appsample.com/gim/overlays/202-2hkr.png",
+      "bounds": {
+        "north": -0.00335,
+        "west": -0.41879,
+        "south": -0.02971,
+        "east": -0.38883
+      }
+    },
+    {
+      "id": 203,
+      "name": "B1",
+      "overlayGroupId": 155,
+      "img": "https://game-cdn.appsample.com/gim/overlays/203-jdtk.png",
+      "bounds": {
+        "north": 0.07461,
+        "west": -0.48147,
+        "south": 0.01623,
+        "east": -0.44258
+      }
+    },
+    {
+      "id": 204,
+      "name": "B1",
+      "overlayGroupId": 156,
+      "img": "https://game-cdn.appsample.com/gim/overlays/204-mjgy.png",
+      "bounds": {
+        "north": -0.00361,
+        "west": -0.41347,
+        "south": -0.01915,
+        "east": -0.39303
+      }
+    },
+    {
+      "id": 205,
+      "name": "B2",
+      "overlayGroupId": 156,
+      "img": "https://game-cdn.appsample.com/gim/overlays/205-cr4i.png",
+      "bounds": {
+        "north": -0.0055,
+        "west": -0.40849,
+        "south": -0.02138,
+        "east": -0.39741
+      }
+    },
+    {
+      "id": 206,
+      "name": "B1",
+      "overlayGroupId": 157,
+      "img": "https://game-cdn.appsample.com/gim/overlays/206-ke0w.png",
+      "bounds": {
+        "north": -0.02335,
+        "west": -0.39467,
+        "south": -0.04327,
+        "east": -0.37921
+      }
+    },
+    {
+      "id": 207,
+      "name": "B2",
+      "overlayGroupId": 157,
+      "img": "https://game-cdn.appsample.com/gim/overlays/207-v1j3.png",
+      "bounds": {
+        "north": -0.02018,
+        "west": -0.39398,
+        "south": -0.03829,
+        "east": -0.37002
+      }
+    },
+    {
+      "id": 208,
+      "name": "B3",
+      "overlayGroupId": 157,
+      "img": "https://game-cdn.appsample.com/gim/overlays/208-n90p.png",
+      "bounds": {
+        "north": -0.02335,
+        "west": -0.37655,
+        "south": -0.04576,
+        "east": -0.35233
+      }
+    },
+    {
+      "id": 209,
+      "name": "B4",
+      "overlayGroupId": 157,
+      "img": "https://game-cdn.appsample.com/gim/overlays/209-70lc.png",
+      "bounds": {
+        "north": -0.00756,
+        "west": -0.37578,
+        "south": -0.03228,
+        "east": -0.3556
+      }
+    },
+    {
+      "id": 210,
+      "name": "B5",
+      "overlayGroupId": 157,
+      "img": "https://game-cdn.appsample.com/gim/overlays/210-hy0h.png",
+      "bounds": {
+        "north": -0.02748,
+        "west": -0.3823,
+        "south": -0.05143,
+        "east": -0.35963
+      }
+    },
+    {
+      "id": 211,
+      "name": "B1",
+      "overlayGroupId": 158,
+      "img": "https://game-cdn.appsample.com/gim/overlays/211-zawt.png",
+      "bounds": {
+        "north": -0.00455,
+        "west": -0.43365,
+        "south": -0.0158,
+        "east": -0.42257
+      }
+    },
+    {
+      "id": 212,
+      "name": "B2",
+      "overlayGroupId": 158,
+      "img": "https://game-cdn.appsample.com/gim/overlays/212-3l1m.png",
+      "bounds": {
+        "north": -0.00704,
+        "west": -0.43425,
+        "south": -0.02224,
+        "east": -0.41433
+      }
+    },
+    {
+      "id": 213,
+      "name": "B3",
+      "overlayGroupId": 158,
+      "img": "https://game-cdn.appsample.com/gim/overlays/213-iy6w.png",
+      "bounds": {
+        "north": -0.01357,
+        "west": -0.43399,
+        "south": -0.02224,
+        "east": -0.41441
+      }
+    },
+    {
+      "id": 214,
+      "name": "B1",
+      "overlayGroupId": 159,
+      "img": "https://game-cdn.appsample.com/gim/overlays/214-ymmx.png",
+      "bounds": {
+        "north": -0.03022,
+        "west": -0.39518,
+        "south": -0.03838,
+        "east": -0.38591
+      }
+    },
+    {
+      "id": 215,
+      "name": "B1",
+      "overlayGroupId": 160,
+      "img": "https://game-cdn.appsample.com/gim/overlays/215-j6g4.png",
+      "bounds": {
+        "north": -0.02945,
+        "west": -0.43133,
+        "south": -0.04456,
+        "east": -0.41931
+      }
+    },
+    {
+      "id": 216,
+      "name": "B2",
+      "overlayGroupId": 160,
+      "img": "https://game-cdn.appsample.com/gim/overlays/216-qhay.png",
+      "bounds": {
+        "north": -0.02902,
+        "west": -0.43141,
+        "south": -0.04413,
+        "east": -0.41939
+      }
+    },
+    {
+      "id": 217,
+      "name": "B1",
+      "overlayGroupId": 161,
+      "img": "https://game-cdn.appsample.com/gim/overlays/217-wee8.png",
+      "bounds": {
+        "north": 0.02301,
+        "west": -0.41029,
+        "south": 0.01477,
+        "east": -0.3993
+      }
+    },
+    {
+      "id": 218,
+      "name": "B2",
+      "overlayGroupId": 161,
+      "img": "https://game-cdn.appsample.com/gim/overlays/218-be8o.png",
+      "bounds": {
+        "north": 0.02396,
+        "west": -0.40737,
+        "south": 0.01468,
+        "east": -0.39398
+      }
+    },
+    {
+      "id": 219,
+      "name": "B1",
+      "overlayGroupId": 162,
+      "img": "https://game-cdn.appsample.com/gim/overlays/219-vte1.png",
+      "bounds": {
+        "north": -0.00575,
+        "west": -0.40617,
+        "south": -0.01932,
+        "east": -0.39278
+      }
+    },
+    {
+      "id": 220,
+      "name": "B1",
+      "overlayGroupId": 163,
+      "img": "https://game-cdn.appsample.com/gim/overlays/220-p6fi.png",
+      "bounds": {
+        "north": -0.15112,
+        "west": -0.37732,
+        "south": -0.17155,
+        "east": -0.35105
+      }
+    },
+    {
+      "id": 226,
+      "name": "L1",
+      "overlayGroupId": 165,
+      "img": "https://game-cdn.appsample.com/gim/overlays/226-o99a.png",
+      "bounds": {
+        "north": -0.23586,
+        "west": -0.45417,
+        "south": -0.27854,
+        "east": -0.42283
+      }
+    },
+    {
+      "id": 227,
+      "name": "B1",
+      "overlayGroupId": 166,
+      "img": "https://game-cdn.appsample.com/gim/overlays/227-41xg.png",
+      "bounds": {
+        "north": -0.23007,
+        "west": -0.42296,
+        "south": -0.26381,
+        "east": -0.40364
+      }
+    },
+    {
+      "id": 228,
+      "name": "B1",
+      "overlayGroupId": 167,
+      "img": "https://game-cdn.appsample.com/gim/overlays/228-m48c.png",
+      "bounds": {
+        "north": -0.22676,
+        "west": -0.38179,
+        "south": -0.25767,
+        "east": -0.35568
+      }
+    },
+    {
+      "id": 229,
+      "name": "B2",
+      "overlayGroupId": 167,
+      "img": "https://game-cdn.appsample.com/gim/overlays/229-vy9y.png",
+      "bounds": {
+        "north": -0.22689,
+        "west": -0.38187,
+        "south": -0.2578,
+        "east": -0.35577
+      }
+    },
+    {
+      "id": 230,
+      "name": "B1",
+      "overlayGroupId": 168,
+      "img": "https://game-cdn.appsample.com/gim/overlays/230-n7to.png",
+      "bounds": {
+        "north": -0.18418,
+        "west": -0.40523,
+        "south": -0.20701,
+        "east": -0.37114
+      }
+    },
+    {
+      "id": 231,
+      "name": "B1",
+      "overlayGroupId": 169,
+      "img": "https://game-cdn.appsample.com/gim/overlays/231-9ncz.png",
+      "bounds": {
+        "north": 0.02421,
+        "west": -0.54993,
+        "south": 0.00129,
+        "east": -0.53387
+      }
+    },
+    {
+      "id": 232,
+      "name": "B1",
+      "overlayGroupId": 170,
+      "img": "https://game-cdn.appsample.com/gim/overlays/232-0atx.png",
+      "bounds": {
+        "north": 0.06534,
+        "west": -0.64275,
+        "south": 0.05281,
+        "east": -0.63167
+      }
+    },
+    {
+      "id": 233,
+      "name": "B1",
+      "overlayGroupId": 171,
+      "img": "https://game-cdn.appsample.com/gim/overlays/233-hchn.png",
+      "bounds": {
+        "north": 0.14081,
+        "west": -0.68121,
+        "south": 0.1257,
+        "east": -0.66602
+      }
+    },
+    {
+      "id": 234,
+      "name": "B2",
+      "overlayGroupId": 172,
+      "img": "https://game-cdn.appsample.com/gim/overlays/234-9pob.png",
+      "bounds": {
+        "north": 0.11952,
+        "west": -0.57775,
+        "south": 0.09814,
+        "east": -0.56186
+      }
+    },
+    {
+      "id": 235,
+      "name": "B3",
+      "overlayGroupId": 172,
+      "img": "https://game-cdn.appsample.com/gim/overlays/235-owmt.png",
+      "bounds": {
+        "north": 0.14124,
+        "west": -0.59372,
+        "south": 0.1142,
+        "east": -0.558
+      }
+    },
+    {
+      "id": 236,
+      "name": "B4",
+      "overlayGroupId": 172,
+      "img": "https://game-cdn.appsample.com/gim/overlays/236-yt4h.png",
+      "bounds": {
+        "north": 0.13506,
+        "west": -0.60522,
+        "south": 0.09016,
+        "east": -0.56976
+      }
+    },
+    {
+      "id": 239,
+      "name": "B1",
+      "overlayGroupId": 173,
+      "img": "https://game-cdn.appsample.com/gim/overlays/239-0rl7.png",
+      "bounds": {
+        "north": 0.19147,
+        "west": -0.5117,
+        "south": 0.16674,
+        "east": -0.49169
+      }
+    },
+    {
+      "id": 240,
+      "name": "B1",
+      "overlayGroupId": 174,
+      "img": "https://game-cdn.appsample.com/gim/overlays/240-67l8.png",
+      "bounds": {
+        "north": 0.14459,
+        "west": -0.5001,
+        "south": 0.12751,
+        "east": -0.48568
+      }
+    },
+    {
+      "id": 241,
+      "name": "B1",
+      "overlayGroupId": 175,
+      "img": "https://game-cdn.appsample.com/gim/overlays/241-w09u.png",
+      "bounds": {
+        "north": 0.18752,
+        "west": -0.47005,
+        "south": 0.17567,
+        "east": -0.46327
+      }
+    },
+    {
+      "id": 242,
+      "name": "B1",
+      "overlayGroupId": 176,
+      "img": "https://game-cdn.appsample.com/gim/overlays/242-ezrl.png",
+      "bounds": {
+        "north": 0.16468,
+        "west": -0.45099,
+        "south": 0.14519,
+        "east": -0.4242
+      }
+    },
+    {
+      "id": 243,
+      "name": "B2",
+      "overlayGroupId": 176,
+      "img": "https://game-cdn.appsample.com/gim/overlays/243-nm33.png",
+      "bounds": {
+        "north": 0.17001,
+        "west": -0.45202,
+        "south": 0.15223,
+        "east": -0.42257
+      }
+    },
+    {
+      "id": 244,
+      "name": "B1",
+      "overlayGroupId": 177,
+      "img": "https://game-cdn.appsample.com/gim/overlays/244-3emp.png",
+      "bounds": {
+        "north": 0.1591,
+        "west": -0.39252,
+        "south": 0.13626,
+        "east": -0.36676
+      }
+    },
+    {
+      "id": 245,
+      "name": "B1",
+      "overlayGroupId": 178,
+      "img": "https://game-cdn.appsample.com/gim/overlays/245-ikw9.png",
+      "bounds": {
+        "north": 0.15799,
+        "west": -0.38213,
+        "south": 0.14107,
+        "east": -0.37088
+      }
+    },
+    {
+      "id": 246,
+      "name": "B1",
+      "overlayGroupId": 179,
+      "img": "https://game-cdn.appsample.com/gim/overlays/246-63nw.png",
+      "bounds": {
+        "north": 0.17619,
+        "west": -0.34924,
+        "south": 0.16176,
+        "east": -0.33851
+      }
+    },
+    {
+      "id": 247,
+      "name": "B1",
+      "overlayGroupId": 180,
+      "img": "https://game-cdn.appsample.com/gim/overlays/247-g4yr.png",
+      "bounds": {
+        "north": 0.19139,
+        "west": -0.35045,
+        "south": 0.1798,
+        "east": -0.33971
+      }
+    },
+    {
+      "id": 248,
+      "name": "B1",
+      "overlayGroupId": 181,
+      "img": "https://game-cdn.appsample.com/gim/overlays/248-gbg5.png",
+      "bounds": {
+        "north": 0.19817,
+        "west": -0.33469,
+        "south": 0.18237,
+        "east": -0.31872
+      }
+    },
+    {
+      "id": 249,
+      "name": "B1",
+      "overlayGroupId": 182,
+      "img": "https://game-cdn.appsample.com/gim/overlays/249-4n1u.png",
+      "bounds": {
+        "north": 0.19671,
+        "west": -0.31945,
+        "south": 0.17456,
+        "east": -0.28579
+      }
+    },
+    {
+      "id": 250,
+      "name": "B1",
+      "overlayGroupId": 183,
+      "img": "https://game-cdn.appsample.com/gim/overlays/250-84ty.png",
+      "bounds": {
+        "north": 0.22565,
+        "west": -0.35225,
+        "south": 0.20332,
+        "east": -0.33181
+      }
+    },
+    {
+      "id": 251,
+      "name": "B1",
+      "overlayGroupId": 184,
+      "img": "https://game-cdn.appsample.com/gim/overlays/251-vgby.png",
+      "bounds": {
+        "north": 0.30172,
+        "west": -0.36762,
+        "south": 0.28695,
+        "east": -0.34615
+      }
+    },
+    {
+      "id": 252,
+      "name": "L1",
+      "overlayGroupId": 185,
+      "img": "https://game-cdn.appsample.com/gim/overlays/252-qdc4.png",
+      "bounds": {
+        "north": 0.29339,
+        "west": -0.40153,
+        "south": 0.27227,
+        "east": -0.3829
+      }
+    },
+    {
+      "id": 254,
+      "name": "L2",
+      "overlayGroupId": 185,
+      "img": "https://game-cdn.appsample.com/gim/overlays/254-xmf3.png",
+      "bounds": {
+        "north": 0.29545,
+        "west": -0.3975,
+        "south": 0.27107,
+        "east": -0.37509
+      }
+    },
+    {
+      "id": 255,
+      "name": "L3",
+      "overlayGroupId": 185,
+      "img": "https://game-cdn.appsample.com/gim/overlays/255-h8p8.png",
+      "bounds": {
+        "north": 0.27811,
+        "west": -0.39312,
+        "south": 0.26403,
+        "east": -0.37998
+      }
+    },
+    {
+      "id": 256,
+      "name": "L4",
+      "overlayGroupId": 185,
+      "img": "https://game-cdn.appsample.com/gim/overlays/256-segf.png",
+      "bounds": {
+        "north": 0.28511,
+        "west": -0.39441,
+        "south": 0.26965,
+        "east": -0.37818
+      }
+    },
+    {
+      "id": 257,
+      "name": "L5",
+      "overlayGroupId": 185,
+      "img": "https://game-cdn.appsample.com/gim/overlays/257-s2a2.png",
+      "bounds": {
+        "north": 0.29125,
+        "west": -0.40239,
+        "south": 0.26918,
+        "east": -0.38015
+      }
+    },
+    {
+      "id": 253,
+      "name": "B1",
+      "overlayGroupId": 186,
+      "img": "https://game-cdn.appsample.com/gim/overlays/253-rpth.png",
+      "bounds": {
+        "north": 0.28841,
+        "west": -0.42403,
+        "south": 0.27811,
+        "east": -0.40651
+      }
+    },
+    {
+      "id": 259,
+      "name": "L1",
+      "overlayGroupId": 187,
+      "img": "https://game-cdn.appsample.com/gim/overlays/259-wq7v.png",
+      "bounds": {
+        "north": 0.18855,
+        "west": -0.48491,
+        "south": 0.15636,
+        "east": -0.45194
+      }
+    },
+    {
+      "id": 260,
+      "name": "B1",
+      "overlayGroupId": 188,
+      "img": "https://game-cdn.appsample.com/gim/overlays/260-3yah.png",
+      "bounds": {
+        "north": 0.29902,
+        "west": -0.36324,
+        "south": 0.2839,
+        "east": -0.35268
+      }
+    },
+    {
+      "id": 261,
+      "name": "B1",
+      "overlayGroupId": 189,
+      "img": "https://game-cdn.appsample.com/gim/overlays/261-pt9o.png",
+      "bounds": {
+        "north": 0.46297,
+        "west": -0.39003,
+        "south": 0.45353,
+        "east": -0.37449
+      }
+    },
+    {
+      "id": 262,
+      "name": "B2",
+      "overlayGroupId": 189,
+      "img": "https://game-cdn.appsample.com/gim/overlays/262-8cqq.png",
+      "bounds": {
+        "north": 0.47181,
+        "west": -0.40016,
+        "south": 0.44099,
+        "east": -0.38093
+      }
+    },
+    {
+      "id": 263,
+      "name": "B3",
+      "overlayGroupId": 189,
+      "img": "https://game-cdn.appsample.com/gim/overlays/263-z2yx.png",
+      "bounds": {
+        "north": 0.46108,
+        "west": -0.40136,
+        "south": 0.45473,
+        "east": -0.3847
+      }
+    },
+    {
+      "id": 264,
+      "name": "B1",
+      "overlayGroupId": 190,
+      "img": "https://game-cdn.appsample.com/gim/overlays/264-01ce.png",
+      "bounds": {
+        "north": 0.47679,
+        "west": -0.38531,
+        "south": 0.45979,
+        "east": -0.36693
+      }
+    },
+    {
+      "id": 265,
+      "name": "B1",
+      "overlayGroupId": 191,
+      "img": "https://game-cdn.appsample.com/gim/overlays/265-3v0m.png",
+      "bounds": {
+        "north": 0.49358,
+        "west": -0.3598,
+        "south": 0.47744,
+        "east": -0.34023
+      }
+    },
+    {
+      "id": 266,
+      "name": "B2",
+      "overlayGroupId": 191,
+      "img": "https://game-cdn.appsample.com/gim/overlays/266-xrtc.png",
+      "bounds": {
+        "north": 0.4877,
+        "west": -0.35985,
+        "south": 0.47319,
+        "east": -0.3486
+      }
+    },
+    {
+      "id": 267,
+      "name": "B3",
+      "overlayGroupId": 191,
+      "img": "https://game-cdn.appsample.com/gim/overlays/267-0a57.png",
+      "bounds": {
+        "north": 0.47834,
+        "west": -0.36358,
+        "south": 0.46022,
+        "east": -0.34512
+      }
+    },
+    {
+      "id": 268,
+      "name": "B1",
+      "overlayGroupId": 192,
+      "img": "https://game-cdn.appsample.com/gim/overlays/268-md0d.png",
+      "bounds": {
+        "north": 0.50899,
+        "west": -0.38325,
+        "south": 0.4816,
+        "east": -0.36169
+      }
+    },
+    {
+      "id": 269,
+      "name": "B1",
+      "overlayGroupId": 193,
+      "img": "https://game-cdn.appsample.com/gim/overlays/269-im85.png",
+      "bounds": {
+        "north": 0.50556,
+        "west": -0.39011,
+        "south": 0.4883,
+        "east": -0.37586
+      }
+    },
+    {
+      "id": 270,
+      "name": "B1",
+      "overlayGroupId": 194,
+      "img": "https://game-cdn.appsample.com/gim/overlays/270-u3ro.png",
+      "bounds": {
+        "north": 0.536,
+        "west": -0.396,
+        "south": 0.49951,
+        "east": -0.37702
+      }
+    },
+    {
+      "id": 271,
+      "name": "B1",
+      "overlayGroupId": 195,
+      "img": "https://game-cdn.appsample.com/gim/overlays/271-vjtg.png",
+      "bounds": {
+        "north": 0.55759,
+        "west": -0.396,
+        "south": 0.54136,
+        "east": -0.37874
+      }
+    },
+    {
+      "id": 272,
+      "name": "B2",
+      "overlayGroupId": 195,
+      "img": "https://game-cdn.appsample.com/gim/overlays/272-px6l.png",
+      "bounds": {
+        "north": 0.55295,
+        "west": -0.39879,
+        "south": 0.53578,
+        "east": -0.38127
+      }
+    },
+    {
+      "id": 273,
+      "name": "B3",
+      "overlayGroupId": 195,
+      "img": "https://game-cdn.appsample.com/gim/overlays/273-d2w9.png",
+      "bounds": {
+        "north": 0.56103,
+        "west": -0.40089,
+        "south": 0.54059,
+        "east": -0.38432
+      }
+    },
+    {
+      "id": 276,
+      "name": "B1",
+      "overlayGroupId": 196,
+      "img": "https://game-cdn.appsample.com/gim/overlays/276-0xil.png",
+      "bounds": {
+        "north": 0.31735,
+        "west": 0.471,
+        "south": 0.29537,
+        "east": 0.49135
+      }
+    },
+    {
+      "id": 277,
+      "name": "B2",
+      "overlayGroupId": 196,
+      "img": "https://game-cdn.appsample.com/gim/overlays/277-nd9y.png",
+      "bounds": {
+        "north": 0.33083,
+        "west": 0.47624,
+        "south": 0.30747,
+        "east": 0.49685
+      }
+    },
+    {
+      "id": 278,
+      "name": "B3",
+      "overlayGroupId": 196,
+      "img": "https://game-cdn.appsample.com/gim/overlays/278-arxh.png",
+      "bounds": {
+        "north": 0.32035,
+        "west": 0.47302,
+        "south": 0.30619,
+        "east": 0.48933
+      }
+    },
+    {
+      "id": 296,
+      "name": "B2",
+      "overlayGroupId": 205,
+      "img": "https://game-cdn.appsample.com/gim/overlays/296-a05n.png",
+      "bounds": {
+        "north": 0.50607,
+        "west": -0.29738,
+        "south": 0.46975,
+        "east": -0.24921
+      }
+    },
+    {
+      "id": 297,
+      "name": "B1",
+      "overlayGroupId": 205,
+      "img": "https://game-cdn.appsample.com/gim/overlays/297-pjsn.png",
+      "bounds": {
+        "north": 0.50487,
+        "west": -0.30794,
+        "south": 0.48023,
+        "east": -0.26956
+      }
+    },
+    {
+      "id": 316,
+      "name": "B1",
+      "overlayGroupId": 217,
+      "img": "https://game-cdn.appsample.com/gim/overlays/316-ggjy.png",
+      "bounds": {
+        "north": 0.23552,
+        "west": 0.0507,
+        "south": 0.2217,
+        "east": 0.07243
+      }
+    },
+    {
+      "id": 317,
+      "name": "B1",
+      "overlayGroupId": 218,
+      "img": "https://game-cdn.appsample.com/gim/overlays/317-0o1i.png",
+      "bounds": {
+        "north": 0.31271,
+        "west": 0.03113,
+        "south": 0.30086,
+        "east": 0.04615
+      }
+    },
+    {
+      "id": 318,
+      "name": "B1",
+      "overlayGroupId": 219,
+      "img": "https://game-cdn.appsample.com/gim/overlays/318-l2dl.png",
+      "bounds": {
+        "north": 0.66732,
+        "west": -0.28841,
+        "south": 0.61838,
+        "east": -0.23183
+      }
+    },
+    {
+      "id": 319,
+      "name": "B1",
+      "overlayGroupId": 220,
+      "img": "https://game-cdn.appsample.com/gim/overlays/319-3exz.png",
+      "bounds": {
+        "north": 0.69128,
+        "west": -0.25299,
+        "south": 0.65848,
+        "east": -0.22045
+      }
+    },
+    {
+      "id": 320,
+      "name": "B1",
+      "overlayGroupId": 221,
+      "img": "https://game-cdn.appsample.com/gim/overlays/320-wbyq.png",
+      "bounds": {
+        "north": 0.76632,
+        "west": -0.32366,
+        "south": 0.73335,
+        "east": -0.28133
+      }
+    },
+    {
+      "id": 321,
+      "name": "B1",
+      "overlayGroupId": 222,
+      "img": "https://game-cdn.appsample.com/gim/overlays/321-q3pe.png",
+      "bounds": {
+        "north": 0.75963,
+        "west": -0.28725,
+        "south": 0.73601,
+        "east": -0.26115
+      }
+    },
+    {
+      "id": 322,
+      "name": "B2",
+      "overlayGroupId": 222,
+      "img": "https://game-cdn.appsample.com/gim/overlays/322-x3ja.png",
+      "bounds": {
+        "north": 0.74881,
+        "west": -0.28253,
+        "south": 0.7391,
+        "east": -0.27214
+      }
+    },
+    {
+      "id": 323,
+      "name": "B1",
+      "overlayGroupId": 223,
+      "img": "https://game-cdn.appsample.com/gim/overlays/323-hilo.png",
+      "bounds": {
+        "north": 0.76828,
+        "west": -0.28607,
+        "south": 0.74698,
+        "east": -0.26375
+      }
+    },
+    {
+      "id": 324,
+      "name": "B1",
+      "overlayGroupId": 224,
+      "img": "https://game-cdn.appsample.com/gim/overlays/324-etna.png",
+      "bounds": {
+        "north": 0.78377,
+        "west": -0.27403,
+        "south": 0.77004,
+        "east": -0.25969
+      }
+    },
+    {
+      "id": 325,
+      "name": "B2",
+      "overlayGroupId": 224,
+      "img": "https://game-cdn.appsample.com/gim/overlays/325-m9tt.png",
+      "bounds": {
+        "north": 0.79358,
+        "west": -0.27866,
+        "south": 0.77074,
+        "east": -0.25462
+      }
+    },
+    {
+      "id": 326,
+      "name": "B3",
+      "overlayGroupId": 224,
+      "img": "https://game-cdn.appsample.com/gim/overlays/326-kdme.png",
+      "bounds": {
+        "north": 0.78513,
+        "west": -0.27703,
+        "south": 0.76984,
+        "east": -0.2602
+      }
+    },
+    {
+      "id": 327,
+      "name": "B1",
+      "overlayGroupId": 225,
+      "img": "https://game-cdn.appsample.com/gim/overlays/327-tv60.png",
+      "bounds": {
+        "north": 0.80028,
+        "west": -0.25784,
+        "south": 0.77152,
+        "east": -0.22393
+      }
+    },
+    {
+      "id": 328,
+      "name": "B1",
+      "overlayGroupId": 226,
+      "img": "https://game-cdn.appsample.com/gim/overlays/328-lol9.png",
+      "bounds": {
+        "north": 0.77285,
+        "west": -0.27626,
+        "south": 0.71601,
+        "east": -0.21049
+      }
+    },
+    {
+      "id": 329,
+      "name": "B1",
+      "overlayGroupId": 227,
+      "img": "https://game-cdn.appsample.com/gim/overlays/329-zuwd.png",
+      "bounds": {
+        "north": 0.87425,
+        "west": -0.13952,
+        "south": 0.84617,
+        "east": -0.10758
+      }
+    },
+    {
+      "id": 330,
+      "name": "B1",
+      "overlayGroupId": 228,
+      "img": "https://game-cdn.appsample.com/gim/overlays/330-qj7i.png",
+      "bounds": {
+        "north": 0.82497,
+        "west": -0.17786,
+        "south": 0.79028,
+        "east": -0.14274
+      }
+    },
+    {
+      "id": 331,
+      "name": "B1",
+      "overlayGroupId": 229,
+      "img": "https://game-cdn.appsample.com/gim/overlays/331-sd8g.png",
+      "bounds": {
+        "north": 0.81587,
+        "west": -0.14171,
+        "south": 0.79139,
+        "east": -0.11673
+      }
+    },
+    {
+      "id": 332,
+      "name": "B2",
+      "overlayGroupId": 229,
+      "img": "https://game-cdn.appsample.com/gim/overlays/332-79ym.png",
+      "bounds": {
+        "north": 0.81655,
+        "west": -0.14987,
+        "south": 0.7841,
+        "east": -0.11441
+      }
+    },
+    {
+      "id": 333,
+      "name": "B1",
+      "overlayGroupId": 230,
+      "img": "https://game-cdn.appsample.com/gim/overlays/333-z0sz.png",
+      "bounds": {
+        "north": 0.83454,
+        "west": -0.12639,
+        "south": 0.81737,
+        "east": -0.10741
+      }
+    },
+    {
+      "id": 334,
+      "name": "B2",
+      "overlayGroupId": 230,
+      "img": "https://game-cdn.appsample.com/gim/overlays/334-38h0.png",
+      "bounds": {
+        "north": 0.83832,
+        "west": -0.13098,
+        "south": 0.80775,
+        "east": -0.09707
+      }
+    },
+    {
+      "id": 335,
+      "name": "B1",
+      "overlayGroupId": 231,
+      "img": "https://game-cdn.appsample.com/gim/overlays/335-1be2.png",
+      "bounds": {
+        "north": 0.76212,
+        "west": -0.12634,
+        "south": 0.72623,
+        "east": -0.09088
+      }
+    },
+    {
+      "id": 336,
+      "name": "B2",
+      "overlayGroupId": 231,
+      "img": "https://game-cdn.appsample.com/gim/overlays/336-tcf2.png",
+      "bounds": {
+        "north": 0.76074,
+        "west": -0.11226,
+        "south": 0.73507,
+        "east": -0.08565
+      }
+    },
+    {
+      "id": 337,
+      "name": "B1",
+      "overlayGroupId": 232,
+      "img": "https://game-cdn.appsample.com/gim/overlays/337-rx41.png",
+      "bounds": {
+        "north": 0.71438,
+        "west": -0.1242,
+        "south": 0.66535,
+        "east": -0.07354
+      }
+    },
+    {
+      "id": 338,
+      "name": "L5",
+      "overlayGroupId": 233,
+      "img": "https://game-cdn.appsample.com/gim/overlays/338-2bds.png",
+      "bounds": {
+        "north": 0.72069,
+        "west": -0.08479,
+        "south": 0.69965,
+        "east": -0.06315
+      }
+    },
+    {
+      "id": 339,
+      "name": "L4",
+      "overlayGroupId": 233,
+      "img": "https://game-cdn.appsample.com/gim/overlays/339-h7o0.png",
+      "bounds": {
+        "north": 0.72683,
+        "west": -0.08968,
+        "south": 0.69368,
+        "east": -0.05396
+      }
+    },
+    {
+      "id": 340,
+      "name": "L3",
+      "overlayGroupId": 233,
+      "img": "https://game-cdn.appsample.com/gim/overlays/340-9suo.png",
+      "bounds": {
+        "north": 0.72245,
+        "west": -0.08307,
+        "south": 0.70588,
+        "east": -0.06487
+      }
+    },
+    {
+      "id": 341,
+      "name": "L2",
+      "overlayGroupId": 233,
+      "img": "https://game-cdn.appsample.com/gim/overlays/341-6j2i.png",
+      "bounds": {
+        "north": 0.7203,
+        "west": -0.08243,
+        "south": 0.69738,
+        "east": -0.0577
+      }
+    },
+    {
+      "id": 342,
+      "name": "L1",
+      "overlayGroupId": 233,
+      "img": "https://game-cdn.appsample.com/gim/overlays/342-q131.png",
+      "bounds": {
+        "north": 0.72498,
+        "west": -0.10449,
+        "south": 0.66702,
+        "east": -0.04276
+      }
+    },
+    {
+      "id": 343,
+      "name": "L5",
+      "overlayGroupId": 234,
+      "img": "https://game-cdn.appsample.com/gim/overlays/343-nucg.png",
+      "bounds": {
+        "north": 0.89864,
+        "west": -0.0282,
+        "south": 0.87004,
+        "east": -0.00004
+      }
+    },
+    {
+      "id": 344,
+      "name": "L4",
+      "overlayGroupId": 234,
+      "img": "https://game-cdn.appsample.com/gim/overlays/344-ldbg.png",
+      "bounds": {
+        "north": 0.91152,
+        "west": -0.02915,
+        "south": 0.88327,
+        "east": 0.00099
+      }
+    },
+    {
+      "id": 345,
+      "name": "L3",
+      "overlayGroupId": 234,
+      "img": "https://game-cdn.appsample.com/gim/overlays/345-vsb5.png",
+      "bounds": {
+        "north": 0.91293,
+        "west": -0.03078,
+        "south": 0.88271,
+        "east": 0.00571
+      }
+    },
+    {
+      "id": 346,
+      "name": "L2",
+      "overlayGroupId": 234,
+      "img": "https://game-cdn.appsample.com/gim/overlays/346-vecz.png",
+      "bounds": {
+        "north": 0.90224,
+        "west": -0.02056,
+        "south": 0.87485,
+        "east": 0.00537
+      }
+    },
+    {
+      "id": 347,
+      "name": "L1",
+      "overlayGroupId": 234,
+      "img": "https://game-cdn.appsample.com/gim/overlays/347-7c6b.png",
+      "bounds": {
+        "north": 0.9089,
+        "west": -0.03198,
+        "south": 0.87533,
+        "east": 0.00494
+      }
+    }
+  ],
+  "7": [],
+  "9": [],
+  "34": [
+    {
+      "id": 157,
+      "name": "B1",
+      "overlayGroupId": 125,
+      "img": "https://game-cdn.appsample.com/gim/overlays/157-x0g8.png",
+      "bounds": {
+        "north": 0.1031,
+        "west": -0.22019,
+        "south": 0.01863,
+        "east": -0.13503
+      }
+    },
+    {
+      "id": 166,
+      "name": "B2",
+      "overlayGroupId": 125,
+      "img": "https://game-cdn.appsample.com/gim/overlays/166-zwjs.png",
+      "bounds": {
+        "north": 0.09022,
+        "west": -0.18954,
+        "south": 0.037,
+        "east": -0.11434
+      }
+    },
+    {
+      "id": 158,
+      "name": "B1",
+      "overlayGroupId": 126,
+      "img": "https://game-cdn.appsample.com/gim/overlays/158-kug7.png",
+      "bounds": {
+        "north": -0.05477,
+        "west": 0.02017,
+        "south": -0.1255,
+        "east": 0.08919
+      }
+    },
+    {
+      "id": 159,
+      "name": "B1",
+      "overlayGroupId": 127,
+      "img": "https://game-cdn.appsample.com/gim/overlays/159-xwky.png",
+      "bounds": {
+        "north": 0.00704,
+        "west": 0.13649,
+        "south": -0.07297,
+        "east": 0.22989
+      }
+    },
+    {
+      "id": 160,
+      "name": "B1",
+      "overlayGroupId": 128,
+      "img": "https://game-cdn.appsample.com/gim/overlays/160-wg8a.png",
+      "bounds": {
+        "north": 0.01494,
+        "west": 0.15486,
+        "south": -0.03897,
+        "east": 0.2098
+      }
+    },
+    {
+      "id": 161,
+      "name": "B2",
+      "overlayGroupId": 128,
+      "img": "https://game-cdn.appsample.com/gim/overlays/161-xp80.png",
+      "bounds": {
+        "north": 0.03331,
+        "west": 0.16482,
+        "south": -0.01683,
+        "east": 0.19538
+      }
+    },
+    {
+      "id": 167,
+      "name": "B1",
+      "overlayGroupId": 130,
+      "img": "https://game-cdn.appsample.com/gim/overlays/167-4crh.png",
+      "bounds": {
+        "north": -0.01683,
+        "west": -0.30698,
+        "south": -0.09305,
+        "east": -0.19607
+      }
+    },
+    {
+      "id": 168,
+      "name": "B1",
+      "overlayGroupId": 131,
+      "img": "https://game-cdn.appsample.com/gim/overlays/168-wkxp.png",
+      "bounds": {
+        "north": 0.00893,
+        "west": -0.24448,
+        "south": -0.13666,
+        "east": -0.14044
+      }
+    }
+  ],
+  "35": [
+    {
+      "id": 170,
+      "name": "B1",
+      "overlayGroupId": 132,
+      "img": "https://game-cdn.appsample.com/gim/overlays/3f5531569fdfb07d4738dabc44d8a944_8332704812576191264.png",
+      "bounds": {
+        "north": 0.14509,
+        "west": -0.09278,
+        "south": 0.10153,
+        "east": -0.05128
+      }
+    },
+    {
+      "id": 171,
+      "name": "B2",
+      "overlayGroupId": 132,
+      "img": "https://game-cdn.appsample.com/gim/overlays/e8f908f1542dbb57e529b1642579af5b_6850414312643503956.png",
+      "bounds": {
+        "north": 0.14612,
+        "west": -0.10341,
+        "south": 0.09604,
+        "east": -0.04219
+      }
+    },
+    {
+      "id": 172,
+      "name": "B3",
+      "overlayGroupId": 132,
+      "img": "https://game-cdn.appsample.com/gim/overlays/94a9303c8ff47f5383a0d47e9af5dff6_6736869594664605568.png",
+      "bounds": {
+        "north": 0.13206,
+        "west": -0.07735,
+        "south": 0.10136,
+        "east": -0.04768
+      }
+    }
+  ],
+  "36": [
+    {
+      "id": 221,
+      "name": "B1",
+      "overlayGroupId": 164,
+      "img": "https://game-cdn.appsample.com/gim/overlays/221-ya07.png",
+      "bounds": {
+        "north": 0.3811,
+        "west": -0.48565,
+        "south": -0.32394,
+        "east": 0.44496
+      }
+    },
+    {
+      "id": 222,
+      "name": "B2",
+      "overlayGroupId": 164,
+      "img": "https://game-cdn.appsample.com/gim/overlays/222-dycb.png",
+      "bounds": {
+        "north": 0.07313,
+        "west": -0.09734,
+        "south": -0.1236,
+        "east": 0.06798
+      }
+    },
+    {
+      "id": 223,
+      "name": "B3",
+      "overlayGroupId": 164,
+      "img": "https://game-cdn.appsample.com/gim/overlays/223-0qmb.png",
+      "bounds": {
+        "north": 0.30385,
+        "west": 0.04944,
+        "south": -0.1303,
+        "east": 0.50573
+      }
+    }
+  ],
+  "37": [
+    {
+      "id": 279,
+      "name": "B1",
+      "overlayGroupId": 197,
+      "img": "https://game-cdn.appsample.com/gim/overlays/279-8wsd.png",
+      "bounds": {
+        "north": -0.05625,
+        "west": -0.29292,
+        "south": -0.08747,
+        "east": -0.22123
+      }
+    },
+    {
+      "id": 280,
+      "name": "L1",
+      "overlayGroupId": 197,
+      "img": "https://game-cdn.appsample.com/gim/overlays/280-zhuk.png",
+      "bounds": {
+        "north": -0.01235,
+        "west": -0.33888,
+        "south": -0.12588,
+        "east": -0.22741
+      }
+    },
+    {
+      "id": 281,
+      "name": "L2",
+      "overlayGroupId": 197,
+      "img": "https://game-cdn.appsample.com/gim/overlays/281-r196.png",
+      "bounds": {
+        "north": -0.06997,
+        "west": -0.29429,
+        "south": -0.08403,
+        "east": -0.25862
+      }
+    },
+    {
+      "id": 282,
+      "name": "L3",
+      "overlayGroupId": 197,
+      "img": "https://game-cdn.appsample.com/gim/overlays/282-36bh.png",
+      "bounds": {
+        "north": -0.05762,
+        "west": -0.29944,
+        "south": -0.09245,
+        "east": -0.25527
+      }
+    },
+    {
+      "id": 283,
+      "name": "B1",
+      "overlayGroupId": 198,
+      "img": "https://game-cdn.appsample.com/gim/overlays/283-kznp.png",
+      "bounds": {
+        "north": 0.28984,
+        "west": -0.03567,
+        "south": 0.20381,
+        "east": 0.03308
+      }
+    },
+    {
+      "id": 284,
+      "name": "B2",
+      "overlayGroupId": 199,
+      "img": "https://game-cdn.appsample.com/gim/overlays/284-k9r8.png",
+      "bounds": {
+        "north": -0.06551,
+        "west": -0.03704,
+        "south": -0.25142,
+        "east": 0.12005
+      }
+    },
+    {
+      "id": 285,
+      "name": "B1",
+      "overlayGroupId": 199,
+      "img": "https://game-cdn.appsample.com/gim/overlays/285-zc4e.png",
+      "bounds": {
+        "north": -0.07683,
+        "west": 0.03773,
+        "south": -0.12588,
+        "east": 0.09364
+      }
+    },
+    {
+      "id": 286,
+      "name": "B1",
+      "overlayGroupId": 200,
+      "img": "https://game-cdn.appsample.com/gim/overlays/286-0lh0.png",
+      "bounds": {
+        "north": 0.18558,
+        "west": -0.15797,
+        "south": -0.04838,
+        "east": 0.10858
+      }
+    },
+    {
+      "id": 288,
+      "name": "L1",
+      "overlayGroupId": 201,
+      "img": "https://game-cdn.appsample.com/gim/overlays/288-y15n.png",
+      "bounds": {
+        "north": 0.05282,
+        "west": -0.01475,
+        "south": 0.03224,
+        "east": 0.00652
+      }
+    },
+    {
+      "id": 289,
+      "name": "L2",
+      "overlayGroupId": 201,
+      "img": "https://game-cdn.appsample.com/gim/overlays/289-zovz.png",
+      "bounds": {
+        "north": 0.05514,
+        "west": -0.01657,
+        "south": 0.02581,
+        "east": 0.00885
+      }
+    },
+    {
+      "id": 290,
+      "name": "L2",
+      "overlayGroupId": 202,
+      "img": "https://game-cdn.appsample.com/gim/overlays/290-rj64.png",
+      "bounds": {
+        "north": 0.06929,
+        "west": -0.035,
+        "south": 0.0367,
+        "east": -0.00307
+      }
+    },
+    {
+      "id": 291,
+      "name": "L1",
+      "overlayGroupId": 202,
+      "img": "https://game-cdn.appsample.com/gim/overlays/291-5qi0.png",
+      "bounds": {
+        "north": 0.05797,
+        "west": -0.01921,
+        "south": 0.02603,
+        "east": 0.01273
+      }
+    },
+    {
+      "id": 292,
+      "name": "B1",
+      "overlayGroupId": 203,
+      "img": "https://game-cdn.appsample.com/gim/overlays/292-sfl8.png",
+      "bounds": {
+        "north": 0.12859,
+        "west": -0.08459,
+        "south": 0.08167,
+        "east": -0.02071
+      }
+    },
+    {
+      "id": 293,
+      "name": "B2",
+      "overlayGroupId": 203,
+      "img": "https://game-cdn.appsample.com/gim/overlays/293-3d8t.png",
+      "bounds": {
+        "north": 0.13426,
+        "west": -0.07688,
+        "south": 0.07703,
+        "east": -0.01367
+      }
+    },
+    {
+      "id": 294,
+      "name": "B3",
+      "overlayGroupId": 203,
+      "img": "https://game-cdn.appsample.com/gim/overlays/294-7jmj.png",
+      "bounds": {
+        "north": 0.12708,
+        "west": -0.07014,
+        "south": 0.10582,
+        "east": -0.04888
+      }
+    },
+    {
+      "id": 295,
+      "name": "B1",
+      "overlayGroupId": 204,
+      "img": "https://game-cdn.appsample.com/gim/overlays/295-2539.png",
+      "bounds": {
+        "north": 0.0692,
+        "west": -0.08148,
+        "south": 0.05702,
+        "east": -0.0637
+      }
+    }
+  ],
+  "40": [
+    {
+      "id": 299,
+      "name": "B1",
+      "overlayGroupId": 206,
+      "img": "https://game-cdn.appsample.com/gim/overlays/299-9n8s.png",
+      "bounds": {
+        "north": 0.08717,
+        "west": -0.44632,
+        "south": -0.0799,
+        "east": -0.24041
+      }
+    },
+    {
+      "id": 300,
+      "name": "B2",
+      "overlayGroupId": 206,
+      "img": "https://game-cdn.appsample.com/gim/overlays/300-515c.png",
+      "bounds": {
+        "north": 0.02123,
+        "west": -0.35227,
+        "south": -0.01871,
+        "east": -0.30823
+      }
+    },
+    {
+      "id": 301,
+      "name": "L1",
+      "overlayGroupId": 207,
+      "img": "https://game-cdn.appsample.com/gim/overlays/301-tt7g.png",
+      "bounds": {
+        "north": 0.1105,
+        "west": 0.30128,
+        "south": -0.03345,
+        "east": 0.45021
+      }
+    },
+    {
+      "id": 302,
+      "name": "B1",
+      "overlayGroupId": 208,
+      "img": "https://game-cdn.appsample.com/gim/overlays/302-p6qk.png",
+      "bounds": {
+        "north": 0.13098,
+        "west": 0.22219,
+        "south": 0.08019,
+        "east": 0.28205
+      }
+    },
+    {
+      "id": 303,
+      "name": "L1",
+      "overlayGroupId": 209,
+      "img": "https://game-cdn.appsample.com/gim/overlays/303-dayl.png",
+      "bounds": {
+        "north": -0.00015,
+        "west": 0.3575,
+        "south": -0.02493,
+        "east": 0.38428
+      }
+    },
+    {
+      "id": 304,
+      "name": "B1",
+      "overlayGroupId": 210,
+      "img": "https://game-cdn.appsample.com/gim/overlays/304-kbne.png",
+      "bounds": {
+        "north": 0.03071,
+        "west": 0.34739,
+        "south": -0.01493,
+        "east": 0.39527
+      }
+    },
+    {
+      "id": 305,
+      "name": "B1",
+      "overlayGroupId": 211,
+      "img": "https://game-cdn.appsample.com/gim/overlays/305-1l65.png",
+      "bounds": {
+        "north": 0.0569,
+        "west": 0.34276,
+        "south": 0.0059,
+        "east": 0.3952
+      }
+    },
+    {
+      "id": 306,
+      "name": "B1",
+      "overlayGroupId": 212,
+      "img": "https://game-cdn.appsample.com/gim/overlays/306-tbbr.png",
+      "bounds": {
+        "north": -0.04925,
+        "west": 0.45433,
+        "south": -0.09429,
+        "east": 0.50013
+      }
+    },
+    {
+      "id": 307,
+      "name": "B1",
+      "overlayGroupId": 213,
+      "img": "https://game-cdn.appsample.com/gim/overlays/307-hp8o.png",
+      "bounds": {
+        "north": 0.00146,
+        "west": 0.26557,
+        "south": -0.0283,
+        "east": 0.30275
+      }
+    },
+    {
+      "id": 308,
+      "name": "B2",
+      "overlayGroupId": 213,
+      "img": "https://game-cdn.appsample.com/gim/overlays/308-yj3x.png",
+      "bounds": {
+        "north": 0.00329,
+        "west": 0.26585,
+        "south": -0.02238,
+        "east": 0.29683
+      }
+    },
+    {
+      "id": 309,
+      "name": "B1",
+      "overlayGroupId": 214,
+      "img": "https://game-cdn.appsample.com/gim/overlays/309-xx0f.png",
+      "bounds": {
+        "north": 0.04099,
+        "west": 0.36262,
+        "south": -0.00249,
+        "east": 0.40157
+      }
+    },
+    {
+      "id": 310,
+      "name": "B2",
+      "overlayGroupId": 214,
+      "img": "https://game-cdn.appsample.com/gim/overlays/310-3441.png",
+      "bounds": {
+        "north": 0.04261,
+        "west": 0.36916,
+        "south": 0.01739,
+        "east": 0.39428
+      }
+    },
+    {
+      "id": 311,
+      "name": "B3",
+      "overlayGroupId": 214,
+      "img": "https://game-cdn.appsample.com/gim/overlays/311-aw53.png",
+      "bounds": {
+        "north": 0.03873,
+        "west": 0.36348,
+        "south": 0.00354,
+        "east": 0.40088
+      }
+    },
+    {
+      "id": 312,
+      "name": "B4",
+      "overlayGroupId": 214,
+      "img": "https://game-cdn.appsample.com/gim/overlays/312-6ssv.png",
+      "bounds": {
+        "north": 0.02916,
+        "west": 0.36602,
+        "south": 0.00061,
+        "east": 0.39601
+      }
+    },
+    {
+      "id": 313,
+      "name": "B1",
+      "overlayGroupId": 215,
+      "img": "https://game-cdn.appsample.com/gim/overlays/313-9jyc.png",
+      "bounds": {
+        "north": 0.00305,
+        "west": 0.38827,
+        "south": -0.02749,
+        "east": 0.41981
+      }
+    },
+    {
+      "id": 314,
+      "name": "B2",
+      "overlayGroupId": 215,
+      "img": "https://game-cdn.appsample.com/gim/overlays/314-08hj.png",
+      "bounds": {
+        "north": 0.01368,
+        "west": 0.38141,
+        "south": -0.02594,
+        "east": 0.42921
+      }
+    },
+    {
+      "id": 315,
+      "name": "B1",
+      "overlayGroupId": 216,
+      "img": "https://game-cdn.appsample.com/gim/overlays/315-vunw.png",
+      "bounds": {
+        "north": 0.03476,
+        "west": 0.56934,
+        "south": 0.00721,
+        "east": 0.59998
+      }
+    }
+  ],
+  "999": [
+    {
+      "id": 1,
+      "name": "overlayGroupId 是 group id, id 是 floor id",
+      "overlayGroupId": 1,
+      "img": "https://game-cdn.appsample.com/share/map/blue-256.png",
+      "bounds": {
+        "north": 0.25,
+        "west": -0.25,
+        "south": -0.25,
+        "east": 0.25
+      }
+    }
+  ]
+}

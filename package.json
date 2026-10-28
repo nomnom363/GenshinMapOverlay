@@ -1,0 +1,42 @@
+{
+  "name": "genshin-map-overlay",
+  "productName": "Genshin Map Overlay",
+  "version": "1.2.0",
+  "description": "Real-time, ban-safe in-game map overlay for Genshin Impact. Features visual CV tracking, multi-level underground/surface map layers, minimap radar with edge indicators, pin selection, right-click mark as found, and 1-click AppSample cloud sync.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "keywords": [
+    "genshin-impact",
+    "overlay",
+    "interactive-map",
+    "appsample",
+    "underground-map",
+    "minimap",
+    "computer-vision",
+    "electron"
+  ],
+  "author": "Community Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@techstark/opencv-js": "^5.0.0-release.1"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.genshinmapoverlay.app",
+    "productName": "Genshin Map Overlay",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.png"
+    }
+  }
+}
